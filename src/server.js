@@ -1,163 +1,136 @@
 require('dotenv').config();
 const express = require('express');
-const helmet = require('helmet');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-const { v4: uuidv4 } = require('uuid');
-
-const maganuBrain = require('./services/brain');
-const memory = require('./services/memory');
-const whatsapp = require('./services/whatsapp');
-const scheduler = require('./services/scheduler');
+const axios = require('axios');
+const { think } = require('./services/brain');
+const { getMemory, addToMemory, clearMemory } = require('./services/memory');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// ============ SECURITY MIDDLEWARE ============
-app.use(helmet());
-app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 60,
-  message: { error: 'Too many requests' }
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+const OWNER_CHAT_ID = process.env.OWNER_CHAT_ID; // Your Telegram chat ID
+
+// ============ SEND MESSAGE TO TELEGRAM ============
+async function sendMessage(chatId, text) {
+  try {
+    await axios.post(`${TELEGRAM_API}/sendMessage`, {
+      chat_id: chatId,
+      text: text,
+      parse_mode: 'Markdown'
+    });
+  } catch (err) {
+    console.error('Send error:', err.response?.data || err.message);
+    // Retry without markdown if it fails
+    try {
+      await axios.post(`${TELEGRAM_API}/sendMessage`, {
+        chat_id: chatId,
+        text: text
+      });
+    } catch (e) {
+      console.error('Retry send error:', e.message);
+    }
+  }
+}
+
+// ============ SEND TYPING INDICATOR ============
+async function sendTyping(chatId) {
+  try {
+    await axios.post(`${TELEGRAM_API}/sendChatAction`, {
+      chat_id: chatId,
+      action: 'typing'
+    });
+  } catch (_) {}
+}
+
+// ============ TELEGRAM WEBHOOK ============
+app.post('/webhook', async (req, res) => {
+  res.sendStatus(200); // Acknowledge immediately
+
+  const update = req.body;
+  if (!update.message) return;
+
+  const msg = update.message;
+  const chatId = msg.chat.id;
+  const text = msg.text || '';
+  const from = msg.from?.first_name || 'User';
+  const sessionId = String(chatId);
+
+  console.log(`[${from}] ${text}`);
+
+  // Handle /clear command
+  if (text.trim().toLowerCase() === '/clear') {
+    clearMemory(sessionId);
+    await sendMessage(chatId, '🧹 Memory cleared. Fresh start!');
+    return;
+  }
+
+  // Show typing indicator
+  await sendTyping(chatId);
+
+  // Get conversation memory
+  const memory = getMemory(sessionId);
+
+  // Get response from Maganu brain
+  const response = await think({ message: text, from, sessionId, memory });
+
+  // Save to memory
+  addToMemory(sessionId, { role: 'user', content: text });
+  addToMemory(sessionId, { role: 'assistant', content: response });
+
+  // Send response
+  await sendMessage(chatId, response);
 });
-app.use(limiter);
 
 // ============ HEALTH CHECK ============
 app.get('/', (req, res) => {
   res.json({
-    agent: 'Maganu',
-    version: '1.0.0',
+    name: 'Maganu Agent',
+    version: '1.2.0',
     status: 'online',
-    owner: 'Rabiu Hamza',
-    ecosystem: 'Harz',
-    uptime: Math.floor(process.uptime()) + 's',
-    timestamp: new Date().toISOString()
+    model: 'Groq Llama 3.3 70B',
+    owner: 'Rabiu Hamza — Harz Ecosystem'
   });
 });
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', agent: 'Maganu v1.0.0' });
+// ============ SEND MESSAGE TO OWNER (for automations) ============
+app.post('/notify', async (req, res) => {
+  const { message, secret } = req.body;
+  if (secret !== process.env.WEBHOOK_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  if (!OWNER_CHAT_ID) {
+    return res.status(400).json({ error: 'OWNER_CHAT_ID not set' });
+  }
+  await sendMessage(OWNER_CHAT_ID, message);
+  res.json({ ok: true });
 });
 
-// ============ WHATSAPP WEBHOOK ============
-// Twilio sends incoming WhatsApp messages here
-app.post('/webhook/whatsapp', async (req, res) => {
+// ============ SET WEBHOOK ============
+async function setWebhook(url) {
   try {
-    const { Body, From, To } = req.body;
-
-    if (!Body || !From) {
-      return res.status(400).send('Missing message body');
-    }
-
-    console.log(`📩 Message from ${From}: ${Body}`);
-
-    // Acknowledge immediately (Twilio requires fast response)
-    res.status(200).send('OK');
-
-    // Get conversation memory for this user
-    const sessionId = From.replace('whatsapp:', '').replace('+', '');
-    const userMemory = memory.getSession(sessionId);
-
-    // Process with Maganu's brain
-    const reply = await maganuBrain.think({
-      message: Body,
-      from: From,
-      sessionId,
-      memory: userMemory
+    const result = await axios.post(`${TELEGRAM_API}/setWebhook`, {
+      url: `${url}/webhook`,
+      allowed_updates: ['message']
     });
-
-    // Save to memory
-    memory.save(sessionId, { role: 'user', content: Body });
-    memory.save(sessionId, { role: 'assistant', content: reply });
-
-    // Send reply via WhatsApp
-    await whatsapp.send(From, reply);
-
+    console.log('Webhook set:', result.data.description);
   } catch (err) {
-    console.error('Webhook error:', err.message);
+    console.error('Webhook error:', err.response?.data || err.message);
   }
-});
-
-// ============ DIRECT CHAT API ============
-// For testing and web interface
-app.post('/chat', async (req, res) => {
-  try {
-    const { message, sessionId = uuidv4() } = req.body;
-
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
-    }
-
-    const userMemory = memory.getSession(sessionId);
-
-    const reply = await maganuBrain.think({
-      message,
-      from: 'api',
-      sessionId,
-      memory: userMemory
-    });
-
-    memory.save(sessionId, { role: 'user', content: message });
-    memory.save(sessionId, { role: 'assistant', content: reply });
-
-    res.json({ reply, sessionId, agent: 'Maganu' });
-
-  } catch (err) {
-    console.error('Chat error:', err.message);
-    res.status(500).json({ error: 'Maganu encountered an error', details: err.message });
-  }
-});
-
-// ============ SEND MESSAGE API ============
-// For automations to push messages to owner
-app.post('/send', async (req, res) => {
-  try {
-    const { message, to } = req.body;
-    const target = to || process.env.OWNER_WHATSAPP;
-
-    if (!message) return res.status(400).json({ error: 'Message required' });
-
-    await whatsapp.send(target, message);
-    res.json({ success: true, sent_to: target });
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ============ MEMORY ENDPOINTS ============
-app.get('/memory/:sessionId', (req, res) => {
-  const hist = memory.getSession(req.params.sessionId);
-  res.json({ sessionId: req.params.sessionId, messages: hist, count: hist.length });
-});
-
-app.delete('/memory/:sessionId', (req, res) => {
-  memory.clearSession(req.params.sessionId);
-  res.json({ cleared: true });
-});
-
-// ============ SCHEDULER STATUS ============
-app.get('/automations', (req, res) => {
-  res.json(scheduler.getStatus());
-});
+}
 
 // ============ START SERVER ============
-app.listen(PORT, () => {
-  console.log(`
-🤖 ═══════════════════════════════════════
-   MAGANU AGENT — Online & Ready
-   Owner: Rabiu Hamza | Harz Ecosystem  
-   Port: ${PORT}
-   Time: ${new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' })}
-🤖 ═══════════════════════════════════════
-  `);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, async () => {
+  console.log(`🤖 Maganu v1.2.0 online — port ${PORT}`);
 
-  // Start scheduled automations
-  scheduler.start();
+  // Auto-set webhook if WEBHOOK_URL is provided
+  if (process.env.WEBHOOK_URL) {
+    await setWebhook(process.env.WEBHOOK_URL);
+    console.log(`📡 Webhook set to: ${process.env.WEBHOOK_URL}/webhook`);
+  } else {
+    console.log('⚠️  Set WEBHOOK_URL env var to activate Telegram webhook');
+  }
 });
 
 module.exports = app;

@@ -1,29 +1,25 @@
-// In-memory session store (upgrade to Redis for production)
-const sessions = new Map();
-const MAX_HISTORY = 20; // Keep last 20 messages per session
+// In-memory conversation store (per session)
+// For production, replace with Redis or a DB
 
-function getSession(sessionId) {
+const sessions = new Map();
+const MAX_MEMORY = 20; // Max messages per session
+
+function getMemory(sessionId) {
   return sessions.get(sessionId) || [];
 }
 
-function save(sessionId, message) {
-  const history = sessions.get(sessionId) || [];
-  history.push(message);
-
-  // Keep only last MAX_HISTORY messages
-  if (history.length > MAX_HISTORY) {
-    history.splice(0, history.length - MAX_HISTORY);
+function addToMemory(sessionId, message) {
+  const mem = sessions.get(sessionId) || [];
+  mem.push(message);
+  // Keep only last MAX_MEMORY messages
+  if (mem.length > MAX_MEMORY) {
+    mem.splice(0, mem.length - MAX_MEMORY);
   }
-
-  sessions.set(sessionId, history);
+  sessions.set(sessionId, mem);
 }
 
-function clearSession(sessionId) {
+function clearMemory(sessionId) {
   sessions.delete(sessionId);
 }
 
-function getAllSessions() {
-  return Array.from(sessions.keys());
-}
-
-module.exports = { getSession, save, clearSession, getAllSessions };
+module.exports = { getMemory, addToMemory, clearMemory };

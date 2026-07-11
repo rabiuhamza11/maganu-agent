@@ -1,7 +1,7 @@
 {
   "name": "maganu-agent",
-  "version": "1.0.0",
-  "description": "Maganu — Custom AI Agent by Harz Ecosystem. Powered by Claude AI.",
+  "version": "1.1.0",
+  "description": "Maganu — Custom AI Agent powered by Qwen AI. Built by Rabiu Hamza | Harz Ecosystem.",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -9,7 +9,6 @@
     "build": "echo 'No build step required'"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.24.0",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -26,7 +25,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["ai", "agent", "whatsapp", "maganu", "harz", "claude"],
+  "keywords": ["ai-agent", "qwen", "whatsapp", "maganu", "harz", "alibaba"],
   "author": "Rabiu Hamza — Harz Ecosystem",
   "license": "MIT"
 }

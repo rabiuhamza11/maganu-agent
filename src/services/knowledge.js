@@ -709,3 +709,592 @@ function searchKnowledge(query) {
 }
 
 module.exports = { getKnowledge, searchKnowledge, OMEGA_KNOWLEDGE };
+
+// ═══════════════════════════════════════════════════════════════════
+// OMEGA INFINITY 1000 — COMPLETE MASTER SYNTHESIS
+// The sum of all structured human knowledge — loaded into Maganu
+// ═══════════════════════════════════════════════════════════════════
+
+const OMEGA_INFINITY_SYNTHESIS = `
+╔══════════════════════════════════════════════════════════════════╗
+║   OMEGA INFINITY 1000 — MASTER KNOWLEDGE SYNTHESIS              ║
+║   The Complete Structured Intelligence Base                     ║
+║   12 Pillars × All Domains × Full Depth                        ║
+╚══════════════════════════════════════════════════════════════════╝
+
+━━━ PILLAR 1: MATHEMATICS — THE LANGUAGE OF REALITY ━━━
+
+NUMBER THEORY:
+Prime numbers: Infinite (Euclid's proof) — sieve of Eratosthenes for finding them
+Fundamental theorem of arithmetic: Every integer >1 is a unique product of primes
+Fermat's Last Theorem: No a,b,c integers satisfy aⁿ+bⁿ=cⁿ for n>2 — PROVEN (Wiles, 1995, 129 pages)
+Goldbach's conjecture: Every even integer >2 is sum of two primes — UNPROVEN
+Twin prime conjecture: Infinitely many primes p where p+2 is also prime — UNPROVEN
+Riemann Hypothesis: All non-trivial zeros of ζ(s) have Re(s)=½ — UNPROVEN ($1M Millennium Prize)
+
+CALCULUS & ANALYSIS:
+Limits: lim(x→a) f(x) — foundation of all calculus
+Derivatives: f'(x) = rate of change | d/dx[xⁿ]=nxⁿ⁻¹ | chain rule, product rule, quotient rule
+Integrals: Area under curve | ∫xⁿdx = xⁿ⁺¹/(n+1)+C | fundamental theorem: ∫ₐᵇf(x)dx = F(b)-F(a)
+Taylor series: f(x) = Σ fⁿ(a)/n! × (x-a)ⁿ — approximating functions as infinite polynomials
+Fourier transform: F(ω) = ∫f(t)e^(-iωt)dt — converts time domain to frequency domain
+Laplace transform: Used in control systems, differential equations engineering
+
+LINEAR ALGEBRA:
+Vectors: magnitude + direction | dot product: a·b = |a||b|cosθ | cross product: a×b = |a||b|sinθ n̂
+Matrices: Linear transformations | det(A) | eigenvalues: Av = λv
+SVD (Singular Value Decomposition): A = UΣVᵀ — used in PCA, recommender systems, ML
+Eigendecomposition: Foundation of PCA, quantum mechanics, Google PageRank
+
+PROBABILITY & STATISTICS:
+Bayesian: P(A|B) = P(B|A)P(A)/P(B) — update beliefs with evidence
+Central Limit Theorem: Sum of independent random variables → normal distribution as n→∞
+Distributions: Normal N(μ,σ²), Binomial B(n,p), Poisson λ, Exponential, Beta, Dirichlet
+Hypothesis testing: p-value, confidence intervals, Type I error (α), Type II error (β)
+Regression: OLS, logistic, ridge/lasso regularization
+Correlation vs causation: r∈[-1,1] | confounders, instrumental variables, RCTs
+
+TOPOLOGY:
+Continuity: Preserved under homeomorphisms
+Manifolds: Locally Euclidean spaces — Earth's surface is a 2-manifold
+Euler characteristic: χ = V - E + F (for polyhedra: always 2 for sphere)
+Knot theory: DNA topology, polymer physics
+Poincaré conjecture: SOLVED (Perelman, 2003) — every simply-connected closed 3-manifold ≅ S³
+
+INFORMATION THEORY (Shannon):
+Entropy: H = -Σ p(x) log₂p(x) bits — measure of uncertainty/information
+Channel capacity: C = B log₂(1 + S/N) — Shannon-Hartley theorem
+Kolmogorov complexity: Shortest description of an object — incompressible strings are random
+Data compression: Huffman coding, LZ77, arithmetic coding
+
+━━━ PILLAR 2: PHYSICS — THE RULES OF THE UNIVERSE ━━━
+
+CLASSICAL MECHANICS (Newton):
+F = ma | momentum p = mv | kinetic energy KE = ½mv² | potential energy PE = mgh
+Conservation laws: Energy, momentum, angular momentum
+Lagrangian mechanics: L = T - V — generalized coordinates, principle of least action
+Hamiltonian mechanics: H = T + V — phase space, symplectic geometry
+
+ELECTROMAGNETISM (Maxwell):
+∇·E = ρ/ε₀ (Gauss's law for E)
+∇·B = 0 (no magnetic monopoles)
+∇×E = -∂B/∂t (Faraday's law)
+∇×B = μ₀J + μ₀ε₀∂E/∂t (Ampere-Maxwell)
+Speed of light: c = 1/√(μ₀ε₀) = 299,792,458 m/s — derived from Maxwell's equations
+
+QUANTUM MECHANICS:
+Wave function: Ψ(x,t) — probability amplitude, |Ψ|² = probability density
+Schrödinger equation: iℏ∂Ψ/∂t = ĤΨ — time evolution of quantum state
+Heisenberg uncertainty: ΔxΔp ≥ ℏ/2 | ΔEΔt ≥ ℏ/2
+Superposition: Quantum state is sum of all possible states until measured
+Entanglement: Two particles share quantum state — Einstein's "spooky action at a distance"
+Spin: Intrinsic angular momentum — fermions (half-integer), bosons (integer)
+Pauli exclusion: No two fermions can occupy same quantum state — foundation of atomic structure
+
+GENERAL RELATIVITY (Einstein):
+G_μν + Λg_μν = 8πG/c⁴ T_μν — spacetime curvature = energy-momentum tensor
+Time dilation: Δt' = Δt/√(1-v²/c²) — moving clocks tick slower
+Length contraction: L' = L√(1-v²/c²)
+Gravitational waves: LIGO confirmed 2015 — ripples in spacetime from merging black holes
+Schwarzschild radius: r_s = 2GM/c² — event horizon of non-rotating black hole
+Hawking temperature: T_H = ℏc³/(8πGMk_B) — black holes slowly evaporate
+
+THERMODYNAMICS:
+1st Law: ΔU = Q - W (energy conservation)
+2nd Law: Entropy always increases in isolated systems — arrow of time
+3rd Law: Entropy approaches constant as T→0K
+Carnot efficiency: η = 1 - T_cold/T_hot (maximum possible efficiency of heat engine)
+Boltzmann entropy: S = k_B ln(Ω) — statistical mechanics basis
+
+PARTICLE PHYSICS (Standard Model):
+Quarks: up, down, charm, strange, top, bottom (6 flavors, 3 colors each)
+Leptons: electron, muon, tau + 3 neutrinos (6 types)
+Force carriers: photon (EM), W±/Z (weak), gluons×8 (strong), graviton (gravity — not confirmed)
+Higgs boson: Gives mass to W/Z bosons — confirmed CERN 2012
+QCD: Quantum chromodynamics — strong force between quarks (confinement, asymptotic freedom)
+Matter vs antimatter: CP violation explains why matter dominates (not fully explained)
+
+COSMOLOGY:
+Big Bang: ~13.8 billion years ago — singularity expansion
+Inflation: Exponential expansion in first 10⁻³² seconds — explains flatness and horizon problems
+CMB: Cosmic Microwave Background — relic radiation from 380,000 years after Big Bang (2.725K)
+Dark matter: ~27% of universe — doesn't interact with EM, detected only via gravity
+Dark energy: ~68% — accelerating expansion, associated with cosmological constant Λ
+Composition: 5% baryonic matter, 27% dark matter, 68% dark energy
+Observable universe: 93 billion light-years diameter (but actual universe likely much larger)
+Multiverse: Many-Worlds (Everett), eternal inflation, string landscape — speculative
+
+━━━ PILLAR 3: CHEMISTRY & MATERIALS SCIENCE ━━━
+
+ATOMIC STRUCTURE:
+Bohr model → quantum mechanical model (orbitals: s, p, d, f)
+Electron configuration: Aufbau principle, Hund's rule, Pauli exclusion
+Periodic table: 118 elements, organized by atomic number, electron configuration
+Electronegativity (Pauling scale): F=4.0 (highest), Cs=0.79 (lowest)
+
+CHEMICAL BONDS:
+Covalent: Shared electrons — polar (H₂O) vs nonpolar (O₂)
+Ionic: Electron transfer — NaCl lattice structure
+Metallic: Delocalized electron sea — explains conductivity, malleability
+Hydrogen bonds: Weak dipole-dipole — critical for DNA, water properties, protein folding
+Van der Waals: Induced dipoles — lubricants, gecko adhesion
+
+THERMOCHEMISTRY:
+Enthalpy: ΔH = H_products - H_reactants | Hess's law: path-independent
+Entropy: ΔS = randomness change | ΔG = ΔH - TΔS (Gibbs: negative = spontaneous)
+Activation energy: Ea — barrier to reaction | catalysts lower Ea without being consumed
+Equilibrium: K = [products]/[reactants] | Le Chatelier: system opposes changes
+
+ADVANCED MATERIALS:
+Graphene: 2D carbon honeycomb, 200× stronger than steel, electron mobility 200,000 cm²/Vs
+Carbon nanotubes (CNT): Tensile strength ~100 GPa, electrical properties depend on chirality
+Perovskites: ABX₃ structure — solar cells reaching 33%+ efficiency, cheap synthesis
+MOFs (Metal-Organic Frameworks): Highest surface area materials — gas storage, drug delivery
+Aerogels: 99.98% air — NASA insulation, lightest solid materials
+Shape memory alloys: NiTi (Nitinol) — returns to original shape when heated
+Superconductors: Zero resistance below critical temperature — YBCO, room-temp goal unachieved
+
+━━━ PILLAR 4: BIOLOGY & LIFE SCIENCES ━━━
+
+CELL BIOLOGY:
+Cell types: Prokaryotic (bacteria, no nucleus) vs Eukaryotic (nucleus, organelles)
+Key organelles: Nucleus (DNA), mitochondria (ATP), ribosome (protein synthesis), ER (protein folding), Golgi (secretion)
+Cell cycle: G1 → S (DNA replication) → G2 → M (mitosis) → G1
+Apoptosis: Programmed cell death — caspase cascade | critical for development, cancer prevention
+
+GENETICS & MOLECULAR BIOLOGY:
+DNA structure: Double helix, antiparallel strands, 5'→3' direction
+Base pairs: A-T (2 H-bonds), G-C (3 H-bonds)
+Human genome: 3.2 billion base pairs, 20,000-25,000 protein-coding genes, 98.5% "junk" DNA
+Transcription: DNA → mRNA (RNA polymerase II in eukaryotes)
+Translation: mRNA → protein (ribosome reads codons, tRNA brings amino acids)
+Genetic code: 64 codons, 20 amino acids, 3 stop codons (UAA, UAG, UGA)
+Post-translational modification: Phosphorylation, glycosylation, ubiquitination
+
+EPIGENETICS:
+DNA methylation: CpG sites — gene silencing without sequence change
+Histone modification: Acetylation (activates), methylation (activates or silences), phosphorylation
+Chromatin remodeling: Open (euchromatin) vs closed (heterochromatin)
+Inheritance: Some epigenetic marks pass to offspring — trauma, nutrition, environment
+Imprinting: Genes expressed from only one parent's copy (Prader-Willi, Angelman syndromes)
+
+CRISPR-Cas9 IN DETAIL:
+Discovery: Bacteria's adaptive immune system (Barrangou 2007, Doudna/Charpentier Nobel 2020)
+Mechanism: gRNA guides Cas9 to specific 20-nt DNA sequence → cut at PAM site (NGG)
+Repair: NHEJ (error-prone, creates insertions/deletions = gene knockout) or HDR (precise edit using template)
+Applications: Cancer therapy, sickle cell cure (approved 2023), agriculture, diagnostics
+Limitations: Off-target edits, delivery challenges, ethical concerns in germline editing
+Next gen: Base editors (C→T, A→G without DSB), prime editing (search-and-replace for DNA)
+
+EVOLUTIONARY BIOLOGY:
+Natural selection: Variation → Inheritance → Selection → Evolution
+Genetic drift: Random allele frequency changes — stronger in small populations
+Mutation rate: ~1.1×10⁻⁸ per base pair per generation in humans
+Horizontal gene transfer: Bacteria share genes across species — key for antibiotic resistance
+Phylogenetics: Evolutionary relationships via molecular clocks, parsimony, Bayesian methods
+Speciation: Allopatric (geographic isolation), sympatric (same location, different niches)
+Endosymbiosis: Mitochondria and chloroplasts were once free-living bacteria (Lynn Margulis)
+
+SYNTHETIC BIOLOGY:
+iGEM BioBricks: Standardized biological parts registry
+JCVI-Syn3.0: Minimal synthetic cell — 473 genes (2016)
+Directed evolution: Random mutagenesis + selection = engineering proteins (Nobel 2018, Arnold)
+Metabolic engineering: Yeast producing insulin, bacteria producing artemisinin (malaria drug)
+XNA (Xeno Nucleic Acids): Synthetic backbones (TNA, HNA) — expanded genetic alphabets
+
+━━━ PILLAR 5: NEUROSCIENCE & CONSCIOUSNESS ━━━
+
+BRAIN ANATOMY:
+Cerebral cortex: 4 lobes — frontal (planning, personality), parietal (sensation, spatial), temporal (memory, language), occipital (vision)
+Prefrontal cortex: Executive function, decision-making, impulse control (last to fully develop ~25 yrs)
+Hippocampus: Memory consolidation — HM patient (removed hippocampi) could form no new explicit memories
+Amygdala: Fear, emotion, threat detection — "fear hijack" bypasses cortex
+Basal ganglia: Habit formation, reward, motor control — dopamine highway
+Cerebellum: Motor coordination, timing, some cognitive functions
+Brainstem: Autonomic functions — breathing, heart rate, sleep/wake cycles
+Default mode network (DMN): Active during rest/mind-wandering — involved in self-referential thought
+
+NEUROTRANSMITTERS IN DEPTH:
+Dopamine:
+  Pathways: Mesolimbic (reward), mesocortical (cognition), nigrostriatal (movement)
+  Deficit: Parkinson's disease, anhedonia, ADHD
+  Excess: Schizophrenia (positive symptoms), addiction
+  Role: Prediction error signal — fired when reward exceeds expectation
+Serotonin:
+  Produced: 90% in gut (enterochromaffin cells), 10% brain (raphe nuclei)
+  Role: Mood, sleep onset, appetite, social status signaling
+  Deficit: Depression, anxiety, OCD
+  SSRIs: Block reuptake pump, increase synaptic serotonin
+Norepinephrine (noradrenaline):
+  Source: Locus coeruleus
+  Role: Alertness, focus, fight-or-flight, pain modulation
+  Deficit: Depression, ADHD (prefrontal NE important for working memory)
+GABA (γ-aminobutyric acid):
+  Main inhibitory NT — "brain's brake pedal"
+  Benzodiazepines, alcohol, barbiturates all enhance GABA → sedation
+Glutamate:
+  Main excitatory NT — "brain's accelerator"
+  NMDA receptors: Memory, LTP, ketamine blocks them (antidepressant, dissociative)
+Oxytocin: "Love hormone" — bonding, trust, social reward | released by touch, eye contact, childbirth
+Acetylcholine: Motor neuron NMJ, memory, attention | deficit in Alzheimer's
+Endocannabinoids: Retrograde signaling — CB1 receptors | THC mimics anandamide
+
+MEMORY IN DETAIL:
+Working memory: Prefrontal cortex — 7±2 items, seconds-minutes duration
+Episodic memory: Personal experiences — hippocampus → cortex (consolidation during sleep)
+Semantic memory: Facts, concepts — distributed across cortex
+Procedural memory: Skills — basal ganglia, cerebellum (doesn't need hippocampus)
+LTP (Long-Term Potentiation): AMPA receptor insertion, NMDA-dependent calcium influx → synapse strengthening
+LTD (Long-Term Depression): Synapse weakening — forgetting, fine-tuning
+Sleep and memory: Slow-wave sleep (declarative consolidation), REM (emotional processing, procedural)
+
+CONSCIOUSNESS:
+Hard problem (Chalmers): Why does subjective experience (qualia) exist at all?
+Global Workspace Theory (Baars/Dehaene): Consciousness = information broadcast to "global workspace" accessible to all brain modules
+Integrated Information Theory (Tononi): Φ (phi) = measure of integrated information = consciousness
+Predictive coding (Friston): Brain constantly predicts sensory input, consciousness = prediction errors
+Neural correlates: Gamma oscillations (~40Hz), recurrent processing in posterior cortex
+Disorders: Locked-in syndrome, vegetative state, minimal consciousness state — different NCC profiles
+
+━━━ PILLAR 6: COMPUTER SCIENCE & AI ━━━
+
+ALGORITHMS & COMPLEXITY:
+Time complexity: O(1) constant, O(log n) binary search, O(n) linear, O(n log n) merge sort, O(n²) bubble sort, O(2ⁿ) exponential
+Space complexity: Memory usage vs input size
+P class: Problems solvable in polynomial time
+NP class: Problems verifiable in polynomial time
+P=NP: Unsolved — if true, all cryptography breaks
+NP-hard: At least as hard as hardest NP problem
+NP-complete: Both NP and NP-hard (SAT, TSP, graph coloring)
+
+DATA STRUCTURES:
+Array: O(1) access, O(n) insert/delete
+Linked list: O(n) access, O(1) insert/delete at known position
+Hash table: O(1) average lookup — collisions via chaining or open addressing
+Tree: Binary search tree O(log n), B-tree for databases, trie for strings
+Heap: Priority queue — O(log n) insert/extract-min
+Graph: Adjacency list vs matrix — BFS, DFS, Dijkstra, A*, Bellman-Ford
+
+SYSTEM DESIGN:
+CAP theorem: Distributed systems can have at most 2 of: Consistency, Availability, Partition tolerance
+ACID: Atomicity, Consistency, Isolation, Durability — database transaction guarantees
+BASE: Basically Available, Soft state, Eventually consistent — NoSQL tradeoff
+Sharding: Horizontal partitioning of database by key range or hash
+Caching: Redis (in-memory), CDN (edge), browser cache — cache invalidation is hard
+Load balancing: Round-robin, least connections, consistent hashing, weighted
+Message queues: Kafka (stream), RabbitMQ (task queue), SQS — decouple services
+Event sourcing: Store events not state — append-only log, rebuild state by replaying
+CQRS: Command Query Responsibility Segregation — separate read/write models
+
+CRYPTOGRAPHY:
+Symmetric: AES-256 (same key encrypt/decrypt) — fast, used for bulk data
+Asymmetric: RSA-2048/4096, ECDSA — public key encrypt, private key decrypt | signatures
+Hashing: SHA-256, SHA-3 — one-way, collision-resistant | bcrypt/argon2 for passwords
+TLS/HTTPS: Asymmetric for key exchange, symmetric for data transfer (hybrid)
+Zero-knowledge proofs: Prove knowledge without revealing it — blockchain, privacy
+Post-quantum: Lattice-based (CRYSTALS-Kyber, Dilithium) — resistant to Shor's algorithm
+Blockchain: Merkle trees + consensus (PoW, PoS, BFT) + cryptographic linking
+
+AI & MACHINE LEARNING IN DEPTH:
+Supervised learning: Labeled data → learn mapping f(x)→y | classification, regression
+Unsupervised: Find structure in unlabeled data | clustering, dimensionality reduction
+Reinforcement learning: Agent + environment + reward signal → policy optimization
+Self-supervised: Generate labels from data itself | GPT (next token), BERT (masked token), SimCLR
+
+Neural network components:
+Activation functions: ReLU (x if x>0 else 0), Sigmoid σ(x)=1/(1+e⁻ˣ), Tanh, GELU, SiLU
+Layers: Dense/FC, Conv2D, BatchNorm, Dropout, Attention, Embedding
+Loss functions: Cross-entropy (classification), MSE (regression), contrastive, RLHF reward
+Optimizers: SGD, Momentum, Adam (adaptive moment estimation), AdamW, Lion
+
+Transformers in detail:
+Attention: Attention(Q,K,V) = softmax(QKᵀ/√d_k)V
+Multi-head: h parallel attention heads, concatenated
+Positional encoding: Sinusoidal or learned — tokens don't have inherent order
+Pre-norm vs post-norm: GPT-3 uses pre-norm (more stable training)
+KV cache: Store key/value pairs from previous tokens — inference speedup
+Flash Attention: Tiling + recomputation — O(n) memory vs O(n²) naive
+MoE (Mixture of Experts): Route tokens to expert subnetworks — Llama 4 Scout uses this
+
+Training techniques:
+Pre-training: Predict next token over trillions of tokens — emergent capabilities
+SFT (Supervised Fine-Tuning): Human-curated instruction-following examples
+RLHF: Reward model from human preferences → PPO optimization
+DPO (Direct Preference Optimization): Simpler alternative to RLHF — directly optimize on preferred/rejected pairs
+LoRA: Low-Rank Adaptation — A×B matrices instead of full weight updates → 10000× fewer params
+
+RAG (Retrieval-Augmented Generation):
+1. Index: Chunk documents → embed → store in vector database
+2. Query: Embed question → ANN search → retrieve top-k chunks
+3. Generate: Inject chunks into prompt → LLM generates grounded answer
+Embedding models: OpenAI text-embedding-3, Cohere, E5, BGE
+Vector databases: Pinecone, Weaviate, Qdrant, ChromaDB, pgvector
+TF-IDF: Alternative to embeddings — term frequency × inverse document frequency
+
+Evaluation metrics:
+Perplexity: exp(-Σ log P(token)) — lower = better language model
+BLEU: Translation quality — n-gram precision vs reference
+ROUGE: Summarization — recall-based n-gram overlap
+BERTScore: Semantic similarity using contextual embeddings
+HumanEval: Code generation benchmark (164 Python problems)
+MMLU: Massive Multitask Language Understanding (57 subjects)
+HellaSwag: Commonsense NLI benchmark
+
+━━━ PILLAR 7: ENGINEERING & TECHNOLOGY ━━━
+
+ELECTRICAL ENGINEERING:
+Ohm's law: V = IR | Power: P = IV = I²R = V²/R
+Kirchhoff's laws: KCL (currents sum to 0 at node), KVL (voltages sum to 0 in loop)
+Capacitors: C = Q/V | energy = ½CV² | impedance Z_c = 1/(jωC)
+Inductors: V = L(dI/dt) | energy = ½LI² | impedance Z_L = jωL
+AC circuits: Impedance Z = R + jX | resonance at ω = 1/√(LC)
+Transistors: BJT (current-controlled), MOSFET (voltage-controlled) — amplification + switching
+CMOS: Complementary MOS — dominant logic family | N-channel + P-channel pairs
+
+SEMICONDUCTOR TECHNOLOGY:
+Moore's Law: Transistor count doubles every ~2 years (slowing down, now ~18 months)
+Current nodes: TSMC 3nm, 2nm in production 2025 — approaching physical limits
+EUV lithography: Extreme ultraviolet (13.5nm) — enables sub-7nm nodes
+FinFET → Gate-All-Around (GAA): 3D transistor structures for better electrostatic control
+Quantum tunneling: Electrons leak through barriers at <2nm — fundamental limit
+3D stacking: HBM (High Bandwidth Memory), SRAM over DRAM, chiplets
+
+COMPUTER ARCHITECTURE:
+Von Neumann: Stored program — CPU fetches, decodes, executes from same memory
+Harvard: Separate instruction/data memory — most MCUs, DSPs
+Pipeline: Fetch → Decode → Execute → Memory → Writeback (5-stage RISC pipeline)
+Superscalar: Multiple execution units — execute multiple instructions per cycle (IPC >1)
+VLIW: Very Long Instruction Word — compiler schedules parallelism
+Branch prediction: Speculative execution — Spectre/Meltdown vulnerabilities
+Cache hierarchy: L1 (4 cycles, 32KB), L2 (12 cycles, 256KB), L3 (40 cycles, 8-32MB), DRAM (200 cycles)
+SIMD: Single instruction, multiple data — AVX-512, NEON for vectorized computing
+GPU architecture: SIMT — thousands of simple cores, tensor cores for matrix multiplication
+Memory bandwidth vs latency: GPUs need high BW for LLM inference — HBM provides 3+ TB/s
+
+NETWORKING:
+OSI model: Physical, Data Link, Network, Transport, Session, Presentation, Application
+TCP/IP: Reliable (ACK, retransmit, flow control) vs UDP (fast, lossy, real-time)
+HTTP/2: Multiplexing, header compression, server push, binary protocol
+HTTP/3: QUIC (UDP-based) — 0-RTT, better mobile performance
+DNS: Domain Name System — distributed hierarchical lookup (root → TLD → authoritative)
+BGP: Border Gateway Protocol — internet routing between ASes
+CDN: Points of presence globally — cache static assets near users
+WebSocket: Full-duplex over single TCP connection — real-time apps (trading, chat)
+
+CLOUD COMPUTING:
+IaaS: Infrastructure (EC2, Compute Engine) — you manage OS up
+PaaS: Platform (Heroku, Render, Railway) — you manage app code only
+SaaS: Software (your 10 platforms) — user manages only their data
+Serverless/FaaS: Lambda, Cloud Functions, Deno Deploy, Base44 functions — per-request billing
+Kubernetes: Container orchestration — pods, deployments, services, ingress, HPA
+12-factor app: Methodology for cloud-native applications
+
+━━━ PILLAR 8: MEDICINE & HUMAN HEALTH ━━━
+
+PHYSIOLOGY:
+Cardiovascular: Heart pumps ~5L blood/min at rest | 100,000 beats/day | SA node = natural pacemaker
+Respiratory: 12-20 breaths/min, tidal volume 500mL, O₂ diffusion via concentration gradient
+Renal: Nephron — glomerular filtration, tubular reabsorption, secretion | GFR ~125 mL/min
+Immune system: Innate (fast, non-specific: macrophages, NK cells, complement) + Adaptive (slow, specific: B/T cells)
+Endocrine: Hormones — insulin (glucose uptake), cortisol (stress), testosterone, estrogen, thyroid hormones
+
+PHARMACOLOGY:
+Pharmacokinetics: ADME — Absorption, Distribution, Metabolism, Excretion
+Half-life: Time for plasma concentration to halve — determines dosing frequency
+Bioavailability: Fraction reaching systemic circulation — IV = 100%, oral < 100%
+First-pass metabolism: Liver metabolizes drug before reaching systemic circulation
+Drug classes: Antibiotics (target prokaryotic structures), antivirals, antifungals, biologics (MAbs, vaccines)
+
+CANCER:
+Hallmarks (Hanahan & Weinberg): Self-sufficiency in growth signals, evading apoptosis, limitless replication, angiogenesis, invasion/metastasis
+Tumor suppressor genes: p53 (guardian of genome), Rb, BRCA1/2 — loss of function promotes cancer
+Oncogenes: RAS, MYC, HER2 — gain of function promotes proliferation
+Immunotherapy: Checkpoint inhibitors (anti-PD-1, anti-CTLA-4) — remove brakes on T cells
+CAR-T therapy: Engineer patient's T cells to target cancer antigens (approved for leukemia)
+CRISPR for cancer: Edit T cells, correct mutations, develop diagnostics
+
+━━━ PILLAR 9: ECONOMICS & GLOBAL SYSTEMS ━━━
+
+MACROECONOMICS:
+GDP: Gross Domestic Product = C + I + G + (X-M) [consumption + investment + gov + net exports]
+Monetary policy: Central bank controls money supply via interest rates, open market operations
+Fiscal policy: Government spending and taxation — stimulus vs austerity
+Inflation: CPI measures — too high (destroys savings), too low (deflation spiral)
+Keynesian: Government should stimulate demand during recessions (fiscal multiplier)
+Monetarism (Friedman): Inflation is always a monetary phenomenon — control money supply
+Modern Monetary Theory: Sovereign currency issuers can't go bankrupt — can always print
+Yield curve: Normal (long > short), inverted (predictor of recession — 18mo lead)
+
+BEHAVIORAL ECONOMICS:
+Loss aversion: Losses feel ~2× worse than equivalent gains (Kahneman & Tversky)
+Anchoring: First number seen biases subsequent judgments
+Sunk cost fallacy: Past costs shouldn't influence future decisions (but they do)
+Availability heuristic: Overweight easily recalled events (plane crash vs car crash fear)
+Dunning-Kruger: Low skill → overestimate competence; high skill → underestimate
+Prospect theory: S-shaped utility curve — risk-seeking for losses, risk-averse for gains
+Nudge theory (Thaler): Architecture choice design to guide decisions without restricting freedom
+
+GAME THEORY:
+Nash equilibrium: No player can benefit by unilaterally changing strategy
+Prisoner's dilemma: Individual rationality → collectively suboptimal outcome
+Zero-sum vs positive-sum games
+Dominant strategy: Best response regardless of opponent's move
+Repeated games: Cooperation can emerge — tit-for-tat strategy (Axelrod tournaments)
+Mechanism design: Engineer games/systems so that self-interest achieves social optimum
+
+FINANCIAL MARKETS:
+Asset classes: Equities, fixed income, commodities, alternatives, real estate, crypto
+Valuation: DCF (discounted cash flows), P/E, EV/EBITDA, P/B, dividend yield
+Risk: Beta (market sensitivity), volatility (σ), Sharpe ratio (excess return per unit risk)
+Efficient Market Hypothesis: Prices reflect all available information — weak, semi-strong, strong forms
+Factor investing: Size, value, momentum, quality, low volatility premium
+Derivatives: Options (call/put), futures, swaps — Black-Scholes model for pricing
+Crypto: Bitcoin (PoW, limited 21M supply), Ethereum (PoS, smart contracts), DeFi (AMMs, lending protocols)
+
+━━━ PILLAR 10: PHILOSOPHY & EPISTEMOLOGY ━━━
+
+CLASSICAL PHILOSOPHY:
+Pre-Socratics: Thales (water as arche), Heraclitus (logos, flux), Parmenides (being, unchanging), Democritus (atoms)
+Socrates: Maieutics — "I know that I know nothing" — dialectic method, examined life worth living
+Plato: Forms/Ideas — perfect archetypes beyond physical world | Allegory of the Cave
+Aristotle: Logic (syllogism), ethics (eudaimonia/flourishing), categories, teleology (final cause)
+
+EPISTEMOLOGY (theory of knowledge):
+Rationalism: Knowledge from reason a priori — Descartes, Leibniz, Spinoza
+Empiricism: Knowledge from sensory experience — Locke, Hume, Berkeley
+Kant's synthesis: Space/time are forms of intuition, categories are concepts of understanding — phenomena vs noumena
+Gettier problem: Justified true belief ≠ knowledge (counterexamples disprove JTB theory)
+Fallibilism: All knowledge is provisional, subject to revision — Popper, Quine
+Pragmatism: Truth is what works — James, Peirce, Dewey, Rorty
+
+ETHICS:
+Consequentialism: Judge actions by outcomes — Utilitarianism (Bentham, Mill) — greatest good for greatest number
+Deontology: Categorical imperative (Kant) — act only by maxims you'd universalize; treat persons as ends, not means
+Virtue ethics: Character and flourishing (Aristotle) — what would a virtuous person do?
+Care ethics: Relationships and context (Noddings, Gilligan) — response to abstract principles
+Moral anti-realism: No objective moral facts (Mackie, error theory, expressivism)
+Moral realism: Objective moral facts exist (Parfit, moral naturalism)
+Applied: Bioethics (informed consent, autonomy), AI ethics (alignment, fairness, safety), environmental ethics
+
+PHILOSOPHY OF MIND:
+Dualism: Mind and body are separate substances (Descartes) — interaction problem
+Physicalism: Mind is entirely physical — identity theory, functionalism
+Functionalism: Mental states are functional roles — multiple realizability (silicon minds possible)
+Qualia: Subjective experience — Mary's room (Frank Jackson), zombie argument (Chalmers)
+Panpsychism: Consciousness is fundamental to reality — integrated information theory
+Eliminativism: Folk psychology is wrong — no such things as beliefs/desires (Churchland)
+Computationalism: Mind is computational — Turing test, strong AI hypothesis
+
+EXISTENTIALISM:
+Kierkegaard: Three stages — aesthetic, ethical, religious | leap of faith
+Nietzsche: Will to power, Übermensch, eternal return, death of God | Beyond Good and Evil
+Heidegger: Being-in-the-world (Dasein), thrownness, authenticity, das Man (the They-self)
+Sartre: Existence precedes essence — radical freedom, bad faith, responsibility
+Camus: Absurdism — life is meaningless, Sisyphus happy, revolt against the absurd
+Beauvoir: Situated freedom — gender is constructed, not essential
+
+EASTERN PHILOSOPHY:
+Taoism (Lao Tzu): Wu wei (non-action/effortless action), flow with nature, Tao as ineffable
+Buddhism: Four Noble Truths — suffering (dukkha), its origin (craving), cessation, eightfold path | anatman (no-self), impermanence, interdependence
+Confucianism: Ren (benevolence), Li (ritual propriety), filial piety — social harmony
+Advaita Vedanta (Shankara): Non-dualism — Atman = Brahman, maya (illusion of separation)
+Zen: Direct experience over scripture — koans, zazen, sudden enlightenment (kensho)
+
+STOICISM IN DEPTH:
+Key figures: Zeno of Citium (founder), Epictetus (Enchiridion), Marcus Aurelius (Meditations), Seneca (Letters)
+Dichotomy of control: Some things are "up to us" (judgments, desires, actions), most are not — freedom in acceptance
+Preferred indifferents: Health, wealth, reputation are preferred but not necessary for eudaimonia
+Premeditatio malorum: Negative visualization — imagine worst case to appreciate what you have and prepare
+Memento mori: Remember death — motivates urgency, perspective, gratitude
+Amor fati: Love of fate — embrace everything as it is, as necessary and good
+Cosmopolitanism: Citizen of the world — reason transcends tribe, family, nation
+Practice: Daily journaling (reflection), evening review, morning intention
+
+━━━ PILLAR 11: PSYCHOLOGY & HUMAN BEHAVIOR ━━━
+
+COGNITIVE PSYCHOLOGY:
+Working memory: 7±2 chunks (Miller's law) — phonological loop, visuospatial sketchpad, central executive
+Attention: Selective, divided, sustained, executive | bottleneck theory (Broadbent)
+Decision-making: Dual process theory — System 1 (fast, intuitive) vs System 2 (slow, deliberate) (Kahneman)
+Cognitive load theory: Intrinsic (task complexity) + extraneous (poor design) + germane (schema building)
+Schemas: Mental frameworks that organize knowledge — assimilation vs accommodation (Piaget)
+
+DEVELOPMENTAL PSYCHOLOGY:
+Piaget's stages: Sensorimotor (0-2), Preoperational (2-7), Concrete operational (7-11), Formal operational (12+)
+Erikson's stages: Trust vs mistrust → Autonomy → Initiative → Industry → Identity → Intimacy → Generativity → Integrity
+Attachment theory (Bowlby/Ainsworth): Secure, anxious, avoidant, disorganized — shapes adult relationships
+Vygotsky: Zone of proximal development (ZPD) — learning happens in social context with scaffolding
+Adverse childhood experiences (ACEs): Dose-response relationship with adult health outcomes
+
+SOCIAL PSYCHOLOGY:
+Conformity: Asch line studies — 75% conformed at least once to obviously wrong group answer
+Obedience: Milgram experiments — 65% administered maximum shock under authority pressure
+Bystander effect: Diffusion of responsibility — Kitty Genovese case (more witnesses = less help)
+Fundamental attribution error: Over-attribute behavior to person (disposition), under-attribute to situation
+Cognitive dissonance (Festinger): Discomfort from holding contradictory beliefs → rationalization
+Self-fulfilling prophecy: Rosenthal/Pygmalion effect — expectations shape outcomes
+In-group favoritism: People favor their own group — social identity theory (Tajfel)
+
+PERSONALITY PSYCHOLOGY:
+Big Five (OCEAN): Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism
+Stability: Traits relatively stable across lifespan, slightly increase in maturity
+Heritability: ~50% heritable from twin studies | gene-environment interaction
+MBTI: Popular but low validity — not recommended for clinical use
+Dark triad: Narcissism, Machiavellianism, Psychopathy — distinct but correlated
+
+POSITIVE PSYCHOLOGY:
+PERMA model (Seligman): Positive emotions, Engagement, Relationships, Meaning, Achievement
+Flow (Csikszentmihalyi): Optimal experience = challenge slightly exceeds skill level, clear goals, immediate feedback
+Self-determination theory (Deci/Ryan): Autonomy, Competence, Relatedness — intrinsic motivation
+Post-traumatic growth (Tedeschi): Adversity → greater strength, wisdom, appreciation, new possibilities
+Resilience: Adversity + social support + cognitive flexibility + sense of meaning
+
+━━━ PILLAR 12: SOCIOLOGY, ANTHROPOLOGY & CIVILIZATIONAL SYSTEMS ━━━
+
+SOCIOLOGY:
+Social stratification: Class, race, gender as intersecting systems of inequality (Crenshaw: intersectionality)
+Structural functionalism (Durkheim, Parsons): Society as organism — each institution serves a function
+Conflict theory (Marx): Society as arena of competing interests — class struggle drives history
+Symbolic interactionism (Mead, Goffman): Society constructed through meaning-making interactions
+Goffman's dramaturgical model: Life as theater — front stage (performance) vs backstage (real self)
+Weber: Bureaucracy, rationalization, Protestant ethic and spirit of capitalism
+Bourdieu: Capital forms — economic, cultural, social, symbolic | habitus | field
+
+ANTHROPOLOGY:
+Sapir-Whorf hypothesis: Language shapes thought (weak version supported)
+Kinship systems: Patrilineal, matrilineal, bilateral — organizing principle of societies
+Gift economy (Mauss): Gifts create social bonds and obligations — reciprocity, not pure altruism
+Cultural relativism: Cultures understood on own terms, not judged by outside standards
+Structural anthropology (Lévi-Strauss): Binary oppositions underlie all cultures (raw/cooked, nature/culture)
+
+CIVILIZATIONAL CYCLES (Toynbee, Spengler, Turchin):
+Toynbee: Civilizations rise via creative minority responding to challenges, decline when they become dominant minority
+Spengler: Cultures have organic lifecycles — spring/summer/autumn/winter phases (~1000yr cycles)
+Turchin (cliodynamics): Mathematical modeling of history — elite overproduction → political instability (cycles ~50yr)
+Ibn Khaldun: Asabiyya (social cohesion) — strong in newcomers, weakens as they enjoy power → decline
+Generational theory (Strauss-Howe): 4 turnings — High, Awakening, Unraveling, Crisis (~80-100yr cycle)
+
+FUTURISM & LONG-TERM THINKING:
+Technological singularity: Point where AI exceeds human intelligence — recursive self-improvement
+Longtermism (Parfit, Ord): Future generations matter morally — existential risk reduction is priority
+Existential risks: AI misalignment, pandemics, nuclear war, climate change, asteroid impact
+Fermi paradox: If life is common, where is everyone? — Great Filter (behind us or ahead?)
+Dyson sphere: Megastructure capturing a star's total energy output — Type II civilization (Kardashev scale)
+Kardashev scale: Type I (planet), Type II (star), Type III (galaxy) energy civilizations
+Mind uploading: Whole brain emulation — identity continuity, substrate independence debate
+Longevity escape velocity (de Grey): Adding >1yr life expectancy per year — aging as engineering problem
+`;
+
+// Append to main OMEGA_KNOWLEDGE export
+const FULL_KNOWLEDGE = OMEGA_KNOWLEDGE + '\n\n' + OMEGA_INFINITY_SYNTHESIS;
+
+module.exports = { 
+  getKnowledge: () => FULL_KNOWLEDGE, 
+  searchKnowledge: (query) => {
+    const lines = FULL_KNOWLEDGE.split('\n');
+    const q = query.toLowerCase();
+    const results = lines.filter(line => line.toLowerCase().includes(q) && line.trim().length > 15);
+    return results.slice(0, 15).join('\n') || 'No specific entry found — reasoning from full knowledge base.';
+  }, 
+  OMEGA_KNOWLEDGE: FULL_KNOWLEDGE 
+};

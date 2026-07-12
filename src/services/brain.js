@@ -155,7 +155,7 @@ async function think({ message, from, sessionId, memory = [] }) {
       {
         model: GROQ_MODEL,
         messages,
-        max_tokens: 8192,      // Groq hard cap for llama-3.3-70b-versatile (128k ctx)
+        max_tokens: 32768,     // True Groq hard cap for llama-3.3-70b-versatile (verified via API)
         temperature: 0.72,
         top_p: 0.95,
         frequency_penalty: 0.1,

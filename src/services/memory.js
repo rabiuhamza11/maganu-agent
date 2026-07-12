@@ -1,25 +1,49 @@
-// In-memory conversation store (per session)
-// For production, replace with Redis or a DB
+// Persistent memory using a simple JSON file store
+// Falls back to in-memory if file system is unavailable
 
-const sessions = new Map();
-const MAX_MEMORY = 20; // Max messages per session
+const fs = require('fs');
+const path = require('path');
+
+const MEMORY_FILE = path.join('/tmp', 'maganu_memory.json');
+const MAX_MEMORY = 30;
+
+function loadAll() {
+  try {
+    if (fs.existsSync(MEMORY_FILE)) {
+      return JSON.parse(fs.readFileSync(MEMORY_FILE, 'utf8'));
+    }
+  } catch (_) {}
+  return {};
+}
+
+function saveAll(data) {
+  try {
+    fs.writeFileSync(MEMORY_FILE, JSON.stringify(data), 'utf8');
+  } catch (_) {}
+}
 
 function getMemory(sessionId) {
-  return sessions.get(sessionId) || [];
+  const all = loadAll();
+  return all[sessionId] || [];
 }
 
 function addToMemory(sessionId, message) {
-  const mem = sessions.get(sessionId) || [];
+  const all = loadAll();
+  const mem = all[sessionId] || [];
   mem.push(message);
-  // Keep only last MAX_MEMORY messages
-  if (mem.length > MAX_MEMORY) {
-    mem.splice(0, mem.length - MAX_MEMORY);
-  }
-  sessions.set(sessionId, mem);
+  if (mem.length > MAX_MEMORY) mem.splice(0, mem.length - MAX_MEMORY);
+  all[sessionId] = mem;
+  saveAll(all);
 }
 
 function clearMemory(sessionId) {
-  sessions.delete(sessionId);
+  const all = loadAll();
+  delete all[sessionId];
+  saveAll(all);
 }
 
-module.exports = { getMemory, addToMemory, clearMemory };
+function getAllSessions() {
+  return Object.keys(loadAll());
+}
+
+module.exports = { getMemory, addToMemory, clearMemory, getAllSessions };

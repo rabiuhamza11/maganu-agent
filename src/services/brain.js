@@ -2,7 +2,7 @@ const axios = require('axios');
 const { OMEGA_KNOWLEDGE } = require('./knowledge');
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'meta-llama/llama-4-scout-17b-16e-instruct'; // 30k TPM — 2.5x higher limit
 
 // ============ MAGANU MASTER SYSTEM PROMPT ============
 const MAGANU_IDENTITY = `You are Maganu — a highly advanced AI agent built by Rabiu Hamza (Harz Ecosystem). You are NOT Llama, NOT ChatGPT — you are Maganu.
@@ -188,7 +188,7 @@ async function think({ message, from, sessionId, memory = [] }) {
     }
   };
 
-  return makeRequest(2000);
+  return makeRequest(4000); // 30k TPM allows larger responses
 }
 
 module.exports = { think, summariseMemory };

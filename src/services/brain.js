@@ -98,15 +98,15 @@ const commands = {
 // When called, asks Groq to compress old conversation into a memory summary.
 async function summariseMemory(sessionId, memory, apiKey) {
   try {
-    const msgs = memory.slice(-20).map(m => `${m.role}: ${m.content}`).join('\n');
+    const msgs = memory.slice(-30).map(m => `${m.role}: ${m.content}`).join('\n');
     const res = await axios.post(GROQ_API_URL, {
       model: GROQ_MODEL,
       messages: [
         { role: 'system', content: 'You are a memory compression engine. Summarise the key facts, decisions, tasks, preferences, and context from this conversation into a dense but readable paragraph. Preserve names, numbers, platform names, task statuses, and anything Rabiu would want remembered long-term. Be factual, not conversational.' },
         { role: 'user', content: msgs }
       ],
-      max_tokens: 600, temperature: 0.3
-    }, { headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, timeout: 20000 });
+      max_tokens: 1200, temperature: 0.3
+    }, { headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, timeout: 30000 });
     return res.data?.choices?.[0]?.message?.content || null;
   } catch (_) { return null; }
 }
@@ -126,7 +126,7 @@ async function think({ message, from, sessionId, memory = [] }) {
   const summary = memSvc.getSummary(sessionId);
 
   // Build messages: system → summary injection → last 24 raw messages → current user message
-  const recentMemory = memory.slice(-24);
+  const recentMemory = memory.slice(-40);  // last 40 exchanges (128k ctx window)
   const messages = [
     { role: 'system', content: MAGANU_IDENTITY }
   ];
@@ -155,7 +155,7 @@ async function think({ message, from, sessionId, memory = [] }) {
       {
         model: GROQ_MODEL,
         messages,
-        max_tokens: 4000,      // was 1500 — 2.6x longer answers now
+        max_tokens: 8192,      // Groq hard cap for llama-3.3-70b-versatile (128k ctx)
         temperature: 0.72,
         top_p: 0.95,
         frequency_penalty: 0.1,

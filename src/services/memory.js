@@ -9,9 +9,9 @@ const MEMORY_FILE = path.join('/tmp', 'maganu_memory.json');
 const SUMMARY_FILE = path.join('/tmp', 'maganu_summaries.json');
 
 // Per-session rolling window — keep last 40 messages (was 30)
-const MAX_MESSAGES = 40;
+const MAX_MESSAGES = 100;  // store last 100 messages per session
 // How many raw messages to pass to LLM — was 12, now 24
-const CONTEXT_WINDOW = 24;
+const CONTEXT_WINDOW = 40;  // send last 40 messages to LLM (128k ctx supports this)
 
 // ─── File helpers ───────────────────────────────────────────────────────────
 
@@ -107,7 +107,7 @@ function buildContext(sessionId) {
 
 function shouldSummarise(sessionId) {
   const mem = getMemory(sessionId);
-  // Trigger every 30 messages (when rolling window is getting full)
+  // Trigger every 50 messages — generates a rich compressed memory block
   return mem.length > 0 && mem.length % 30 === 0;
 }
 

@@ -150,6 +150,7 @@ async function think({ message, from, sessionId, memory = [] }) {
   }
 
   // Retry with exponential backoff on rate limit (429)
+  // Groq free tier: 12,000 tokens/min limit. Start small, wait on 429.
   const makeRequest = async (tokens, attempt = 1) => {
     try {
       const response = await axios.post(
@@ -165,28 +166,29 @@ async function think({ message, from, sessionId, memory = [] }) {
         },
         {
           headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-          timeout: 60000
+          timeout: 90000
         }
       );
       return response.data?.choices?.[0]?.message?.content || '⚠️ No response from Groq.';
     } catch (err) {
-      if (err.response?.status === 429 && attempt <= 3) {
-        // Exponential backoff: 2s, 5s, 12s + reduce tokens on each retry
-        const delay = [2000, 5000, 12000][attempt - 1];
-        const reducedTokens = Math.floor(tokens * 0.6); // cut tokens 40% each retry
-        console.log(`Rate limit hit. Retry ${attempt}/3 in ${delay}ms with ${reducedTokens} tokens...`);
-        await new Promise(r => setTimeout(r, delay));
+      if (err.response?.status === 429 && attempt <= 4) {
+        // Groq TPM limit resets every 60s — wait progressively then retry with fewer tokens
+        const retryAfter = parseInt(err.response?.headers?.['retry-after'] || '15');
+        const delay = attempt === 1 ? 15000 : attempt === 2 ? 30000 : attempt === 3 ? 45000 : 65000;
+        const reducedTokens = Math.max(300, Math.floor(tokens * 0.5));
+        console.log(`Rate limit. Attempt ${attempt}/4. Waiting ${delay/1000}s, retrying with ${reducedTokens} tokens...`);
+        await new Promise(r => setTimeout(r, Math.max(delay, retryAfter * 1000)));
         return makeRequest(reducedTokens, attempt + 1);
       }
       console.error('Groq error:', err.response?.data || err.message);
       if (err.response?.status === 401) return '⚠️ Groq API key invalid.';
-      if (err.response?.status === 429) return '❌ Groq is busy right now — please send your message again in 30 seconds.';
-      if (err.code === 'ECONNABORTED') return '⏱ Response took too long. Try a shorter question.';
+      if (err.response?.status === 429) return 'I\'m getting a lot of requests right now. Please resend your message in about a minute.';
+      if (err.code === 'ECONNABORTED') return '⏱ That took too long. Try breaking your question into smaller parts.';
       return `❌ Error: ${err.response?.data?.error?.message || err.message}`;
     }
   };
 
-  return makeRequest(8192);
+  return makeRequest(2000);
 }
 
 module.exports = { think, summariseMemory };

@@ -94,6 +94,24 @@ const commands = {
 };
 
 // ============ MAIN THINK FUNCTION ============
+// ─── Auto-summariser ──────────────────────────────────────────────────────────
+// When called, asks Groq to compress old conversation into a memory summary.
+async function summariseMemory(sessionId, memory, apiKey) {
+  try {
+    const msgs = memory.slice(-20).map(m => `${m.role}: ${m.content}`).join('\n');
+    const res = await axios.post(GROQ_API_URL, {
+      model: GROQ_MODEL,
+      messages: [
+        { role: 'system', content: 'You are a memory compression engine. Summarise the key facts, decisions, tasks, preferences, and context from this conversation into a dense but readable paragraph. Preserve names, numbers, platform names, task statuses, and anything Rabiu would want remembered long-term. Be factual, not conversational.' },
+        { role: 'user', content: msgs }
+      ],
+      max_tokens: 600, temperature: 0.3
+    }, { headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, timeout: 20000 });
+    return res.data?.choices?.[0]?.message?.content || null;
+  } catch (_) { return null; }
+}
+
+// ─── MAIN THINK FUNCTION ────────────────────────────────────────────────────
 async function think({ message, from, sessionId, memory = [] }) {
   const cmd = message.trim().toLowerCase().split(' ')[0];
   if (commands[cmd]) return commands[cmd]();
@@ -101,19 +119,51 @@ async function think({ message, from, sessionId, memory = [] }) {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) return '⚠️ Groq API key missing. Add GROQ_API_KEY to environment.';
 
+  // Import memory helpers
+  const memSvc = require('./memory');
+
+  // Get long-term summary for this session (if exists)
+  const summary = memSvc.getSummary(sessionId);
+
+  // Build messages: system → summary injection → last 24 raw messages → current user message
+  const recentMemory = memory.slice(-24);
   const messages = [
-    { role: 'system', content: MAGANU_IDENTITY },
-    ...memory.slice(-12),
-    { role: 'user', content: message }
+    { role: 'system', content: MAGANU_IDENTITY }
   ];
+
+  // Inject long-term summary as a system block before recent messages
+  if (summary && summary.text) {
+    messages.push({
+      role: 'system',
+      content: `=== LONG-TERM MEMORY (updated ${summary.updated?.slice(0,10)||'recent'}) ===\n${summary.text}\n=== You remembered all of the above — factor it into your answer ===`
+    });
+  }
+
+  messages.push(...recentMemory);
+  messages.push({ role: 'user', content: message });
+
+  // Auto-summarise when rolling window is getting full (every 30 messages)
+  if (memSvc.shouldSummarise(sessionId)) {
+    summariseMemory(sessionId, memory, apiKey).then(sumText => {
+      if (sumText) memSvc.setSummary(sessionId, sumText);
+    }).catch(() => {});
+  }
 
   try {
     const response = await axios.post(
       GROQ_API_URL,
-      { model: GROQ_MODEL, messages, max_tokens: 1500, temperature: 0.7, top_p: 0.9 },
+      {
+        model: GROQ_MODEL,
+        messages,
+        max_tokens: 4000,      // was 1500 — 2.6x longer answers now
+        temperature: 0.72,
+        top_p: 0.95,
+        frequency_penalty: 0.1,
+        presence_penalty: 0.05
+      },
       {
         headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-        timeout: 30000
+        timeout: 60000         // was 30s — extended for long analytical responses
       }
     );
     return response.data?.choices?.[0]?.message?.content || '⚠️ No response from Groq.';
@@ -121,9 +171,9 @@ async function think({ message, from, sessionId, memory = [] }) {
     console.error('Groq error:', err.response?.data || err.message);
     if (err.response?.status === 401) return '⚠️ Invalid Groq API key.';
     if (err.response?.status === 429) return '⏳ Rate limit hit. Try again in a moment.';
-    if (err.code === 'ECONNABORTED') return '⏱ Groq timeout. Try again.';
+    if (err.code === 'ECONNABORTED') return '⏱ Groq timeout — response was too large. Try a shorter query.';
     return `❌ Error: ${err.response?.data?.error?.message || err.message}`;
   }
 }
 
-module.exports = { think };
+module.exports = { think, summariseMemory };

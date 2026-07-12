@@ -1,49 +1,124 @@
-// Persistent memory using a simple JSON file store
-// Falls back to in-memory if file system is unavailable
+// Maganu Persistent Memory — Enhanced
+// Stores per-session conversation history with long-term summary extraction
+// Uses file system (falls back to in-memory on read-only fs like Render)
 
 const fs = require('fs');
 const path = require('path');
 
 const MEMORY_FILE = path.join('/tmp', 'maganu_memory.json');
-const MAX_MEMORY = 30;
+const SUMMARY_FILE = path.join('/tmp', 'maganu_summaries.json');
 
-function loadAll() {
+// Per-session rolling window — keep last 40 messages (was 30)
+const MAX_MESSAGES = 40;
+// How many raw messages to pass to LLM — was 12, now 24
+const CONTEXT_WINDOW = 24;
+
+// ─── File helpers ───────────────────────────────────────────────────────────
+
+function load(file) {
   try {
-    if (fs.existsSync(MEMORY_FILE)) {
-      return JSON.parse(fs.readFileSync(MEMORY_FILE, 'utf8'));
-    }
+    if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (_) {}
   return {};
 }
 
-function saveAll(data) {
+function save(file, data) {
   try {
-    fs.writeFileSync(MEMORY_FILE, JSON.stringify(data), 'utf8');
+    fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
   } catch (_) {}
 }
 
+// ─── Session memory ─────────────────────────────────────────────────────────
+
 function getMemory(sessionId) {
-  const all = loadAll();
-  return all[sessionId] || [];
+  return load(MEMORY_FILE)[sessionId] || [];
 }
 
 function addToMemory(sessionId, message) {
-  const all = loadAll();
+  const all = load(MEMORY_FILE);
   const mem = all[sessionId] || [];
   mem.push(message);
-  if (mem.length > MAX_MEMORY) mem.splice(0, mem.length - MAX_MEMORY);
+  // Keep rolling window
+  if (mem.length > MAX_MESSAGES) mem.splice(0, mem.length - MAX_MESSAGES);
   all[sessionId] = mem;
-  saveAll(all);
+  save(MEMORY_FILE, all);
 }
 
 function clearMemory(sessionId) {
-  const all = loadAll();
+  const all = load(MEMORY_FILE);
   delete all[sessionId];
-  saveAll(all);
+  save(MEMORY_FILE, all);
+  // Also clear summary
+  const summaries = load(SUMMARY_FILE);
+  delete summaries[sessionId];
+  save(SUMMARY_FILE, summaries);
 }
 
 function getAllSessions() {
-  return Object.keys(loadAll());
+  return Object.keys(load(MEMORY_FILE));
 }
 
-module.exports = { getMemory, addToMemory, clearMemory, getAllSessions };
+// ─── Long-term summary ──────────────────────────────────────────────────────
+// We store a running plain-text summary of what Maganu knows about each session.
+// This survives even when the rolling window gets full.
+
+function getSummary(sessionId) {
+  return load(SUMMARY_FILE)[sessionId] || null;
+}
+
+function setSummary(sessionId, text) {
+  const summaries = load(SUMMARY_FILE);
+  summaries[sessionId] = {
+    text,
+    updated: new Date().toISOString(),
+    messageCount: getMemory(sessionId).length
+  };
+  save(SUMMARY_FILE, summaries);
+}
+
+// ─── Context builder ────────────────────────────────────────────────────────
+// Returns the optimal context to inject into the LLM prompt.
+// Includes: optional long-term summary injection + last N raw messages.
+
+function buildContext(sessionId) {
+  const mem = getMemory(sessionId);
+  const summary = getSummary(sessionId);
+
+  const context = [];
+
+  // Inject summary as a system-style memory block if it exists
+  if (summary && summary.text) {
+    context.push({
+      role: 'system',
+      content: `=== LONG-TERM MEMORY (${summary.updated?.slice(0,10) || 'recent'}) ===\n${summary.text}\n=== END MEMORY ===`
+    });
+  }
+
+  // Add the most recent raw messages (last 24)
+  const recent = mem.slice(-CONTEXT_WINDOW);
+  context.push(...recent);
+
+  return context;
+}
+
+// ─── Auto-summarise trigger ─────────────────────────────────────────────────
+// Called from brain.js after every N messages to compress old context into summary.
+// Returns true if a summarise is needed.
+
+function shouldSummarise(sessionId) {
+  const mem = getMemory(sessionId);
+  // Trigger every 30 messages (when rolling window is getting full)
+  return mem.length > 0 && mem.length % 30 === 0;
+}
+
+module.exports = {
+  getMemory,
+  addToMemory,
+  clearMemory,
+  getAllSessions,
+  getSummary,
+  setSummary,
+  buildContext,
+  shouldSummarise,
+  CONTEXT_WINDOW
+};

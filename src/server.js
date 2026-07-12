@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { think } = require('./services/brain');
-const { getMemory, addToMemory, clearMemory } = require('./services/memory');
+const { getMemory, addToMemory, clearMemory, getSummary, setSummary, shouldSummarise, CONTEXT_WINDOW } = require('./services/memory');
 const payments = require('./services/payments');
 const scheduler = require('./services/scheduler');
 const github = require('./services/github');
@@ -67,7 +67,15 @@ async function processUpdate(chatId, text, from, sessionId) {
   // ===== SYSTEM =====
   if (cmd === '/start') return `👋 *Maganu v6.0 — Ultimate Edition*\n\nHey ${from}!\n\n116 capabilities | 95+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
 
-  if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared!'; }
+  if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
+  if (cmd === '/memory') {
+    const mem = getMemory(sessionId);
+    const sum = getSummary(sessionId);
+    let msg = `🧠 *Maganu Memory Status*\n\nSession: ${sessionId}\nMessages stored: ${mem.length} (last ${CONTEXT_WINDOW} sent to AI)\n`;
+    if (sum) msg += `Long-term summary: ✅ (${sum.updated?.slice(0,10)||'recent'})\n\nSummary:\n${sum.text?.slice(0,400)}...`;
+    else msg += 'Long-term summary: None yet (auto-generates after 30 messages)';
+    return msg;
+  }
 
   if (cmd === '/status') return `🟢 *Maganu v6.0 Online*\n\n116 capabilities | 95+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
 

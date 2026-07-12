@@ -18,6 +18,8 @@ const nigerian = require('./services/nigerian');
 const learning = require('./services/learning');
 const intelligence = require('./services/intelligence');
 const writer = require('./services/writer');
+const memExt = require('./services/memory_extended');
+const devtools = require('./services/devtools');
 
 const app = express();
 app.use(express.json());
@@ -63,13 +65,13 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `👋 *Maganu v5.0 — Ultimate Edition*\n\nHey ${from}!\n\n86 capabilities | 65+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
+  if (cmd === '/start') return `👋 *Maganu v6.0 — Ultimate Edition*\n\nHey ${from}!\n\n116 capabilities | 95+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared!'; }
 
-  if (cmd === '/status') return `🟢 *Maganu v5.0 Online*\n\n86 capabilities | 65+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
+  if (cmd === '/status') return `🟢 *Maganu v6.0 Online*\n\n116 capabilities | 95+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
 
-  if (cmd === '/help') return `🤖 *Maganu v5.0 — 65+ Commands*\n\n*System*\n/status /ecosystem /clear\n\n*Payments*\n/payments /paystack /stripe /revenue\n\n*Deploy*\n/repos /github /commit [repo] [msg]\n/deploy /netlify /render /railway [repo]\n/logs [id]\n\n*Productivity*\n/today /week /uptime\n/tasks /addtask /done /deltask\n\n*CRM*\n/crm /addclient /followup /invoice /leads\n\n*Nigerian Tools*\n/vat /wht /firs /cbn /rate /nginvoice\n\n*Intelligence*\n/crypto — live prices\n/domain [name] — availability\n/ssl [domain] — cert check\n/trending — GitHub hot repos\n/funding — African startup news\n/producthunt — today's launches\n\n*Research*\n/search /research /competitor\n/review /arch /summarize\n\n*Analytics*\n/traffic /codestats /market /digest\n\n*Learning*\n/techdigest /skill /flashcard /books\n\n*Habits*\n/habits /addhabit [name] /habit [name]\n\n*Business Docs*\n/proposal [client] | [project] | [budget]\n/sop [process] | [steps]\n/jd [role] | [company] | [reqs]\n/press [headline] | [product] | [detail]\n/contract [paste text]\n\n*Outreach & Content*\n/drip [product] | [audience]\n/outreach [role] | [company] | [product]\n/calendar30 [platform] | [topic]\n/newsletter [platform] | [highlights]\n/thread [topic]\n/linkedin [topic] | [audience]\n/ad [platform] | [product] | [audience]\n/podcast [topic] | [audience]\n/youtube [title] | [niche]\n\n*Strategy*\n/pivot [idea] | [problem]\n/tam [idea] | [geography]\n/features [product] | [backlog]\n/exit [platform] | [metrics]\n\n*Business Builder*\n/launch /pricing /abtest /names\n\n*Security*\n/password [password]\n/secaudit [codebase]\n\n*Content*\n/chapter /promo /post /broadcast\n\n/email [to subject] | [body]`;
+  if (cmd === '/help') return `🤖 *Maganu v6.0 — 65+ Commands*\n\n*System*\n/status /ecosystem /clear\n\n*Payments*\n/payments /paystack /stripe /revenue\n\n*Deploy*\n/repos /github /commit [repo] [msg]\n/deploy /netlify /render /railway [repo]\n/logs [id]\n\n*Productivity*\n/today /week /uptime\n/tasks /addtask /done /deltask\n\n*CRM*\n/crm /addclient /followup /invoice /leads\n\n*Nigerian Tools*\n/vat /wht /firs /cbn /rate /nginvoice\n\n*Intelligence*\n/crypto — live prices\n/domain [name] — availability\n/ssl [domain] — cert check\n/trending — GitHub hot repos\n/funding — African startup news\n/producthunt — today's launches\n\n*Research*\n/search /research /competitor\n/review /arch /summarize\n\n*Analytics*\n/traffic /codestats /market /digest\n\n*Learning*\n/techdigest /skill /flashcard /books\n\n*Habits*\n/habits /addhabit [name] /habit [name]\n\n*Business Docs*\n/proposal [client] | [project] | [budget]\n/sop [process] | [steps]\n/jd [role] | [company] | [reqs]\n/press [headline] | [product] | [detail]\n/contract [paste text]\n\n*Outreach & Content*\n/drip [product] | [audience]\n/outreach [role] | [company] | [product]\n/calendar30 [platform] | [topic]\n/newsletter [platform] | [highlights]\n/thread [topic]\n/linkedin [topic] | [audience]\n/ad [platform] | [product] | [audience]\n/podcast [topic] | [audience]\n/youtube [title] | [niche]\n\n*Strategy*\n/pivot [idea] | [problem]\n/tam [idea] | [geography]\n/features [product] | [backlog]\n/exit [platform] | [metrics]\n\n*Business Builder*\n/launch /pricing /abtest /names\n\n*Security*\n/password [password]\n/secaudit [codebase]\n\n*Content*\n/chapter /promo /post /broadcast\n\n/email [to subject] | [body]`;
 
   if (cmd === '/ecosystem') return `🌐 *Harz Ecosystem — 10/10*\n\n1. HarzDM — harzdm-marketplace.vercel.app\n2. OMEGA INFINITY — omega-infinity-dashboard.vercel.app\n3. TradeOS — tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI (Base44)\n5. ContentPilot AI (Base44)\n6. Abuja Estate City AI — abuja-estate-city-ai.vercel.app\n7. Nexal Media (Base44)\n8. DeployForge (Base44)\n9. Nigerian Number Lookup (Base44)\n10. OMEGA DocMaster X (Base44)`;
 
@@ -196,6 +198,50 @@ async function processUpdate(chatId, text, from, sessionId) {
   if (cmd === '/email') { const [toSubj,body]=rest.split('|'); if(!toSubj||!body) return 'Usage: /email [to@email.com Subject] | [body]'; const [to,...subj]=toSubj.trim().split(' '); return await sendEmail(to,subj.join(' '),body.trim()); }
   if (cmd === '/scheduler') { const s=scheduler.getStatus(); let m=`📅 *Scheduler*\n\n`; s.automations.forEach(a=>{m+=`✅ ${a.name.replace(/_/g,' ')} — ${a.schedule}\n`;}); return m; }
 
+  // ===== GOALS & DECISIONS =====
+  if (cmd === '/goals') return memExt.listGoals();
+  if (cmd === '/goal') { if(!a1) return 'Usage: /goal [title] | [deadline] | [description]'; const g=memExt.addGoal(a1,a2,a3); return `✅ Goal added: "${g.title}"\nDeadline: ${g.deadline}\nTrack with: /goals`; }
+  if (cmd === '/progress') { if(!a1) return 'Usage: /progress [goal-name] | [0-100] | [note]'; const g=memExt.updateGoalProgress(a1,a2,a3); return g?`📊 *${g.title}*\nProgress: ${g.progress}%`:`❌ Goal not found.`; }
+  if (cmd === '/decide') { if(!a1) return 'Usage: /decide [decision] | [reasoning] | [alternatives]'; memExt.logDecision(a1,a2,a3); return `📋 Decision logged: "${a1}"`; }
+  if (cmd === '/decisions') return memExt.listDecisions();
+  if (cmd === '/focus') { if(!rest) return 'Usage: /focus [your #1 priority today]'; return await memExt.setIntention(rest); }
+  if (cmd === '/intention') return memExt.getTodayIntention();
+  if (cmd === '/weeklyreview') return await memExt.generateWeeklyReview();
+  if (cmd === '/morning') return await memExt.getMorningQuestions();
+  
+  // ===== ENERGY & WELLBEING =====
+  if (cmd === '/energy') { if(!args[0]) return 'Usage: /energy [1-10] [optional note]'; const e=memExt.logEnergy(args[0],args.slice(1).join(' ')); return `⚡ Energy ${e.level}/10 logged${e.note?': '+e.note:''}`; }
+  if (cmd === '/energyreport') return memExt.getEnergyReport();
+  if (cmd === '/gratitude') { const items=rest.split('|').map(s=>s.trim()); if(!items[0]) return 'Usage: /gratitude [item1] | [item2] | [item3]'; return memExt.logGratitude(items[0],items[1],items[2]); }
+  
+  // ===== NETWORKING & READING =====
+  if (cmd === '/connect') { if(!a1) return 'Usage: /connect [name] | [role] | [context] | [follow-up]'; const c=memExt.logConnection(a1,a2,a3,a4); return `🤝 Connection logged: ${c.name} (${c.role||'N/A'})`; }
+  if (cmd === '/network') return memExt.listConnections();
+  if (cmd === '/book') { if(!a1) return 'Usage: /book [title] | [author] | [rating 1-5] | [review]'; const b=memExt.logBook(a1,a2,a3,a4); return `📚 Book logged: "${b.title}" ${"⭐".repeat(b.rating||0)}`; }
+  if (cmd === '/books') return memExt.listBooks();
+  
+  // ===== DELEGATION =====
+  if (cmd === '/delegate') { if(!a1||!a2) return 'Usage: /delegate [task] | [assignee] | [deadline] | [note]'; const d=memExt.logDelegation(a1,a2,a3,a4); return `📌 Delegated: "${d.task}" → ${d.assignee}\nDeadline: ${d.deadline}`; }
+  if (cmd === '/delegations') return memExt.listDelegations();
+  if (cmd === '/delegated') { if(!rest) return 'Usage: /delegated [task name]'; const d=memExt.completeDelegation(rest); return d?`✅ Delegation complete: "${d.task}"`:`❌ Not found.`; }
+  
+  // ===== DEV TOOLS =====
+  if (cmd === '/api') { const [method,url,...bodyParts]=rest.split(' '); if(!method||!url) return 'Usage: /api [GET/POST] [url] [optional-body]'; return await devtools.testEndpoint(method,url,bodyParts.join(' ')); }
+  if (cmd === '/json') { if(!rest) return 'Usage: /json [paste JSON]'; return devtools.formatJSON(rest); }
+  if (cmd === '/regex') { if(!rest) return 'Usage: /regex [describe what to match]'; return await devtools.generateRegex(rest); }
+  if (cmd === '/sql') { if(!a1) return 'Usage: /sql [describe what you need] | [db type]'; return await devtools.writeSQL(a1,a2); }
+  if (cmd === '/error') { if(!rest) return 'Usage: /error [paste your stack trace]'; return await devtools.decodeError(rest); }
+  if (cmd === '/data') { if(!rest) return 'Usage: /data [paste data to analyze]'; return await devtools.analyzeData(rest); }
+  if (cmd === '/entity') { if(!a1) return 'Usage: /entity [entity-name] | [question about it]'; return await devtools.exploreEntityData(a1,a2); }
+  
+  // ===== FINANCE =====
+  if (cmd === '/forecast') { if(!a1) return 'Usage: /forecast [current MRR] | [monthly growth %] | [months ahead]'; return await devtools.forecastRevenue(a1,a2||'10',a3||'12'); }
+  
+  // ===== TEAM TOOLS =====
+  if (cmd === '/standup') { if(!a1) return 'Usage: /standup [project] | [yesterday] | [today] | [blockers]'; return await devtools.generateStandup(a1,a2,a3,a4); }
+  if (cmd === '/onboarding') { if(!a1) return 'Usage: /onboarding [role] | [company] | [tools]'; return await devtools.generateOnboardingDoc(a1,a2,a3); }
+  if (cmd === '/review') { if(a1&&a2) return await devtools.generatePerformanceReview(a1,a2,a3,a4); if(!rest) return 'Usage: /review [code] or /perf [name] | [role]'; return await research.reviewCode(rest); }
+
   // ===== AI FALLBACK =====
   const memory = getMemory(sessionId);
   const response = await think({ message: raw, from, sessionId, memory });
@@ -244,7 +290,7 @@ app.post('/notify', async (req, res) => {
 });
 
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '5.0.0', status: 'online', capabilities: 86, commands: 65, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '6.0.0', status: 'online', capabilities: 86, commands: 65, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {
@@ -254,7 +300,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v5.0.0 — ${PORT} | 86 capabilities | 65+ commands`);
+  console.log(`🤖 Maganu v6.0.0 — ${PORT} | 116 capabilities | 95+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

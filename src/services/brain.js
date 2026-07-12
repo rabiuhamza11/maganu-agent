@@ -149,31 +149,44 @@ async function think({ message, from, sessionId, memory = [] }) {
     }).catch(() => {});
   }
 
-  try {
-    const response = await axios.post(
-      GROQ_API_URL,
-      {
-        model: GROQ_MODEL,
-        messages,
-        max_tokens: 32768,     // True Groq hard cap for llama-3.3-70b-versatile (verified via API)
-        temperature: 0.72,
-        top_p: 0.95,
-        frequency_penalty: 0.1,
-        presence_penalty: 0.05
-      },
-      {
-        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-        timeout: 60000         // was 30s — extended for long analytical responses
+  // Retry with exponential backoff on rate limit (429)
+  const makeRequest = async (tokens, attempt = 1) => {
+    try {
+      const response = await axios.post(
+        GROQ_API_URL,
+        {
+          model: GROQ_MODEL,
+          messages,
+          max_tokens: tokens,
+          temperature: 0.72,
+          top_p: 0.95,
+          frequency_penalty: 0.1,
+          presence_penalty: 0.05
+        },
+        {
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+          timeout: 60000
+        }
+      );
+      return response.data?.choices?.[0]?.message?.content || '⚠️ No response from Groq.';
+    } catch (err) {
+      if (err.response?.status === 429 && attempt <= 3) {
+        // Exponential backoff: 2s, 5s, 12s + reduce tokens on each retry
+        const delay = [2000, 5000, 12000][attempt - 1];
+        const reducedTokens = Math.floor(tokens * 0.6); // cut tokens 40% each retry
+        console.log(`Rate limit hit. Retry ${attempt}/3 in ${delay}ms with ${reducedTokens} tokens...`);
+        await new Promise(r => setTimeout(r, delay));
+        return makeRequest(reducedTokens, attempt + 1);
       }
-    );
-    return response.data?.choices?.[0]?.message?.content || '⚠️ No response from Groq.';
-  } catch (err) {
-    console.error('Groq error:', err.response?.data || err.message);
-    if (err.response?.status === 401) return '⚠️ Invalid Groq API key.';
-    if (err.response?.status === 429) return '⏳ Rate limit hit. Try again in a moment.';
-    if (err.code === 'ECONNABORTED') return '⏱ Groq timeout — response was too large. Try a shorter query.';
-    return `❌ Error: ${err.response?.data?.error?.message || err.message}`;
-  }
+      console.error('Groq error:', err.response?.data || err.message);
+      if (err.response?.status === 401) return '⚠️ Groq API key invalid.';
+      if (err.response?.status === 429) return '❌ Groq is busy right now — please send your message again in 30 seconds.';
+      if (err.code === 'ECONNABORTED') return '⏱ Response took too long. Try a shorter question.';
+      return `❌ Error: ${err.response?.data?.error?.message || err.message}`;
+    }
+  };
+
+  return makeRequest(8192);
 }
 
 module.exports = { think, summariseMemory };

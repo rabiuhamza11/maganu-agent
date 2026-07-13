@@ -44,6 +44,7 @@ const SYSTEM_PROMPT = [
   'BuildBot AI: superagent-2286fb2f.base44.app/functions/buildbotAI',
   'Nexal Media: superagent-2286fb2f.base44.app/functions/nexalMedia',
   'All links: superagent-2286fb2f.base44.app/functions/fluxLinks',
+  'OMEGA MASTER: omega-master.onrender.com (Supreme command hub, GitHub: rabiuhamza11/omega-master)',
   '',
   'GITHUB REPOS (11 total): maganu-agent(v6.2), omega-infinity-1000(v1.0), tradeos(v1.0),',
   'buildbot-ai(v1.0), harzdm-marketplace(v1.0), omega-ai-packager(v0.3), abuja-estatehub-mvp(v1.0),',

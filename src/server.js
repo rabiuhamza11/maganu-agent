@@ -308,7 +308,26 @@ Or just chat naturally — I understand plain language.`;
 
   // ===== PAYMENTS =====
   if (cmd === '/payments' || cmd === '/revenue') return await payments.getFullPaymentReport();
-  if (cmd === '/paystack') { const s=await payments.getPaystackStats(); if(s.error) return `❌ ${s.error}`; return `💚 *Paystack*\nBalance: ${s.balance}\n${s.successfulTxns}/${s.totalTxns} txns\nRevenue: ${s.totalRevenue}`; }
+  if (cmd === '/paystack') {
+    const s = await payments.getPaystackStats();
+    if (s.error) return '❌ Paystack Error: ' + s.error;
+    const modeIcon = s.mode === 'LIVE' ? '🟢' : '🟡';
+    let msg = '*💳 Paystack Dashboard*\n';
+    msg += 'Mode: ' + modeIcon + ' ' + s.mode + '\n';
+    msg += 'Balance: *' + s.balance + '*\n';
+    msg += 'Customers: ' + s.customers + '\n';
+    msg += 'Txns: ' + s.totalTxns + ' attempts | ' + s.totalSuccess + ' succeeded\n';
+    msg += 'Revenue: *' + s.totalRevenue + '*\n';
+    msg += 'Total attempted: ₦' + (s.totalAmt||0).toLocaleString('en-NG',{maximumFractionDigits:0}) + '\n';
+    msg += 'Conversion: *' + (s.totalTxns ? ((s.totalSuccess/s.totalTxns)*100).toFixed(1) : '0') + '%*\n\n';
+    msg += '*Platform Breakdown:*\n';
+    const sorted = Object.entries(s.byPlatform || {}).sort(function(a,b){return b[1].amount-a[1].amount;});
+    sorted.forEach(function(e){ msg += e[0] + ': ' + e[1].count + ' attempts | ₦' + e[1].amount.toLocaleString('en-NG',{maximumFractionDigits:0}) + '\n'; });
+    msg += '\n*Recent (last 5):*\n';
+    (s.recent||[]).forEach(function(t){ const i=t.status==='success'?'✅':t.status==='abandoned'?'⏸️':'❌'; msg += i + ' ' + t.platform + ' ₦' + t.amount.toLocaleString() + ' — ' + t.email + '\n'; });
+    msg += '\nhttps://superagent-2286fb2f.base44.app/functions/paystackDashboard';
+    return msg;
+  }
   if (cmd === '/stripe') { const s=await payments.getStripeStats(); if(s.error) return `❌ ${s.error}`; return `💜 *Stripe*\nBalance: ${s.balance}\n${s.succeededCharges}/${s.totalCharges} charges\nRevenue: ${s.totalRevenue}`; }
 
   // ===== CALENDAR =====

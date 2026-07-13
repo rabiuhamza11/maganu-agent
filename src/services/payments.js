@@ -31,34 +31,67 @@ async function getPaystackTransactions(limit = 5) {
 
 async function getPaystackStats() {
   try {
-    const [balRes, txRes] = await Promise.all([
-      axios.get('https://api.paystack.co/balance', {
-        headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
-      }),
-      axios.get('https://api.paystack.co/transaction?perPage=50', {
-        headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` }
-      })
+    const key = process.env.PAYSTACK_SECRET_KEY;
+    if (!key) return { error: 'PAYSTACK_SECRET_KEY not set' };
+    const headers = { Authorization: 'Bearer ' + key };
+    const [balRes, txRes, custRes] = await Promise.all([
+      axios.get('https://api.paystack.co/balance', { headers }),
+      axios.get('https://api.paystack.co/transaction?perPage=100', { headers }),
+      axios.get('https://api.paystack.co/customer?perPage=50', { headers }),
     ]);
-    const txns = txRes.data?.data || [];
-    const successful = txns.filter(t => t.status === 'success');
-    const total = successful.reduce((sum, t) => sum + t.amount, 0);
-    const balances = balRes.data?.data || [];
-    const balStr = balances.map(b => `${b.currency}: ₦${(b.balance / 100).toLocaleString()}`).join(', ') || '₦0';
+    const txns = txRes.data && txRes.data.data ? txRes.data.data : [];
+    const customers = custRes.data && custRes.data.data ? custRes.data.data : [];
+    const balances = balRes.data && balRes.data.data ? balRes.data.data : [];
+    const balNGN = balances.find(function(b) { return b.currency === 'NGN'; });
+    const balanceAmt = balNGN ? balNGN.balance / 100 : 0;
+
+    const MODE_MAP = {
+      BuildBotAI: 'BuildBot AI', NexalMedia: 'Nexal Media',
+      ContentPilot: 'ContentPilot AI', HarzDM: 'HarzDM',
+      HostMasterAI: 'HostMaster AI', OracleAI: 'Oracle AI',
+    };
+
+    const statuses = {};
+    const byPlatform = {};
+    let totalSuccess = 0, successAmt = 0, totalAmt = 0;
+
+    txns.forEach(function(t) {
+      const status = t.status || 'unknown';
+      statuses[status] = (statuses[status] || 0) + 1;
+      const meta = t.metadata || {};
+      const rawApp = meta.app || meta.platform || 'Other';
+      const platform = MODE_MAP[rawApp] || rawApp;
+      if (!byPlatform[platform]) byPlatform[platform] = { count: 0, amount: 0, success: 0 };
+      byPlatform[platform].count++;
+      byPlatform[platform].amount += (t.amount || 0) / 100;
+      totalAmt += (t.amount || 0) / 100;
+      if (status === 'success') {
+        byPlatform[platform].success++;
+        totalSuccess++;
+        successAmt += (t.amount || 0) / 100;
+      }
+    });
+
+    const mode = key.startsWith('sk_live') ? 'LIVE' : 'TEST';
+    const recent = txns.slice(0, 5).map(function(t) {
+      return {
+        email: t.customer && t.customer.email ? t.customer.email : 'Unknown',
+        amount: (t.amount || 0) / 100,
+        status: t.status,
+        platform: MODE_MAP[t.metadata && t.metadata.app ? t.metadata.app : ''] || (t.metadata && t.metadata.app ? t.metadata.app : 'Unknown'),
+        date: t.created_at ? t.created_at.slice(0, 10) : 'N/A'
+      };
+    });
 
     return {
-      balance: balStr,
-      totalTxns: txns.length,
-      successfulTxns: successful.length,
-      totalRevenue: `₦${(total / 100).toLocaleString()}`,
-      recentTxns: txns.slice(0, 3).map(t => ({
-        email: t.customer?.email || 'Unknown',
-        amount: `₦${(t.amount / 100).toLocaleString()}`,
-        status: t.status,
-        date: new Date(t.created_at).toLocaleDateString('en-NG')
-      }))
+      mode, balanceAmt, totalTxns: txns.length, totalSuccess, successAmt,
+      totalAmt, customers: customers.length, statuses, byPlatform, recent,
+      balance: '₦' + balanceAmt.toLocaleString('en-NG'),
+      successfulTxns: totalSuccess,
+      totalRevenue: '₦' + successAmt.toLocaleString('en-NG')
     };
   } catch (err) {
-    return { error: err.response?.data?.message || err.message };
+    return { error: (err.response && err.response.data && err.response.data.message) ? err.response.data.message : err.message };
   }
 }
 

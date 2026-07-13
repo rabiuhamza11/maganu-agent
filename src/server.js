@@ -65,7 +65,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `👋 *Maganu v6.0 — Ultimate Edition*\n\nHey ${from}!\n\n155+ capabilities | 130+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
+  if (cmd === '/start') return `👋 *Maganu v6.2 — Ultimate Edition*\n\nHey ${from}!\n\n170+ capabilities | 140+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -77,9 +77,9 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `🟢 *Maganu v6.0 Online*\n\n155+ capabilities | 130+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
+  if (cmd === '/status') return `🟢 *Maganu v6.2 Online*\n\n170+ capabilities | 140+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
 
-  if (cmd === '/help') return `🤖 *Maganu v6.1 — 155+ Commands*
+  if (cmd === '/help') return `🤖 *Maganu v6.2 — 170+ Commands*
 
 *System*
 /status /ecosystem /dashboard /clear
@@ -656,7 +656,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/maganu') {
-    return '🤖 *Maganu v6.1*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 130+ | Commands: 110+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
+    return '🤖 *Maganu v6.2*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 170+ | Commands: 140+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
   }
 
   if (cmd === '/hostmaster') {
@@ -926,7 +926,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v6.0.0 — ${PORT} | 155+ capabilities | 130+ commands`);
+  console.log(`🤖 Maganu v6.2.0 — ${PORT} | 170+ capabilities | 140+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

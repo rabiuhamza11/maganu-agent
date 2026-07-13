@@ -1,109 +1,28 @@
-# Maganu — Custom AI Agent
-**Built by Rabiu Hamza | Harz Ecosystem**
+# Maganu AI Agent v6.2
 
-Maganu is a fully custom AI agent powered by Claude, deployed as a standalone Node.js server with WhatsApp integration via Twilio.
+Autonomous executive AI brain of the Harz Enterprise ecosystem.
 
----
+## Overview
+Maganu is a production-grade autonomous AI agent with 170+ capabilities and 140+ commands. Powered by Groq llama-4-scout (30,000 TPM).
 
-## Features
-- 🤖 Powered by Claude AI (Anthropic)
-- 📱 WhatsApp messaging via Twilio
-- 🧠 Conversation memory per session
-- 📅 Scheduled automations (daily briefings, ecosystem checks)
-- 🌐 Full Harz Ecosystem knowledge built-in
-- ⚡ REST API for direct chat and message sending
-- 🔒 Rate limiting, CORS, Helmet security
+## Capabilities
+- Real-time ecosystem dashboards & reporting
+- GitHub repo creation, branch management & file pushing
+- Unified Paystack/Stripe payment monitoring
+- Automated daily briefings via Telegram & WhatsApp
+- 40-message context window, 32,768 token output
+- Exponential backoff retry logic (rate-limit safe)
+- Honesty protocol: never claims tasks done without verification
 
----
+## Live
+https://maganu-agent.onrender.com
 
-## Quick Start
+## Commands (sample)
+- /status all — full ecosystem health check
+- /paystack — payment breakdown across 6 platforms
+- /git list — list all GitHub repos
+- /dashboard — business metrics overview
+- /version — confirm current version
 
-### 1. Install dependencies
-```bash
-npm install
-```
-
-### 2. Configure environment
-```bash
-cp .env.example .env
-# Edit .env with your API keys
-```
-
-### 3. Required API Keys
-- **ANTHROPIC_API_KEY** — Get from https://console.anthropic.com
-- **TWILIO_ACCOUNT_SID** — Get from https://console.twilio.com
-- **TWILIO_AUTH_TOKEN** — Get from https://console.twilio.com
-- **OWNER_WHATSAPP** — Your WhatsApp number e.g. `whatsapp:+2347012345678`
-
-### 4. Run locally
-```bash
-npm run dev
-```
-
-### 5. Deploy to Railway (recommended)
-```bash
-# Install Railway CLI
-npm install -g @railway/cli
-
-# Login and deploy
-railway login
-railway init
-railway up
-```
-
----
-
-## WhatsApp Setup (Twilio)
-
-1. Sign up at https://console.twilio.com
-2. Go to **Messaging > Try it out > Send a WhatsApp message**
-3. Follow Twilio Sandbox instructions to connect your number
-4. Set webhook URL to: `https://your-domain.com/webhook/whatsapp`
-5. Set HTTP method to **POST**
-
----
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Agent status |
-| GET | `/health` | Health check |
-| POST | `/chat` | Direct chat API |
-| POST | `/webhook/whatsapp` | Twilio WhatsApp webhook |
-| POST | `/send` | Send message to WhatsApp |
-| GET | `/memory/:sessionId` | View session memory |
-| DELETE | `/memory/:sessionId` | Clear session memory |
-| GET | `/automations` | List active automations |
-
----
-
-## Commands (WhatsApp)
-Send these to Maganu on WhatsApp:
-- `/status` — System status
-- `/help` — Show all commands
-- `/ecosystem` — All Harz platforms
-- `/harzdm` — HarzDM marketplace info
-- `/omega` — OMEGA INFINITY info
-- `/tradeos` — TradeOS info
-- `/buildbot` — BuildBot AI info
-
----
-
-## Architecture
-```
-maganu/
-  src/
-    server.js          # Express server + routes
-    services/
-      brain.js         # Claude AI integration + commands
-      memory.js        # Session conversation memory
-      whatsapp.js      # Twilio WhatsApp sender
-      scheduler.js     # Cron automations
-```
-
----
-
-**Owner:** Rabiu Hamza Mohammed  
-**Ecosystem:** Harz  
-**GitHub:** github.com/rabiuhamza11  
+## Part of Harz Enterprise
+https://github.com/rabiuhamza11

@@ -97,6 +97,9 @@ async function processUpdate(chatId, text, from, sessionId) {
   if (cmd === '/railway') { if (!args[0]) return 'Usage: /railway [repo]'; const r = await deploy.deployRailway(args[0]); return r.ok?`🚀 Railway: ${args[0]}\n${r.url}`:`❌ ${r.error}`; }
   if (cmd === '/commit') { const repo=args[0]; const msg=args.slice(1).join(' '); if(!repo||!msg) return 'Usage: /commit [repo] [message]'; const r=await deploy.triggerCommit(repo,msg); return r.ok?`✅ ${r.message}`:`❌ ${r.error}`; }
   if (cmd === '/logs') { const id=args[0]||'srv-d99er9reo5us738eskk0'; return `📋 *Render Logs*\n\n${await deploy.getRenderLogs(id)}`; }
+  if (cmd === '/newrepo') { const name=args[0]; const desc=args.slice(1).join(' '); if(!name) return 'Usage: /newrepo [name] [description]'; const r=await deploy.createRepo(name,desc); return r.ok?`🐙 Repo created!\n${r.url}`:`❌ ${r.error}`; }
+  if (cmd === '/redeploy') { const id=args[0]||'srv-d99er9reo5us738eskk0'; const r=await deploy.redeploy(id); return r.ok?`🔄 Redeploy triggered!\nDeploy ID: ${r.deployId}`:`❌ ${r.error}`; }
+  if (cmd === '/pushfile') { const repo=args[0]; const file=args[1]; const content=args.slice(2).join(' '); if(!repo||!file||!content) return 'Usage: /pushfile [repo] [filepath] [content]'; const r=await deploy.createOrUpdateFile(repo,file,content,`Update ${file} via Maganu`); return r.ok?`✅ ${r.message}`:`❌ ${r.error}`; }
 
   // ===== CRM =====
   if (cmd === '/crm') return crm.formatCRM();

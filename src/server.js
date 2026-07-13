@@ -212,7 +212,38 @@ Or just chat naturally — I understand plain language.`;
   if (cmd === '/deltask') { return tasks.deleteTask(args[0]) ? `🗑 Deleted.` : `❌ Not found.`; }
 
   // ===== DEPLOY =====
-  if (cmd === '/repos') { const r = await deploy.listRepos(); if (!r.length) return '❌ No repos.'; let m=`🐙 *Repos (${r.length})*\n\n`; r.slice(0,15).forEach(x=>{m+=`${x.private?'🔒':'🌐'} ${x.name} — ${x.language} ⭐${x.stars}\n`;}); return m; }
+  if (cmd === '/repos' || cmd === '/git') {
+    const github = require('./services/github');
+    if (!rest && cmd === '/git') return await github.getGitHubReport();
+    if (cmd === '/repos') return await github.getGitHubReport();
+    // /git [subcommand] [arg1] | [arg2] | [arg3]
+    const parts = rest ? rest.split('|').map(s => s.trim()) : [];
+    const sub = parts[0] || '';
+    const subArgs = parts.slice(1);
+    return await github.handleGitHubCommand(sub, subArgs);
+  }
+  if (cmd === '/git-create') {
+    const github = require('./services/github');
+    if (!a1) return '❌ Usage: /git-create [repo-name] | [description]';
+    const parts = rest.split('|').map(s=>s.trim());
+    const r = await github.createRepo(parts[0], parts[1] || '', false);
+    if (r.error) return `❌ Failed: ${r.error}`;
+    return `✅ *Repo Created!*\n\n${r.name}\n${r.url}`;
+  }
+  if (cmd === '/git-release') {
+    const github = require('./services/github');
+    const parts = (rest||'').split('|').map(s=>s.trim());
+    if (!parts[0] || !parts[1]) return '❌ Usage: /git-release [repo] | [tag] | [title]';
+    const r = await github.createRelease(parts[0], parts[1], parts[2] || parts[1]);
+    if (r.error) return `❌ Failed: ${r.error}`;
+    return `✅ Release *${r.tag}* live!\n${r.url}`;
+  }
+  if (cmd === '/git-list') {
+    const github = require('./services/github');
+    const repos = await github.listRepos();
+    if (repos.error) return `❌ ${repos.error}`;
+    return `🐙 *Repos (${repos.length}):*\n\n` + repos.slice(0,15).map((r,i)=>`${i+1}. ${r.name} — ${r.language||'N/A'}`).join('\n');
+  }
   if (cmd === '/deploy') { if (!args[0]) return 'Usage: /deploy [repo]'; const r = await deploy.deployVercel(args[0]); return r.ok?`🚀 Vercel: ${args[0]}\n${r.url}`:`❌ ${r.error}`; }
   if (cmd === '/netlify') { if (!args[0]) return 'Usage: /netlify [repo]'; const r = await deploy.deployNetlify(args[0]); return r.ok?`🚀 Netlify: ${args[0]}\n${r.url}`:`❌ ${r.error}`; }
   if (cmd === '/render') { if (!args[0]) return 'Usage: /render [repo]'; const r = await deploy.deployRender(args[0]); return r.ok?`🚀 Render: ${args[0]}\n${r.url}`:`❌ ${r.error}`; }

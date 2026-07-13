@@ -65,7 +65,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `👋 *Maganu v6.0 — Ultimate Edition*\n\nHey ${from}!\n\n130+ capabilities | 110+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
+  if (cmd === '/start') return `👋 *Maganu v6.0 — Ultimate Edition*\n\nHey ${from}!\n\n155+ capabilities | 130+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -77,9 +77,131 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `🟢 *Maganu v6.0 Online*\n\n130+ capabilities | 110+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
+  if (cmd === '/status') return `🟢 *Maganu v6.0 Online*\n\n155+ capabilities | 130+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
 
-  if (cmd === '/help') return `🤖 *Maganu v6.0 — 65+ Commands*\n\n*System*\n/status /ecosystem /clear\n\n*Payments*\n/payments /paystack /stripe /revenue\n\n*Deploy*\n/repos /github /commit [repo] [msg]\n/deploy /netlify /render /railway [repo]\n/logs [id]\n\n*Productivity*\n/today /week /uptime\n/tasks /addtask /done /deltask\n\n*CRM*\n/crm /addclient /followup /invoice /leads\n\n*Nigerian Tools*\n/vat /wht /firs /cbn /rate /nginvoice\n\n*Intelligence*\n/crypto — live prices\n/domain [name] — availability\n/ssl [domain] — cert check\n/trending — GitHub hot repos\n/funding — African startup news\n/producthunt — today's launches\n\n*Research*\n/search /research /competitor\n/review /arch /summarize\n\n*Analytics*\n/traffic /codestats /market /digest\n\n*Learning*\n/techdigest /skill /flashcard /books\n\n*Habits*\n/habits /addhabit [name] /habit [name]\n\n*Business Docs*\n/proposal [client] | [project] | [budget]\n/sop [process] | [steps]\n/jd [role] | [company] | [reqs]\n/press [headline] | [product] | [detail]\n/contract [paste text]\n\n*Outreach & Content*\n/drip [product] | [audience]\n/outreach [role] | [company] | [product]\n/calendar30 [platform] | [topic]\n/newsletter [platform] | [highlights]\n/thread [topic]\n/linkedin [topic] | [audience]\n/ad [platform] | [product] | [audience]\n/podcast [topic] | [audience]\n/youtube [title] | [niche]\n\n*Strategy*\n/pivot [idea] | [problem]\n/tam [idea] | [geography]\n/features [product] | [backlog]\n/exit [platform] | [metrics]\n\n*Business Builder*\n/launch /pricing /abtest /names\n\n*Security*\n/password [password]\n/secaudit [codebase]\n\n*Content*\n/chapter /promo /post /broadcast\n\n/email [to subject] | [body]`;
+  if (cmd === '/help') return `🤖 *Maganu v6.1 — 155+ Commands*
+
+*System*
+/status /ecosystem /dashboard /clear
+
+*Platforms*
+/harzdm /buildbot /contentpilot /nexal
+/omega /tradeos /maganu /hostmaster /oracle
+
+*Deploy & GitHub*
+/repos /deploy [repo] /netlify [repo]
+/render [repo] /railway [repo]
+/commit [repo] [msg] /newrepo [name]
+/pushfile [repo] [file] [content]
+/redeploy /logs
+
+*Payments*
+/payments /paystack /stripe /revenue
+/mrr [customers] | [price]
+/roi [invest] [returns]
+/forecast [mrr] [growth%] [months]
+
+*Finance & Math*
+/vat [amount] /wht [amount] | [type]
+/convert [amt] [from] [to]
+/margin [cost] [price]
+/break [fixed] [var] [price]
+/compound [principal] [rate] [years]
+/calc [expression]
+
+*Nigerian Tools*
+/firs /cbn /rate /nginvoice
+/cac /naira [USD amount]
+/nigeriannews
+
+*Research & Intel*
+/search [query] /news [topic]
+/research [topic] /crypto
+/domain [name] /ssl [domain]
+/trending /funding /producthunt
+/competitor [company]
+
+*Content & Writer*
+/thread [topic] /linkedin [topic]|[audience]
+/ad [platform]|[product]|[audience]
+/youtube [title]|[niche]
+/podcast [topic]|[audience]
+/newsletter [platform]|[highlights]
+/calendar30 [platform]|[topic]
+/drip [product]|[audience]
+/broadcast /wamsg [msg] /caption [platform]|[topic]
+/post [platform] [topic] /promo /chapter
+
+*Business Docs*
+/proposal [client]|[project]|[budget]
+/sop [process]|[steps]
+/jd [role]|[company]|[reqs]
+/press [headline]|[product]|[detail]
+/contract [text] /invoice [client]|[desc]|[amt]
+/template invoice|proposal|nda
+/pitch [product]|[audience]|[problem]
+
+*Strategy*
+/pivot [idea]|[problem]
+/tam [idea]|[geography]
+/features [product]|[backlog]
+/exit [platform]|[metrics]
+/launch [product]|[desc]
+/pricing [product]|[goal]|[cost]
+/names [idea]|[industry]
+/abtest [product]|[audience]
+
+*Planning*
+/sprint [project]|[goal]|[days]
+/milestone [project]|[ms]|[deadline]
+/standup [project]|[yesterday]|[today]|[blockers]
+/goals /goal [title]|[date]|[desc]
+/progress [goal]|[pct]|[note]
+/tasks /addtask [task] /done [id] /deltask [id]
+/delegate [task]|[who]|[date]
+/delegations /weeklyreview
+
+*Mindset*
+/quote /affirmation /challenge
+/morning /focus [priority]
+/energy [1-10] /energyreport
+/gratitude [1]|[2]|[3]
+/habits /addhabit [name] /habit [name]
+
+*Dev Tools*
+/api [GET/POST] [url] /json [text]
+/sql [desc]|[db] /regex [desc]
+/error [stacktrace] /data [paste]
+/review [code] /arch [desc]
+/secaudit [codebase] /password [pw]
+
+*Knowledge*
+/know [topic] /omega1000 [topic]
+/summarize [text] /books [context]
+/flashcard /skill /techdigest
+
+*Analytics*
+/traffic [repo] /codestats
+/github /uptime /market
+/digest
+
+*Calendar*
+/today /week
+
+*CRM*
+/crm /addclient [name]|[project]
+/followup [name]|[days]|[note]
+/leads /network /connect [name]|[role]
+
+*Comms*
+/email [to subject]|[body]
+/scheduler
+
+*Security*
+/password [pw] /secaudit [codebase]
+
+Or just chat naturally — I understand plain language.`;
+
 
   if (cmd === '/ecosystem') return `🌐 *Harz Ecosystem — 10/10*\n\n1. HarzDM — harzdm-marketplace.vercel.app\n2. OMEGA INFINITY — omega-infinity-dashboard.vercel.app\n3. TradeOS — tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI (Base44)\n5. ContentPilot AI (Base44)\n6. Abuja Estate City AI — abuja-estate-city-ai.vercel.app\n7. Nexal Media (Base44)\n8. DeployForge (Base44)\n9. Nigerian Number Lookup (Base44)\n10. OMEGA DocMaster X (Base44)`;
 
@@ -354,7 +476,348 @@ async function processUpdate(chatId, text, from, sessionId) {
     return '🛠️ *Harz Tech Stack*\n\n*Hosting*\nBase44 — backend functions (Deno/TS)\nVercel — static frontends\nRender — Node.js services (Maganu)\n\n*AI*\nBase44 Superagent — primary AI\nMaganu — Groq llama-4-scout Telegram\nGroq API — fast LLM inference\n\n*Payments*\nPaystack (NGN, test mode)\nStripe (USD, test mode)\n\n*Database*\nBase44 entities (MongoDB-backed)\n\n*Languages*\nTypeScript/Deno (functions)\nJavaScript/Node.js (Maganu)\nHTML/CSS/JS (frontends)\nNext.js (OMEGA dashboard)';
   }
 
+  // ===== MATH & QUICK CALC =====
+  if (cmd === '/calc') { if(!rest) return 'Usage: /calc [expression]\nExample: /calc 15000 * 12 * 0.075'; try { const result = eval(rest.replace(/[^0-9+\-*/().% ]/g,'')); return '🧮 *Result*\n\n' + rest + '\n= *' + result + '*'; } catch(e) { return '❌ Invalid expression: ' + rest; } }
+
+  if (cmd === '/margin') {
+    const cost = parseFloat(args[0]?.replace(/,/g,''));
+    const price = parseFloat(args[1]?.replace(/,/g,''));
+    if(!cost||!price) return 'Usage: /margin [cost] [selling price]\nExample: /margin 8000 15000';
+    const profit = price - cost;
+    const margin = ((profit/price)*100).toFixed(1);
+    const markup = ((profit/cost)*100).toFixed(1);
+    return '📊 *Margin Analysis*\n\nCost: ₦' + cost.toLocaleString() + '\nPrice: ₦' + price.toLocaleString() + '\nProfit: ₦' + profit.toLocaleString() + '\nMargin: *' + margin + '%*\nMarkup: ' + markup + '%';
+  }
+
+  if (cmd === '/break') {
+    const fixed = parseFloat(args[0]?.replace(/,/g,''));
+    const varCost = parseFloat(args[1]?.replace(/,/g,''));
+    const price = parseFloat(args[2]?.replace(/,/g,''));
+    if(!fixed||!varCost||!price) return 'Usage: /break [fixed costs] [variable cost/unit] [selling price]';
+    const units = Math.ceil(fixed / (price - varCost));
+    const revenue = units * price;
+    return '📊 *Breakeven Analysis*\n\nFixed Costs: ₦' + fixed.toLocaleString() + '\nVariable Cost: ₦' + varCost.toLocaleString() + '/unit\nSelling Price: ₦' + price.toLocaleString() + '\n\nBreakeven: *' + units.toLocaleString() + ' units*\nRevenue at breakeven: ₦' + revenue.toLocaleString();
+  }
+
+  if (cmd === '/compound') {
+    const principal = parseFloat(args[0]?.replace(/,/g,''));
+    const rate = parseFloat(args[1]);
+    const years = parseInt(args[2]||'5');
+    if(!principal||!rate) return 'Usage: /compound [principal] [rate%] [years]\nExample: /compound 1000000 12 5';
+    const total = principal * Math.pow(1 + rate/100, years);
+    const gain = total - principal;
+    return '💰 *Compound Interest*\n\nPrincipal: ₦' + principal.toLocaleString() + '\nRate: ' + rate + '% p.a.\nYears: ' + years + '\n\nFinal: *₦' + Math.round(total).toLocaleString() + '*\nGain: ₦' + Math.round(gain).toLocaleString();
+  }
+
+  // ===== MOTIVATION & MINDSET =====
+  if (cmd === '/quote') {
+    const quotes = [
+      'The best time to plant a tree was 20 years ago. The second best time is now.',
+      'Stop waiting for the perfect moment. Take the moment and make it perfect.',
+      'Your network is your net worth. Build real relationships, not just contacts.',
+      'Revenue solves most problems. Ship faster.',
+      'Every master was once a disaster. Keep going.',
+      'The goal is not to be perfect by the end. The goal is to be better today.',
+      'Build in public. Learn in public. Grow in public.',
+      'Ideas without execution are just dreams. Execute daily.',
+      'Your biggest competitor is your yesterday self.',
+      'Done is better than perfect. Launch and iterate.',
+      'The man who moves a mountain begins by carrying away small stones.',
+      'Excellence is not a destination but a continuous journey.',
+      'Lagos hustle is different. You were built for this.',
+      'Wealth is built quietly, one decision at a time.',
+      'Code it. Ship it. Iterate it. That is the whole game.'
+    ];
+    const q = quotes[Math.floor(Math.random() * quotes.length)];
+    return '💡 *Quote of the Moment*\n\n_' + q + '_';
+  }
+
+  if (cmd === '/affirmation') {
+    const aff = [
+      'I am Rabiu Hamza. I build things that matter. I ship fast and learn faster.',
+      'Every line of code I write brings the Harz ecosystem closer to dominance.',
+      'I am the architect of a 10-platform empire. I execute with precision.',
+      'My ideas are valid. My timing is perfect. My team is capable.',
+      'I attract the right clients, the right partners, and the right capital.',
+      'I am disciplined, focused, and unstoppable in pursuit of my vision.',
+      'The Harz ecosystem will serve millions. I am building that future today.',
+      'I delegate what slows me, execute what matters, and rest without guilt.',
+      'My wealth grows because my value to others grows daily.',
+      'I am exactly where I need to be, moving at exactly the right speed.'
+    ];
+    const a = aff[Math.floor(Math.random() * aff.length)];
+    return '🔥 *Your Affirmation*\n\n_' + a + '_\n\nRepeat it 3x. Own it.';
+  }
+
+  if (cmd === '/challenge') {
+    const challenges = [
+      '🎯 Today: Cold-pitch ONE potential client for any of your platforms. Real DM, real offer.',
+      '🎯 Today: Post ONE piece of content to the AI Global channel about a Harz platform.',
+      '🎯 Today: Review one of your GitHub repos and push at least one meaningful commit.',
+      '🎯 Today: Identify ONE bottleneck in your business and fix or delegate it before midnight.',
+      '🎯 Today: Set up ONE automation that will save you 30+ minutes every week going forward.',
+      '🎯 Today: Write down 3 revenue ideas for any of your 10 platforms. Pick one to implement.',
+      '🎯 Today: Do a 10-minute deep work session on your most delayed project. Just 10 minutes.',
+      '🎯 Today: Reach out to ONE person in your network who could become a partner or customer.',
+      '🎯 Today: Add ONE feature to any platform that users would immediately notice and love.',
+      '🎯 Today: Document ONE process in your business that only lives in your head right now.'
+    ];
+    const c = challenges[Math.floor(Math.random() * challenges.length)];
+    return c + '\n\nReport back with /done when finished. 💪';
+  }
+
+  // ===== SPRINT & PROJECT PLANNING =====
+  if (cmd === '/sprint') {
+    if(!a1) return 'Usage: /sprint [project] | [goal] | [days]\nExample: /sprint BuildBot | Launch payment flow | 7';
+    const project = a1;
+    const goal = a2 || 'Complete milestone';
+    const days = parseInt(a3||'7');
+    return '🏃 *Sprint Plan: ' + project + '*\n\nGoal: ' + goal + '\nDuration: ' + days + ' days\n\nDay 1-2: Design + architecture\nDay 3-4: Core implementation\nDay 5-6: Testing + QA\nDay ' + days + ': Deploy + review\n\nTrack with /tasks. Log blockers with /error. Report progress with /standup ' + project;
+  }
+
+  if (cmd === '/milestone') {
+    if(!a1) return 'Usage: /milestone [project] | [milestone] | [deadline]';
+    return '🏁 *Milestone Set*\n\nProject: ' + a1 + '\nMilestone: ' + (a2||'MVP complete') + '\nDeadline: ' + (a3||'TBD') + '\n\nBreak it into tasks: /addtask [step]\nTrack daily: /standup ' + a1;
+  }
+
+  // ===== HARZ-SPECIFIC COMMANDS =====
+  if (cmd === '/harzdm') {
+    return '🛒 *HarzDM Marketplace*\n\nURL: harzdm-marketplace.vercel.app\nRevenue split: 90% seller / 10% platform\nPayments: Stripe (USD) + Paystack (NGN)\nEntities: Product, Seller, Order\nGitHub: github.com/rabiuhamza11/harzdm-marketplace (v1.0.0)\n\nBackend functions:\nharzDM | harzDMCheckout | harzDMDashboard\nharzDMCatalog | harzDMSellerSignup | harzWebhook\n\nStatus: LIVE ✅ (Stripe test mode)';
+  }
+
+  if (cmd === '/buildbot') {
+    return '🏗️ *BuildBot AI*\n\nURL: superagent-2286fb2f.base44.app/functions/buildbotAI\nTiers: Basic ₦15k/mo | Pro ₦45k/mo\nPayments: Paystack\nGitHub: github.com/rabiuhamza11/buildbot-ai (v1.0)\n\nJuly 2026 prices loaded:\nCement: ₦11,300/bag | Iron 12mm: ₦8,500\nBasic: ₦180k/sqm | Standard: ₦350k | Luxury: ₦500k\nSVG floor plan generator: LIVE\n\nAdmin: /functions/buildbotAdmin\nStatus: LIVE ✅';
+  }
+
+  if (cmd === '/contentpilot') {
+    return '🚀 *ContentPilot AI*\n\nURL: superagent-2286fb2f.base44.app/functions/contentPilotDashboard\nTiers: Starter $15 | Pro $39 | Agency $99/mo\nNGN equiv: ₦15k | ₦35k | ₦85k\nPayments: Paystack + Stripe\nEntity: ContentPilotSubscriber\n\nStatus: LIVE ✅ (test mode)\nCheckout: /functions/contentPilotCheckout\nWebhook: /functions/contentPilotWebhook';
+  }
+
+  if (cmd === '/nexal') {
+    return '📢 *Nexal Media*\n\nURL: superagent-2286fb2f.base44.app/functions/nexalMedia\nPackages: Starter ₦15,000 (FB+IG) | Growth ₦50,000 (6 platforms)\nPlatforms: Facebook, Instagram, TikTok, YouTube, X, LinkedIn\nEntity: NexalAdSubmission\nPayment: Paystack\n\nStatus: LIVE ✅ (test mode)\nFlow: Submit → Checkout → Webhook → DB record';
+  }
+
+  if (cmd === '/omega') {
+    return '⚡ *OMEGA INFINITY 1000*\n\nURL: omega-infinity-dashboard.vercel.app\nStack: Next.js + NestJS + TypeScript + PostgreSQL + Docker\n10 AI Agent roles: Executive, Planner, Backend, Frontend,\nDatabase, QA, Security, DevOps, Documentation, Deployment\nGitHub: github.com/rabiuhamza11/omega-infinity-1000 (v1.0)\n\nEntities: OmegaWorkspace, RagChunk, OmegaInfinityProject\nPackager: omega-ai-packager (v0.3.0)\nStatus: LIVE ✅';
+  }
+
+  if (cmd === '/tradeos') {
+    return '📈 *TradeOS*\n\nURL: tradeos-dashboard-fawn.vercel.app\nExchanges: Binance, Coinbase, Alpaca, OANDA, Kraken\nData: Real-time Kraken integration\nSecurity: AES-256-GCM\nPackages: web | api | mobile | desktop | voice | video\nGitHub: github.com/rabiuhamza11/tradeos (v1.0)\n\nStatus: LIVE ✅';
+  }
+
+  if (cmd === '/maganu') {
+    return '🤖 *Maganu v6.1*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 130+ | Commands: 110+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
+  }
+
+  if (cmd === '/hostmaster') {
+    return '🌐 *HostMaster AI*\n\nStatus: Prototype LIVE (Base44)\nModules: Domain registration, Web hosting, VPS,\nAI website builder, DNS management, Billing portal\nEntities: HMDomain, HMHostingOrder, HMTicket, HMInvoice\n\nNext step: Namecheap reseller account ($50 min) + static IP\nOr: Cloudflare/Dynadot API key for live registrations\n\nDual-registrar fallback: Cloudflare (at-cost) + Dynadot';
+  }
+
+  if (cmd === '/oracle') {
+    return '🔮 *Oracle AI*\n\nApp ID: 6a1e2ae23020fb3c9af2fc4d\nURL: superagent-2286fb2f.base44.app/functions/oracleAI\n\nModules: Astrology | Astronomy | Ramli (Geomancy)\nHisab (Calculation) | Numerology | Daily Reading\n\nMonetization:\nFree: 1 reading/day\nSingle: ₦500/reading\nMonthly: ₦2,500/unlimited\nPayment: Paystack\n\nEntity: OracleSession\nStatus: LIVE ✅';
+  }
+
+  // ===== BROADCAST TOOLS =====
+  if (cmd === '/wamsg') {
+    if(!rest) return 'Usage: /wamsg [your message]\nI will format it as a WhatsApp broadcast.';
+    return '📤 *WhatsApp Broadcast Ready*\n\n' + rest + '\n\n---\nCopy and send to your AI Global channel or groups.';
+  }
+
+  if (cmd === '/caption') {
+    if(!a1) return 'Usage: /caption [platform] | [topic]\nExample: /caption instagram | BuildBot AI launch';
+    return require('./services/writer').generateAdCopy(a1, a2||'Harz platform', 'entrepreneurs', 'engagement');
+  }
+
+  // ===== KNOWLEDGE BASE =====
+  if (cmd === '/omega1000') {
+    const k = require('./services/knowledge');
+    const info = k.searchKnowledge(rest||'omega infinity');
+    return '🧠 *OMEGA 1000 Knowledge*\n\n' + (info||'Ask me anything about the OMEGA INFINITY 1000 framework — science, philosophy, engineering, business.');
+  }
+
+  if (cmd === '/know') {
+    if(!rest) return 'Usage: /know [topic]\nSearch the OMEGA 1000 knowledge base.';
+    const k = require('./services/knowledge');
+    const info = k.searchKnowledge(rest);
+    return '🧠 *' + rest + '*\n\n' + (info||'Not in knowledge base — try /research ' + rest);
+  }
+
+  // ===== FILE & DATA TOOLS =====
+  if (cmd === '/template') {
+    const templates = {
+      invoice: 'INVOICE\n---\nFrom: [Your Name]\nTo: [Client Name]\nDate: ' + new Date().toLocaleDateString('en-NG') + '\n\nServices:\n1. [Description] — ₦[Amount]\n\nSubtotal: ₦[X]\nVAT (7.5%): ₦[Y]\nTotal: ₦[Z]\n\nBank: [Bank Name]\nAccount: [Account Number]\nDue: [Date]',
+      proposal: 'PROJECT PROPOSAL\n---\nProject: [Name]\nClient: [Name]\nDate: ' + new Date().toLocaleDateString('en-NG') + '\n\nObjective:\n[What you will build]\n\nDeliverables:\n1. [Item 1]\n2. [Item 2]\n\nTimeline: [X weeks]\nBudget: ₦[Amount]\n\nNext Step: [Call/Meeting/Deposit]',
+      nda: 'NON-DISCLOSURE AGREEMENT\n---\nBetween: [Party A] and [Party B]\nDate: ' + new Date().toLocaleDateString('en-NG') + '\n\nConfidential Information includes all technical,\nbusiness, and financial data shared between parties.\n\nDuration: 2 years from signing\nJurisdiction: Lagos, Nigeria\n\nSigned: _________  Date: ______'
+    };
+    const type = (rest||'invoice').toLowerCase();
+    return '📄 *' + type.toUpperCase() + ' Template*\n\n' + (templates[type]||templates.invoice);
+  }
+
+  // ===== NIGERIAN BUSINESS TOOLS =====
+  if (cmd === '/cac') {
+    return '🏢 *CAC Business Registration Guide*\n\nStep 1: Go to search.cac.gov.ng\nCheck if business name is available\n\nStep 2: Register at portal.cac.gov.ng\nBusiness Name (BN): ₦10,000\nPrivate Company (Ltd): ₦35,000\n\nStep 3: Required docs\nMeans of ID (NIN/Intl Passport)\nAddress proof\nProprietary Declaration form\n\nStep 4: Timeline\nBN: 48-72 hours online\nLimited: 2-4 weeks\n\nFor FIRS TIN after CAC: tin.jtb.gov.ng';
+  }
+
+  if (cmd === '/naira') {
+    if(!rest) return 'Usage: /naira [USD amount]\nExample: /naira 500';
+    const usdAmt = parseFloat(rest.replace(/[^0-9.]/g,''));
+    if(!usdAmt) return '❌ Invalid amount';
+    const ngn = usdAmt * 1650;
+    return '💱 *USD → NGN*\n\n$' + usdAmt.toLocaleString() + ' USD\n= *₦' + ngn.toLocaleString() + '*\n\n(Rate: ₦1,650/USD — check /rate for live rate)';
+  }
+
+  if (cmd === '/pitch') {
+    if(!a1) return 'Usage: /pitch [product] | [audience] | [problem]\nExample: /pitch BuildBot AI | contractors | manual cost estimation';
+    return require('./services/writer').generateProposal(a2||'Investors', a1, '').then ? 
+      require('./services/writer').generateProposal(a2||'Investors', a1, '') :
+      '🎤 *Elevator Pitch: ' + a1 + '*\n\nProblem: ' + (a3||'Manual, time-consuming process') + '\nSolution: ' + a1 + ' automates this using AI.\nMarket: ' + (a2||'Nigerian SMEs') + '\nTraction: Early adopters, live platform\nAsk: Invest or partner with us.\nContact: harzco.business@gmail.com';
+  }
+
+
+  // ===== WEATHER =====
+  if (cmd === '/weather') {
+    const weather = require('./services/weather');
+    const city = rest || 'lagos';
+    return await weather.getWeather(city);
+  }
+
+  // ===== PRODUCTIVITY / POMODORO =====
+  if (cmd === '/timer') {
+    const prod = require('./services/productivity');
+    if (!rest || rest === 'status') return prod.checkTimer(sessionId);
+    if (rest === 'stop') return prod.stopTimer(sessionId);
+    return prod.startTimer(sessionId, rest);
+  }
+  if (cmd === '/win') { if(!rest) return 'Usage: /win [what you accomplished]'; const prod=require('./services/productivity'); return prod.addWin(rest); }
+  if (cmd === '/wins') { const prod=require('./services/productivity'); return prod.getWins(); }
+  if (cmd === '/journal') { if(!rest) return 'Usage: /journal [your thoughts]'; const prod=require('./services/productivity'); return prod.addJournal(rest); }
+  if (cmd === '/myjournal') { const prod=require('./services/productivity'); return prod.getJournal(); }
+  if (cmd === '/prodstats') { const prod=require('./services/productivity'); return prod.getProductivityStats(); }
+
+  // ===== UTILITY TOOLS =====
+  if (cmd === '/wordcount') { if(!rest) return 'Usage: /wordcount [paste text]'; const t=require('./services/tools'); return t.analyzeText(rest); }
+  if (cmd === '/wc') { if(!rest) return 'Usage: /wc [paste text]'; const t=require('./services/tools'); return t.analyzeText(rest); }
+  if (cmd === '/uuid') { const t=require('./services/tools'); return t.generateUUID(); }
+  if (cmd === '/b64') {
+    const t=require('./services/tools');
+    if(!a1) return 'Usage: /b64 encode [text] or /b64 decode [text]';
+    if(a1.toLowerCase()==='encode') return t.base64Encode(args.slice(1).join(' '));
+    if(a1.toLowerCase()==='decode') return t.base64Decode(args.slice(1).join(' '));
+    return t.base64Encode(rest);
+  }
+  if (cmd === '/loan') {
+    const t=require('./services/tools');
+    if(!a1||!a2||!a3) return 'Usage: /loan [principal] | [annual rate%] | [months]\nExample: /loan 5000000 | 18 | 24';
+    return t.loanCalculator(a1, a2, a3);
+  }
+  if (cmd === '/age') { if(!rest) return 'Usage: /age [YYYY-MM-DD]'; const t=require('./services/tools'); return t.calcAge(rest); }
+  if (cmd === '/tip') {
+    const t=require('./services/tools');
+    if(!a1) return 'Usage: /tip [amount] | [tip%] | [people]\nExample: /tip 25000 | 10 | 3';
+    return t.calcTip(a1, parseFloat(a2||'10'), parseInt(a3||'1'));
+  }
+  if (cmd === '/word') { const t=require('./services/tools'); return t.wordOfTheDay(); }
+  if (cmd === '/percent') { if(!rest) return 'Usage: /percent 15% of 500000\n/percent 20% off 120000\n/percent 75000 is what % of 500000'; const t=require('./services/tools'); return t.calcPercent(rest); }
+  if (cmd === '/genpass') {
+    const t=require('./services/tools');
+    const len=parseInt(args[0])||16;
+    return t.generatePassword(len);
+  }
+
+  // ===== ADDITIONAL NIGERIAN TOOLS =====
+  if (cmd === '/paye') {
+    if(!rest) return 'Usage: /paye [annual salary in NGN]\nExample: /paye 6000000';
+    const n=require('./services/nigerian');
+    return n.payeCalculator ? n.payeCalculator(rest.replace(/,/g,'')) : 'PAYE calculator not loaded';
+  }
+  if (cmd === '/holidays') { const n=require('./services/nigerian'); return n.nigerianPublicHolidays ? n.nigerianPublicHolidays() : 'Holiday data not loaded'; }
+  if (cmd === '/biz') {
+    const n=require('./services/nigerian');
+    const type=rest||'bn';
+    return n.getBusinessFormationCost ? n.getBusinessFormationCost(type) : '/biz [bn|ltd|ngo|llp]';
+  }
+
+  // ===== ADVANCED BUSINESS TOOLS =====
+  if (cmd === '/swot') {
+    if(!a1) return 'Usage: /swot [product or company]\nExample: /swot BuildBot AI';
+    return await think({ message: `Create a concise SWOT analysis for: ${rest}. Format with Strengths, Weaknesses, Opportunities, Threats. Context: This is a Nigerian tech startup. Be specific and actionable.`, from, sessionId, memory: [] });
+  }
+  if (cmd === '/okr') {
+    if(!a1) return 'Usage: /okr [team or product]\nExample: /okr ContentPilot AI Q3 2026';
+    return await think({ message: `Create 3 OKRs (Objectives and Key Results) for: ${rest}. Each objective should have 2-3 measurable key results. Context: Nigerian tech startup ecosystem, July 2026.`, from, sessionId, memory: [] });
+  }
+  if (cmd === '/market') {
+    if(!rest) return 'Usage: /market [industry or product]\nExample: /market AI construction tools Nigeria';
+    return await think({ message: `Provide a brief market analysis for: ${rest}. Include: market size estimate, key players, growth trends, Nigerian market angle, and opportunity. Be specific with numbers where possible.`, from, sessionId, memory: [] });
+  }
+  if (cmd === '/valuation') {
+    if(!a1) return 'Usage: /valuation [MRR] | [multiplier]\nExample: /valuation 500000 | 24';
+    const mrr = parseFloat(String(a1).replace(/,/g,''));
+    const mult = parseFloat(a2||'24');
+    const arr = mrr * 12;
+    const val = arr * mult;
+    return `📊 *SaaS Valuation Estimate*\n\nMRR: ₦${mrr.toLocaleString()}\nARR: ₦${arr.toLocaleString()}\nMultiplier: ${mult}x ARR\n\nEstimated Valuation: *₦${val.toLocaleString()}*\n($${(val/1650/1000000).toFixed(2)}M USD)\n\nNote: Early-stage Nigerian SaaS typically 8-20x ARR`;
+  }
+  if (cmd === '/runway') {
+    if(!a1||!a2) return 'Usage: /runway [cash balance] | [monthly burn]\nExample: /runway 5000000 | 800000';
+    const cash = parseFloat(String(a1).replace(/,/g,''));
+    const burn = parseFloat(String(a2).replace(/,/g,''));
+    const months = Math.floor(cash / burn);
+    const date = new Date(); date.setMonth(date.getMonth() + months);
+    return `🏃 *Runway Calculator*\n\nCash: ₦${cash.toLocaleString()}\nMonthly Burn: ₦${burn.toLocaleString()}\nRunway: *${months} months*\nZero date: ${date.toLocaleDateString('en-NG', {month:'long', year:'numeric'})}\n\n${months < 6 ? '⚠️ CRITICAL — raise or cut costs NOW' : months < 12 ? '⚡ Moderate — start fundraising' : '✅ Healthy runway'}`;
+  }
+  if (cmd === '/churn') {
+    if(!a1||!a2) return 'Usage: /churn [churned customers] | [total customers]\nExample: /churn 3 | 50';
+    const churned = parseFloat(a1), total = parseFloat(a2);
+    const rate = (churned / total * 100).toFixed(2);
+    const ltv_mult = rate > 0 ? (100 / parseFloat(rate)).toFixed(1) : 'infinite';
+    return `📉 *Churn Analysis*\n\nChurned: ${churned} / ${total} customers\nChurn Rate: *${rate}%*\nLTV Multiplier: ~${ltv_mult}x ARPU\n\n${parseFloat(rate) > 10 ? '🔴 High churn — investigate immediately' : parseFloat(rate) > 5 ? '🟡 Moderate — improve onboarding' : '🟢 Healthy churn rate'}`;
+  }
+
+  // ===== HARZ ECOSYSTEM REVENUE TRACKER =====
+  if (cmd === '/revenue') {
+    const platforms = [
+      { name: 'BuildBot AI', tiers: 'Basic ₦15k | Pro ₦45k', status: 'test' },
+      { name: 'ContentPilot', tiers: '$15/$39/$99/mo', status: 'test' },
+      { name: 'Nexal Media', tiers: '₦15k-₦50k/campaign', status: 'test' },
+      { name: 'HarzDM', tiers: '10% commission', status: 'test' },
+      { name: 'Oracle AI', tiers: '₦500/reading | ₦2,500/mo', status: 'test' },
+      { name: 'HostMaster AI', tiers: 'Domain + Hosting', status: 'prototype' },
+    ];
+    let msg = `💰 *Harz Revenue Overview*\n\n`;
+    platforms.forEach(p => {
+      const icon = p.status === 'test' ? '🟡' : '⚪';
+      msg += `${icon} ${p.name}\n   ${p.tiers}\n`;
+    });
+    msg += `\nAll in test mode — awaiting Paystack/Stripe live verification.\nType /mrr [customers] | [price] to project revenue.`;
+    return msg;
+  }
+
+  // ===== QUICK INFO COMMANDS =====
+  if (cmd === '/todaytip') {
+    const tips = [
+      'Deploy one small update to any platform today. Forward motion beats perfection.',
+      'Check your Paystack dashboard — verify that business documents are submitted.',
+      'Write one piece of content about any Harz platform. Post to AI Global channel.',
+      'Review one GitHub repo — push a README update or small fix.',
+      'Message one potential customer about BuildBot AI. Real outreach, real feedback.',
+      'Set up one new automation. Even 5 minutes saved daily = 30 hours/year.',
+      'Review your domain portfolio — any renewals coming up? Any new opportunities?',
+      'Look at your apps from a visitor perspective. What is confusing?',
+      'Price check: are your rates competitive with the Nigerian market? /buildbot',
+      'One chapter review: reread one chapter of The Complete Genius 365 today.'
+    ];
+    const tip = tips[new Date().getDate() % tips.length];
+    return `💡 *Daily Tip*\n\n${tip}\n\nFrom your agent, Maganu.`;
+  }
+
+  if (cmd === '/version') {
+    return `🤖 *Maganu v6.2*\n\nCapabilities: 170+\nCommands: 140+\nModel: llama-4-scout (30k TPM)\nNew in v6.2:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
+  }
+
+
   // ===== AI FALLBACK =====
+
 
   const memory = getMemory(sessionId);
   const response = await think({ message: raw, from, sessionId, memory });
@@ -413,7 +876,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v6.0.0 — ${PORT} | 130+ capabilities | 110+ commands`);
+  console.log(`🤖 Maganu v6.0.0 — ${PORT} | 155+ capabilities | 130+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

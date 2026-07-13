@@ -80,7 +80,7 @@ const COMMANDS = {
     return '* Maganu v6.0 Online*\n\nHey ' + (from || 'Rabiu') + '! Full intelligence loaded.\n\n10 Harz platforms | 116 capabilities\nNigerian market data | OMEGA knowledge\nScheduler: 5 daily automations\n\nType /help for all commands.';
   },
   '/status': function() {
-    return '*Maganu v6.0 - All Systems Online*\n\nModel: Llama-4-scout (30k TPM)\nOwner Chat ID: 1440727973\nScheduler: 5 daily automations active\nPayments: Paystack + Stripe (TEST MODE)\nGitHub: 9+ repos connected\nHarz Ecosystem: 10/10 platforms live\n\nReady, Rabiu.';
+    return '*Maganu v6.2 - All Systems Online*\n\nModel: Llama-4-scout (30k TPM)\nOwner Chat ID: 1440727973\nScheduler: 5 daily automations active\nPayments: Paystack + Stripe (TEST MODE)\nGitHub: 9+ repos connected\nHarz Ecosystem: 10/10 platforms live\n\nReady, Rabiu.';
   },
   '/ecosystem': function() {
     return '*Harz Ecosystem - 10/10 Live*\n\n1. HarzDM - harzdm-marketplace.vercel.app\n2. OMEGA INFINITY - omega-infinity-dashboard.vercel.app\n3. TradeOS - tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI - Base44 (NGN15k-NGN45k/mo)\n5. ContentPilot AI - Base44 ($15-$99/mo)\n6. Abuja Estate City - abuja-estate-city-ai.vercel.app\n7. Nexal Media - Base44 (NGN15k-NGN50k)\n8. DeployForge - Base44\n9. Nigerian Number Lookup - Base44\n10. OMEGA DocMaster X - Base44\n\nIn Dev: HostMaster AI, Apex Bank';

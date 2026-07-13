@@ -86,3 +86,45 @@ async function checkPriceAlert(threshold, direction = 'above') {
 }
 
 module.exports = { getExchangeRate, calculateVAT, calculateWHT, getFIRSChecklist, getCBNContext, formatNigerianInvoice, checkPriceAlert };
+
+// ─── Additional Nigerian business tools ───
+function getBusinessFormationCost(type = 'bn') {
+  const types = {
+    bn: { name: 'Business Name', cost: 10000, time: '48-72 hours', body: 'CAC' },
+    ltd: { name: 'Private Company (Ltd)', cost: 35000, time: '2-4 weeks', body: 'CAC' },
+    ngo: { name: 'NGO / Foundation', cost: 20000, time: '3-6 weeks', body: 'CAC' },
+    llp: { name: 'Limited Liability Partnership', cost: 30000, time: '2-3 weeks', body: 'CAC' },
+  };
+  const t = types[type.toLowerCase()] || types.bn;
+  return `*${t.name}*\nCost: ₦${t.cost.toLocaleString()}\nTimeline: ${t.time}\nBody: ${t.body}\nPortal: portal.cac.gov.ng`;
+}
+
+function nigerianPublicHolidays() {
+  const holidays = [
+    'Jan 1 — New Year', 'Apr 18 — Good Friday', 'Apr 21 — Easter Monday',
+    'May 1 — Workers Day', 'Jun 12 — Democracy Day', 'Oct 1 — Independence Day',
+    'Dec 25 — Christmas', 'Dec 26 — Boxing Day', 'Eid-el-Fitr (Islamic cal)',
+    'Eid-el-Kabir (Islamic cal)', 'Eid-el-Maulud (Islamic cal)'
+  ];
+  return '*2026 Nigerian Public Holidays*\n\n' + holidays.join('\n');
+}
+
+function payeCalculator(annualSalary) {
+  const amt = parseFloat(String(annualSalary).replace(/,/g, ''));
+  if (!amt) return 'Provide annual salary in NGN';
+  // PAYE: first 300k @ 7%, next 300k @ 11%, next 500k @ 15%, next 500k @ 19%, next 1.6m @ 21%, above @ 24%
+  const brackets = [[300000, 0.07], [300000, 0.11], [500000, 0.15], [500000, 0.19], [1600000, 0.21], [Infinity, 0.24]];
+  let tax = 0, remaining = amt;
+  for (const [limit, rate] of brackets) {
+    const taxable = Math.min(remaining, limit);
+    tax += taxable * rate;
+    remaining -= taxable;
+    if (remaining <= 0) break;
+  }
+  const net = amt - tax;
+  return `*PAYE Calculator*\n\nGross Annual: ₦${amt.toLocaleString()}\nGross Monthly: ₦${(amt/12).toLocaleString('en-NG',{maximumFractionDigits:0})}\nAnnual Tax: ₦${tax.toLocaleString('en-NG',{maximumFractionDigits:0})}\nMonthly Tax: ₦${(tax/12).toLocaleString('en-NG',{maximumFractionDigits:0})}\nNet Monthly Take-home: *₦${(net/12).toLocaleString('en-NG',{maximumFractionDigits:0})}*`;
+}
+
+module.exports.getBusinessFormationCost = getBusinessFormationCost;
+module.exports.nigerianPublicHolidays = nigerianPublicHolidays;
+module.exports.payeCalculator = payeCalculator;

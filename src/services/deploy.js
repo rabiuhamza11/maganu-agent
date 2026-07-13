@@ -4,7 +4,7 @@ const axios = require('axios');
 const GITHUB_OWNER = 'rabiuhamza11';
 const HEADERS_GH = () => ({
   Authorization: `token ${process.env.GITHUB_TOKEN}`,
-  'User-Agent': 'Maganu-Agent/6.0',
+  'User-Agent': 'Maganu-Agent/6.2',
   Accept: 'application/vnd.github.v3+json',
   'Content-Type': 'application/json'
 });
@@ -96,7 +96,7 @@ async function createRepo(repoName, description, isPrivate = false) {
 // ============ VERCEL ============
 async function deployVercel(repoName) {
   try {
-    const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
+    const VERCEL_TOKEN = process.env.VERCEL_TOKEN_2 || process.env.VERCEL_TOKEN;
     const userRes = await axios.get('https://api.vercel.com/v2/user', {
       headers: { Authorization: `Bearer ${VERCEL_TOKEN}` }
     });

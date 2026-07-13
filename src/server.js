@@ -65,7 +65,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `👋 *Maganu v6.0 — Ultimate Edition*\n\nHey ${from}!\n\n116 capabilities | 95+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
+  if (cmd === '/start') return `👋 *Maganu v6.0 — Ultimate Edition*\n\nHey ${from}!\n\n130+ capabilities | 110+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -77,7 +77,7 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `🟢 *Maganu v6.0 Online*\n\n116 capabilities | 95+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
+  if (cmd === '/status') return `🟢 *Maganu v6.0 Online*\n\n130+ capabilities | 110+ commands\nModel: Groq Llama 3.3 70B\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
 
   if (cmd === '/help') return `🤖 *Maganu v6.0 — 65+ Commands*\n\n*System*\n/status /ecosystem /clear\n\n*Payments*\n/payments /paystack /stripe /revenue\n\n*Deploy*\n/repos /github /commit [repo] [msg]\n/deploy /netlify /render /railway [repo]\n/logs [id]\n\n*Productivity*\n/today /week /uptime\n/tasks /addtask /done /deltask\n\n*CRM*\n/crm /addclient /followup /invoice /leads\n\n*Nigerian Tools*\n/vat /wht /firs /cbn /rate /nginvoice\n\n*Intelligence*\n/crypto — live prices\n/domain [name] — availability\n/ssl [domain] — cert check\n/trending — GitHub hot repos\n/funding — African startup news\n/producthunt — today's launches\n\n*Research*\n/search /research /competitor\n/review /arch /summarize\n\n*Analytics*\n/traffic /codestats /market /digest\n\n*Learning*\n/techdigest /skill /flashcard /books\n\n*Habits*\n/habits /addhabit [name] /habit [name]\n\n*Business Docs*\n/proposal [client] | [project] | [budget]\n/sop [process] | [steps]\n/jd [role] | [company] | [reqs]\n/press [headline] | [product] | [detail]\n/contract [paste text]\n\n*Outreach & Content*\n/drip [product] | [audience]\n/outreach [role] | [company] | [product]\n/calendar30 [platform] | [topic]\n/newsletter [platform] | [highlights]\n/thread [topic]\n/linkedin [topic] | [audience]\n/ad [platform] | [product] | [audience]\n/podcast [topic] | [audience]\n/youtube [title] | [niche]\n\n*Strategy*\n/pivot [idea] | [problem]\n/tam [idea] | [geography]\n/features [product] | [backlog]\n/exit [platform] | [metrics]\n\n*Business Builder*\n/launch /pricing /abtest /names\n\n*Security*\n/password [password]\n/secaudit [codebase]\n\n*Content*\n/chapter /promo /post /broadcast\n\n/email [to subject] | [body]`;
 
@@ -253,7 +253,109 @@ async function processUpdate(chatId, text, from, sessionId) {
   if (cmd === '/onboarding') { if(!a1) return 'Usage: /onboarding [role] | [company] | [tools]'; return await devtools.generateOnboardingDoc(a1,a2,a3); }
   if (cmd === '/review') { if(a1&&a2) return await devtools.generatePerformanceReview(a1,a2,a3,a4); if(!rest) return 'Usage: /review [code] or /perf [name] | [role]'; return await research.reviewCode(rest); }
 
+  // ===== HARZ DASHBOARD =====
+  if (cmd === '/dashboard') {
+    const uptime = await monitor.getUptimeReport();
+    const rate = await nigerian.getExchangeRate();
+    const coins = await intelligence.getCryptoPrices(['bitcoin','ethereum']);
+    const now = new Date().toLocaleString('en-NG',{timeZone:'Africa/Lagos'});
+    return `🏢 *Harz Ecosystem Dashboard*\n📅 ${now}\n\n🌐 *Platforms*\n✅ HarzDM — harzdm-marketplace.vercel.app\n✅ OMEGA INFINITY — omega-infinity-dashboard.vercel.app\n✅ TradeOS — tradeos-dashboard-fawn.vercel.app\n✅ BuildBot AI — Base44 live\n✅ ContentPilot AI — Base44 live\n✅ Abuja Estate City — abuja-estate-city-ai.vercel.app\n✅ Nexal Media — Base44 live\n✅ DeployForge — Base44 live\n✅ Maganu — Render live\n\n💱 *Market*\nUSD/NGN: ₦${Math.round(rate.usdNgn||1650)}\n${coins}\n\n💳 *Payments*\nPaystack: TEST MODE (pending verify)\nStripe: TEST MODE (pending activate)\n\nType /uptime for server status`;
+  }
+
+  // ===== NEWS & INTEL =====
+  if (cmd === '/news') {
+    const topic = rest || 'Nigeria tech startup AI';
+    try {
+      const url = 'https://api.duckduckgo.com/?q=' + encodeURIComponent(topic) + '&format=json&no_html=1';
+      const r = await axios.get(url, {timeout:8000});
+      const d = r.data;
+      const items = [];
+      if (d.AbstractText) items.push(d.AbstractText);
+      (d.RelatedTopics||[]).slice(0,4).forEach(function(t){ if(t.Text) items.push(t.Text); });
+      return '📰 *News: ' + topic + '*\n\n' + (items.join('\n\n') || 'No results found.');
+    } catch(e) { return '📰 Search error: ' + e.message; }
+  }
+
+  if (cmd === '/nigeriannews') {
+    try {
+      const r = await axios.get('https://api.duckduckgo.com/?q=Nigeria+business+tech+startup+today&format=json&no_html=1',{timeout:8000});
+      const d = r.data;
+      const items = [];
+      if(d.AbstractText) items.push(d.AbstractText);
+      (d.RelatedTopics||[]).slice(0,5).forEach(function(t){ if(t.Text) items.push(t.Text); });
+      return '🇳🇬 *Nigeria Business & Tech*\n\n' + (items.join('\n\n') || 'No results found.');
+    } catch(e) { return '❌ Error: ' + e.message; }
+  }
+
+  // ===== CURRENCY & FINANCE =====
+  if (cmd === '/convert') {
+    const amount = parseFloat(args[0]?.replace(/,/g,''));
+    const from2 = (args[1]||'USD').toUpperCase();
+    const to2 = (args[2]||'NGN').toUpperCase();
+    if(!amount) return 'Usage: /convert [amount] [from] [to]\nExample: /convert 100 USD NGN';
+    try {
+      const rates = await nigerian.getExchangeRate();
+      let result;
+      if(from2==='USD'&&to2==='NGN') result = amount * (rates.usdNgn||1650);
+      else if(from2==='NGN'&&to2==='USD') result = amount / (rates.usdNgn||1650);
+      else if(from2==='GBP'&&to2==='NGN') result = amount * (rates.gbpNgn||2100);
+      else if(from2==='NGN'&&to2==='GBP') result = amount / (rates.gbpNgn||2100);
+      else result = amount;
+      return '💱 *Currency*\n\n' + amount.toLocaleString() + ' ' + from2 + ' = *' + result.toLocaleString('en-NG',{maximumFractionDigits:2}) + ' ' + to2 + '*\nRate: 1 USD ≈ ₦' + Math.round(rates.usdNgn||1650);
+    } catch(e) { return '❌ Rate error: ' + e.message; }
+  }
+
+  if (cmd === '/roi') {
+    const invest = parseFloat(args[0]?.replace(/,/g,''));
+    const returns = parseFloat(args[1]?.replace(/,/g,''));
+    if(!invest||!returns) return 'Usage: /roi [investment] [returns]\nExample: /roi 500000 850000';
+    const roi = ((returns - invest) / invest * 100).toFixed(2);
+    const profit = (returns - invest).toLocaleString('en-NG');
+    return '📊 *ROI Analysis*\n\nInvestment: ₦' + invest.toLocaleString() + '\nReturns: ₦' + returns.toLocaleString() + '\nProfit: ₦' + profit + '\nROI: *' + roi + '%*\n\n' + (parseFloat(roi)>0?'✅ Profitable':'❌ Loss-making');
+  }
+
+  if (cmd === '/mrr') {
+    const arr = rest.split('|').map(s=>s.trim());
+    const customers = parseInt(arr[0]);
+    const arpu = parseFloat((arr[1]||'0').replace(/,/g,''));
+    if(!customers||!arpu) return 'Usage: /mrr [customers] | [avg monthly price]';
+    const mrr = customers * arpu;
+    const arr12 = mrr * 12;
+    return '💰 *MRR Calculator*\n\nCustomers: ' + customers + '\nARPU: ₦' + arpu.toLocaleString() + '\nMRR: *₦' + mrr.toLocaleString() + '*\nARR: *₦' + arr12.toLocaleString() + '*\n($' + (mrr/1650).toFixed(0) + ' USD/mo)';
+  }
+
+  // ===== APP BUILDING GUIDANCE =====
+  if (cmd === '/buildguide') {
+    const type = (rest||'saas').toLowerCase();
+    const g = {
+      saas: '🏗️ *SaaS Build Guide*\n\n1. Entity schemas (User, Subscription, Product)\n2. Auth via createClientFromRequest()\n3. Paystack (NGN) or Stripe (USD) checkout backend fn\n4. HTML frontend in Deno.serve() — inline CSS+JS\n5. Deploy at base44.app/functions/name\n6. Webhook for payment callbacks\n7. Entity CRUD via @base44/sdk',
+      landing: '🏗️ *Landing Page Guide*\n\n1. Hero + CTA\n2. Features grid (3-9 items)\n3. Pricing cards (3 tiers)\n4. Testimonials + FAQ\n5. Footer + contact\n\nAll in one Deno.serve() fn. Full inline CSS. No frameworks needed.',
+      api: '🏗️ *API Build Guide*\n\n1. POST: await req.json()\n2. SDK: import createClientFromRequest from base44/sdk\n3. Entity: sdk.entities.Name.filter({})\n4. CORS: Access-Control-Allow-Origin: *\n5. Always return JSON with status codes'
+    };
+    return g[type] || g.saas;
+  }
+
+  if (cmd === '/buildtemplate') {
+    const type = (rest||'').toLowerCase();
+    if(type==='api') return '📄 *API Template*\n\n```ts\nimport { createClientFromRequest } from \'npm:@base44/sdk@0.8.31\';\nDeno.serve(async (req) => {\n  const CORS = { \'Access-Control-Allow-Origin\': \'*\' };\n  if (req.method === \'OPTIONS\') return new Response(null, {status:200,headers:CORS});\n  const body = await req.json();\n  const sdk = createClientFromRequest(req);\n  const data = await sdk.entities.YourEntity.filter({});\n  return new Response(JSON.stringify(data), {headers:{...CORS,\'Content-Type\':\'application/json\'}});\n});```';
+    return '📄 *Landing Template*\n\n```ts\nDeno.serve(async (req) => {\n  const html = `<!DOCTYPE html><html><head><title>App</title></head><body><h1>Hello</h1></body></html>`;\n  return new Response(html, {headers:{\'Content-Type\':\'text/html\'}});\n});```\n\nMore: /buildtemplate api';
+  }
+
+  // ===== QUICK ECOSYSTEM INFO =====
+  if (cmd === '/links') {
+    return '🔗 *Harz Ecosystem Links*\n\nharzdm-marketplace.vercel.app\nomega-infinity-dashboard.vercel.app\ntradeos-dashboard-fawn.vercel.app\nabuja-estate-city-ai.vercel.app\nsuperagent-2286fb2f.base44.app/functions/buildbotAI\nsuperagent-2286fb2f.base44.app/functions/contentPilotDashboard\nsuperagent-2286fb2f.base44.app/functions/nexalMedia\nsuperagent-2286fb2f.base44.app/functions/fluxLinks\nmaganu-agent.onrender.com';
+  }
+
+  if (cmd === '/base44') {
+    return '⚡ *Base44 Platform*\n\nFunction URL: https://superagent-2286fb2f.base44.app/functions/name\n\nActive functions:\nbuildbot AI | contentPilotDashboard | contentPilotCheckout\nnexalMedia | harzWebhook | oracleAI\nnigerianNumberLookup | abujaEstateCityAI | fluxLinks\n\nLanguage: TypeScript/Deno — runs serverless';
+  }
+
+  if (cmd === '/stack') {
+    return '🛠️ *Harz Tech Stack*\n\n*Hosting*\nBase44 — backend functions (Deno/TS)\nVercel — static frontends\nRender — Node.js services (Maganu)\n\n*AI*\nBase44 Superagent — primary AI\nMaganu — Groq llama-4-scout Telegram\nGroq API — fast LLM inference\n\n*Payments*\nPaystack (NGN, test mode)\nStripe (USD, test mode)\n\n*Database*\nBase44 entities (MongoDB-backed)\n\n*Languages*\nTypeScript/Deno (functions)\nJavaScript/Node.js (Maganu)\nHTML/CSS/JS (frontends)\nNext.js (OMEGA dashboard)';
+  }
+
   // ===== AI FALLBACK =====
+
   const memory = getMemory(sessionId);
   const response = await think({ message: raw, from, sessionId, memory });
   addToMemory(sessionId, { role: 'user', content: raw });
@@ -311,7 +413,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v6.0.0 — ${PORT} | 116 capabilities | 95+ commands`);
+  console.log(`🤖 Maganu v6.0.0 — ${PORT} | 130+ capabilities | 110+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

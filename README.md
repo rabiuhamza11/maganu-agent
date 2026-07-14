@@ -1,28 +1,56 @@
-# Maganu AI Agent v6.2
+# Maganu AI Agent v7.0 — Financial Edition
 
-Autonomous executive AI brain of the Harz Enterprise ecosystem.
+🤖 **Maganu AI** — Rabiu Hamza's personal AI assistant and Harz Ecosystem controller.
 
-## Overview
-Maganu is a production-grade autonomous AI agent with 170+ capabilities and 140+ commands. Powered by Groq llama-4-scout (30,000 TPM).
+## What's New in v7.0
 
-## Capabilities
-- Real-time ecosystem dashboards & reporting
-- GitHub repo creation, branch management & file pushing
-- Unified Paystack/Stripe payment monitoring
-- Automated daily briefings via Telegram & WhatsApp
-- 40-message context window, 32,768 token output
-- Exponential backoff retry logic (rate-limit safe)
-- Honesty protocol: never claims tasks done without verification
+### 💰 Financial Transactions
+- **Bank Transfers** — Send money to any Nigerian bank account
+- **Payment Links** — Generate checkout links for customers
+- **Refunds** — Process full or partial refunds
+- **Account Verification** — Verify bank account names instantly
+- **Transfer Recipients** — Create and manage recipients
+- **Transaction Lookup** — Full transaction details by reference
 
-## Live
-https://maganu-agent.onrender.com
+### 💳 Payment Gateways
+- **Paystack** — Full API integration (payments, transfers, refunds, banks)
+- **Stripe** — Checkout sessions, charges, refunds
+- **Flutterwave** — Payment links, balance, transactions
+- **Auto-routing** — NGN → Paystack, USD → Stripe
 
-## Commands (sample)
-- /status all — full ecosystem health check
-- /paystack — payment breakdown across 6 platforms
-- /git list — list all GitHub repos
-- /dashboard — business metrics overview
-- /version — confirm current version
+### 🚀 Enhanced Capabilities
+- 200+ capabilities (up from 170)
+- 165+ commands (up from 140)
+- Financial operations module
+- Multi-gateway payment link generation
+- Real-time bank verification
+- Nigerian bank directory
 
-## Part of Harz Enterprise
-https://github.com/rabiuhamza11
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/pay [email] [amt] [cur] \| [desc]` | Create payment link |
+| `/transfer [amt] \| [recipient] \| [reason]` | Bank transfer |
+| `/recipient [name] \| [acct] \| [bank]` | Create transfer recipient |
+| `/verify [acct] \| [bank]` | Verify account name |
+| `/banks` | List Nigerian banks |
+| `/refund [ref] \| [amt]` | Refund transaction |
+| `/txn [ref]` | Transaction details |
+| `/finalize [code] \| [otp]` | Finalize transfer |
+| `/flw [amt] \| [email] \| [name] \| [phone]` | Flutterwave payment |
+| `/gateway` | Payment gateway status |
+
+## Architecture
+- **Runtime**: Node.js + Express
+- **AI**: Groq llama-4-scout (30k TPM)
+- **Host**: Render.com
+- **Payments**: Paystack + Stripe + Flutterwave
+- **Deploy**: Vercel + Netlify + Render + Railway
+
+## Owner
+**Rabiu Hamza Mohammed** (hamzarabiu390@gmail.com)
+Telegram: @Maganu AI Agent
+
+---
+Built with ❤️ by Rabiu Hamza | Harz Ecosystem

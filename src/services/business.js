@@ -5,27 +5,16 @@ const axios = require('axios');
 // Uses Gmail via SMTP (nodemailer) or Resend API
 const EMAIL_FROM = process.env.BUSINESS_EMAIL || 'harzco.business@gmail.com';
 
-async function sendEmail(to, subject, body) {
-  // Try Resend API first (if API key is set)
-  const resendKey = process.env.RESEND_API_KEY;
-  if (resendKey) {
-    try {
-      const res = await axios.post('https://api.resend.com/emails', {
-        from: `Maganu AI <${EMAIL_FROM}>`,
-        to, subject, html: body.replace(/\n/g, '<br>'),
-      }, { headers: { Authorization: `Bearer ${resendKey}` }, timeout: 10000 });
-      return { success: true, id: res.data?.id, provider: 'resend' };
-    } catch (e) {
-      return { success: false, error: e.response?.data?.message || e.message };
-    }
+async function sendEmail(to, subject, body, fromName) {
+  // Use Base44 Gmail bridge (live Gmail integration)
+  try {
+    const res = await axios.post('https://superagent-2286fb2f.base44.app/functions/emailBridge', {
+      to, subject, body, fromName: fromName || 'Maganu AI'
+    }, { timeout: 15000 });
+    return res.data;
+  } catch (e) {
+    return { success: false, error: e.response?.data?.error || e.message };
   }
-  
-  // Fallback: use a simple mailto link
-  return {
-    success: false,
-    error: 'No email API key configured. Set RESEND_API_KEY on Render for live email sending.',
-    mailto: `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
-  };
 }
 
 async function handleSendEmail(args) {
@@ -38,7 +27,7 @@ async function handleSendEmail(args) {
   const [to, subject, ...bodyParts] = parts;
   const body = bodyParts.join(' | ');
   
-  const result = await sendEmail(to, subject, body);
+  const result = await sendEmail(to, subject, body, 'Maganu AI');
   if (result.success) {
     return `📧 *Email Sent*\n\nTo: ${to}\nSubject: ${subject}\n\n✅ Delivered (ID: ${result.id})`;
   }

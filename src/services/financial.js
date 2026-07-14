@@ -269,8 +269,59 @@ async function handleGatewayStatus() {
   return msg;
 }
 
+
+// /quickpay [amount] | [reason]
+// Quick transfer to owner's UBA account — no recipient code needed
+async function handleQuickPay(args) {
+  const [amountStr, ...reasonParts] = args;
+  const reason = reasonParts.join(' ') || 'Owner withdrawal';
+  
+  const accountNumber = process.env.OWNER_BANK_ACCOUNT;
+  const bankCode = process.env.OWNER_BANK_CODE;
+  const bankName = process.env.OWNER_BANK_NAME;
+  
+  if (!accountNumber || !bankCode) {
+    return '❌ Owner bank account not configured. Set OWNER_BANK_ACCOUNT and OWNER_BANK_CODE in Render env.';
+  }
+  
+  const amount = parseFloat(amountStr);
+  if (isNaN(amount) || amount <= 0) return '❌ Invalid amount. Usage: /quickpay [amount] | [reason]';
+  
+  // Step 1: Create recipient using owner's bank details
+  const recipient = await payments.createRecipient({
+    name: 'Rabiu Hamza Mohammed',
+    account_number: accountNumber,
+    bank_code: bankCode,
+  });
+  
+  if (recipient.error) return '❌ Failed to create recipient: ' + recipient.error;
+  
+  // Step 2: Initiate transfer
+  const transfer = await payments.initiateTransfer({
+    amount,
+    recipient_code: recipient.recipient_code,
+    reason,
+  });
+  
+  if (transfer.error) return '❌ Transfer failed: ' + transfer.error;
+  
+  let msg = '💸 *Quick Pay to Your UBA Account*\n\n';
+  msg += 'Amount: ' + transfer.amount + '\n';
+  msg += 'Bank: ' + (bankName || 'UBA') + '\n';
+  msg += 'Account: ' + accountNumber + '\n';
+  msg += 'Status: ' + transfer.status + '\n';
+  msg += 'Transfer Code: ' + transfer.transfer_code + '\n';
+  msg += 'Reason: ' + reason + '\n';
+  msg += '\n' + transfer.message;
+  
+  if (transfer.status === 'pending') {
+    msg += '\n\nTo finalize: /finalize ' + transfer.transfer_code + ' | [OTP]';
+  }
+  return msg;
+}
+
 module.exports = {
   handlePay, handleTransfer, handleRecipient, handleBanks,
   handleVerify, handleRefund, handleTransaction, handleFinalize,
-  handleFlutterwave, handleGatewayStatus,
+  handleFlutterwave, handleGatewayStatus, handleQuickPay,
 };

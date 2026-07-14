@@ -20,6 +20,7 @@ const intelligence = require('./services/intelligence');
 const writer = require('./services/writer');
 const memExt = require('./services/memory_extended');
 const devtools = require('./services/devtools');
+const financial = require('./services/financial');
 
 const app = express();
 app.use(express.json());
@@ -65,7 +66,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `👋 *Maganu v6.2 — Ultimate Edition*\n\nHey ${from}!\n\n170+ capabilities | 140+ commands\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.0 — Financial Edition*\n\nHey ${from}!\n\n200+ capabilities | 165+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -77,9 +78,9 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `🟢 *Maganu v6.2 Online*\n\n170+ capabilities | 140+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\nPayments: Stripe + Paystack\nDeploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. 🔥`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.0 Online*\n\n200+ capabilities | 165+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
 
-  if (cmd === '/help') return `🤖 *Maganu v6.2 — 170+ Commands*
+  if (cmd === '/help') return `🤖 *Maganu v7.0 — 170+ Commands*
 
 *System*
 /status /ecosystem /dashboard /clear
@@ -96,7 +97,7 @@ async function processUpdate(chatId, text, from, sessionId) {
 /redeploy /logs
 
 *Payments*
-/payments /paystack /stripe /revenue
+/payments /paystack /stripe /revenue\n*Financial*\n/pay [email] [amt] [cur] | [desc]\n/transfer [amt] | [recipient] | [reason]\n/recipient [name] | [acct] | [bank]\n/verify [acct] | [bank]\n/banks /refund [ref] | [amt]\n/txn [ref] /finalize [code] | [otp]\n/flw [amt] | [email] | [name] | [phone]\n/gateway
 /mrr [customers] | [price]
 /roi [invest] [returns]
 /forecast [mrr] [growth%] [months]
@@ -339,6 +340,41 @@ Or just chat naturally — I understand plain language.`;
 
   // ===== PAYMENTS =====
   if (cmd === '/payments' || cmd === '/revenue') return await payments.getFullPaymentReport();
+
+  // ===== FINANCIAL TRANSACTIONS (v7.0) =====
+  if (cmd === '/gateway') return financial.handleGatewayStatus();
+  if (cmd === '/pay') {
+    const payArgs = rest.split('|').map(s => s?.trim());
+    const [email, amountStr, currency = 'NGN'] = payArgs[0]?.split(' ') || [];
+    return financial.handlePay([email, amountStr, currency, payArgs[1] || '']);
+  }
+  if (cmd === '/transfer') {
+    const transferArgs = rest.split('|').map(s => s?.trim());
+    return financial.handleTransfer([transferArgs[0], transferArgs[1], transferArgs[2] || '']);
+  }
+  if (cmd === '/recipient') {
+    const recipientArgs = rest.split('|').map(s => s?.trim());
+    return financial.handleRecipient(recipientArgs);
+  }
+  if (cmd === '/banks') return financial.handleBanks();
+  if (cmd === '/verify') {
+    const verifyArgs = rest.split('|').map(s => s?.trim());
+    return financial.handleVerify(verifyArgs);
+  }
+  if (cmd === '/refund') {
+    const refundArgs = rest.split('|').map(s => s?.trim());
+    return financial.handleRefund(refundArgs);
+  }
+  if (cmd === '/txn') return financial.handleTransaction(args);
+  if (cmd === '/finalize') {
+    const finArgs = rest.split('|').map(s => s?.trim());
+    return financial.handleFinalize(finArgs);
+  }
+  if (cmd === '/flw') {
+    const flwArgs = rest.split('|').map(s => s?.trim());
+    return financial.handleFlutterwave(flwArgs);
+  }
+
   if (cmd === '/paystack') {
     const s = await payments.getPaystackStats();
     if (s.error) return '❌ Paystack Error: ' + s.error;
@@ -656,7 +692,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/maganu') {
-    return '🤖 *Maganu v6.2*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 170+ | Commands: 140+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
+    return '🤖 *Maganu v7.0*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 170+ | Commands: 140+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
   }
 
   if (cmd === '/hostmaster') {
@@ -862,7 +898,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/version') {
-    return `🤖 *Maganu v6.2*\n\nCapabilities: 170+\nCommands: 140+\nModel: llama-4-scout (30k TPM)\nNew in v6.2:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
+    return `🤖 *Maganu v7.0*\n\nCapabilities: 170+\nCommands: 140+\nModel: llama-4-scout (30k TPM)\nNew in v7.0:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
   }
 
 
@@ -916,7 +952,7 @@ app.post('/notify', async (req, res) => {
 });
 
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '6.2.0', status: 'online', capabilities: 170, commands: 140, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.0.0', status: 'online', capabilities: 200, commands: 165, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {
@@ -926,7 +962,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v6.2.0 — ${PORT} | 170+ capabilities | 140+ commands`);
+  console.log(`🤖 Maganu v7.0.0 — ${PORT} | 200+ capabilities | 165+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

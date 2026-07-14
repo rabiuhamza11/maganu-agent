@@ -4,7 +4,7 @@ const axios = require('axios');
 const GITHUB_OWNER = 'rabiuhamza11';
 const HEADERS_GH = () => ({
   Authorization: `token ${process.env.GITHUB_TOKEN}`,
-  'User-Agent': 'Maganu-Agent/6.2',
+  'User-Agent': 'Maganu-Agent/7.0',
   Accept: 'application/vnd.github.v3+json',
   'Content-Type': 'application/json'
 });

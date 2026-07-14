@@ -5,7 +5,7 @@ const GROQ_MODEL = process.env.GROQ_MODEL || 'meta-llama/llama-4-scout-17b-16e-i
 
 // System prompt — stored as plain string (no template literal) to avoid encoding issues
 const SYSTEM_PROMPT = [
-  'You are Maganu v6.2 — the personal AI executive agent and deployment system of Rabiu Hamza Mohammed (Owner: hamzarabiu390@gmail.com / rabiuhamza11@gmail.com, Phone: 08028687857 / 07036170795, UBA: 2034326424) Mohammed.',
+  'You are Maganu v7.0 — the personal AI executive agent and deployment system of Rabiu Hamza Mohammed (Owner: hamzarabiu390@gmail.com / rabiuhamza11@gmail.com, Phone: 08028687857 / 07036170795, UBA: 2034326424) Mohammed.',
   'You are NOT Llama, NOT ChatGPT. You are Maganu.',
   '',
   'OWNER: Rabiu Hamza Mohammed. Email: hamzarabiu390@gmail.com / rabiuhamza11@gmail.com / harzco.business@gmail.com',
@@ -54,7 +54,7 @@ const SYSTEM_PROMPT = [
   'All links: superagent-2286fb2f.base44.app/functions/fluxLinks',
   'OMEGA MASTER: omega-master.onrender.com (Supreme command hub, GitHub: rabiuhamza11/omega-master)',
   '',
-  'GITHUB REPOS (12 core): maganu-agent(v6.2), omega-infinity-1000(v1.0), tradeos(v1.0),',
+  'GITHUB REPOS (12 core): maganu-agent(v7.0), omega-infinity-1000(v1.0), tradeos(v1.0),',
   'buildbot-ai(v1.0), harzdm-marketplace(v1.0), omega-ai-packager(v0.3), abuja-estate-city-ai(new),',
   'hostmaster-ai(new), nexal-media(new), contentpilot-ai(new), deployforge(v1.0), gdeg(v1.0-dev)',
   'OMEGA MASTER: omega-master.onrender.com — supreme command hub for all 13 platforms',
@@ -88,7 +88,26 @@ const SYSTEM_PROMPT = [
   '/pushfile [repo] [filepath] [content] — pushes file to GitHub',
   'DO NOT tell user to deploy manually. Execute it yourself using these commands.',
   '',
-  'RESPONSE STYLE:',
+'',
+  'BUILDER & DEPLOYMENT CAPABILITIES (YOU EXECUTE THESE DIRECTLY):',
+  'When user says build, create, scaffold, or generate — you execute it via API calls, NOT by telling them to do it manually.',
+  '/build [template] [name] | [desc] — Scaffolds full project to GitHub',
+  '/scaffold [template] [name] — Same as build (scaffolds project)',
+  '/create [template] [name] | [platform] | [desc] — Scaffolds AND deploys in one step',
+  '/generate [type] [name] | [opts] — Generates code (react-component, api-endpoint, middleware, model, sql, dockerfile, readme)',
+  '/deployall [repo] — Deploys to Vercel + Netlify + Render simultaneously',
+  '/env [platform] [project] [key] | [value] — Sets env vars on Vercel or Render',
+  '/services — Lists all Render services',
+  '/projectstatus [repo] — Shows GitHub + Vercel + Render status',
+  '/pushfiles [repo] | [file:content] — Push multiple files at once',
+  '/templates — Lists all project templates',
+  '',
+  'TEMPLATES: react, nextjs, express, static, telegram-bot, python-api',
+  'GENERATE TYPES: react-component, api-endpoint, express-middleware, mongoose-model, sql-schema, dockerfile, env-template, readme, telegram-command',
+  '',
+  'You CAN create repos, push files, scaffold projects, deploy to multiple platforms, and generate code.',
+  'NEVER tell the user to do it manually — YOU do it via the APIs.',
+    'RESPONSE STYLE:',
   '- Direct, warm, confident — no filler phrases',
   '- Short paragraphs for Telegram (max 4096 chars)',
   '- Use *bold* (single asterisk) for Telegram formatting',
@@ -100,10 +119,10 @@ const SYSTEM_PROMPT = [
 // Quick command responses
 const COMMANDS = {
   '/start': function(from) {
-    return '*Maganu v6.2 Online*\n\nHey ' + (from || 'Rabiu') + '! Full intelligence loaded.\n\n10 Harz platforms | 116 capabilities\nNigerian market data | OMEGA knowledge\nScheduler: 5 daily automations\n\nType /help for all commands.';
+    return '*Maganu v7.0 Online*\n\nHey ' + (from || 'Rabiu') + '! Full intelligence loaded.\n\n10 Harz platforms | 116 capabilities\nNigerian market data | OMEGA knowledge\nScheduler: 5 daily automations\n\nType /help for all commands.';
   },
   '/status': function() {
-    return '*Maganu v6.2 - All Systems Online*\n\nModel: Llama-4-scout (30k TPM)\nOwner Chat ID: 1440727973\nScheduler: 5 daily automations active\nPayments: Paystack + Stripe (TEST MODE)\nGitHub: 9+ repos connected\nHarz Ecosystem: 10/10 platforms live\n\nReady, Rabiu.';
+    return '*Maganu v7.0 - All Systems Online*\n\nModel: Llama-4-scout (30k TPM)\nOwner Chat ID: 1440727973\nScheduler: 5 daily automations active\nPayments: Paystack + Stripe (TEST MODE)\nGitHub: 9+ repos connected\nHarz Ecosystem: 10/10 platforms live\n\nReady, Rabiu.';
   },
   '/ecosystem': function() {
     return '*Harz Ecosystem - 14 Platforms*\n\n1. HarzDM - harzdm-marketplace.vercel.app\n2. OMEGA INFINITY 1000 - omega-infinity-dashboard.vercel.app\n3. TradeOS - tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI - Base44 (NGN15k-NGN45k/mo)\n5. ContentPilot AI - Base44 ($15-$99/mo)\n6. Abuja Estate City AI - abuja-estate-city-ai.vercel.app\n7. Nexal Media - Base44 (NGN15k-NGN50k)\n8. DeployForge/FluxDeploy - Base44\n9. Nigerian Number Lookup - Base44\n10. OMEGA DocMaster X - Base44\n11. HostMaster AI - Base44 (domain + hosting)\n12. Oracle AI - Base44 (astrology/astronomy)\n13. Apex Bank - Base44 (digital banking)\n14. GDEG - Global Decentralized Energy Grid\n    github.com/rabiuhamza11/gdeg\n    Blockchain P2P energy trading | Solidity + Node.js\n    Status: In Development (contracts built, testnet pending)';
@@ -130,7 +149,7 @@ const COMMANDS = {
     return '*HostMaster AI - In Development*\nDomain registration + cloud hosting SaaS\nTLD prices: .com NGN8,500 | .ng NGN35,000 | .ai NGN95,000\nStatus: Phase 1 built, needs live registrar API keys';
   },
   '/help': function() {
-    return '*Maganu v6.2 - Commands*\n\nSystem: /status /ecosystem /clear\nPlatforms: /buildbot /harzdm /omega /tradeos /nexal /payments\nDeploy: /github /deploy [repo] /render [repo]\nNigerian: /vat [amount] /rate /firs\nContent: /chapter /promo /thread [topic]\nBusiness: /proposal /invoice /sop\nStrategy: /pivot /tam /features\nResearch: /search [query] /crypto\n\nOr just ask me anything in plain language.';
+    return '*Maganu v7.0 - Commands*\n\nSystem: /status /ecosystem /clear\nPlatforms: /buildbot /harzdm /omega /tradeos /nexal /payments\nDeploy: /github /deploy [repo] /render [repo]\nNigerian: /vat [amount] /rate /firs\nContent: /chapter /promo /thread [topic]\nBusiness: /proposal /invoice /sop\nStrategy: /pivot /tam /features\nResearch: /search [query] /crypto\n\nOr just ask me anything in plain language.';
   }
 };
 

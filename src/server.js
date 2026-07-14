@@ -446,6 +446,38 @@ Or just chat naturally — I understand plain language.`;
   if (cmd === '/headers') return security.handleHeadersCheck();
   if (cmd === '/reposec') return security.handleRepoSecurity();
 
+
+  // ===== AI CREATIVE (v7.1) =====
+  if (cmd === '/image' || cmd === '/generate') return aiCreative.handleGenerateImage(args);
+  if (cmd === '/ecoimage') return aiCreative.handleEcoImage(args);
+  if (cmd === '/translate') return aiCreative.handleTranslate(args);
+  if (cmd === '/languages') return aiCreative.handleLanguages();
+
+  // ===== BUSINESS (v7.1) =====
+  if (cmd === '/sendemail') return business.handleSendEmail(args);
+  if (cmd === '/emailtemplate') return business.handleEmailTemplate(args);
+  if (cmd === '/pdf' || cmd === '/document') return business.handleGenerateDoc(args);
+  if (cmd === '/invoice') return business.handleInvoice(args);
+  if (cmd === '/tax') return business.handleTax(args);
+
+  // ===== ANALYTICS (v7.1) =====
+  if (cmd === '/forecast') return analytics.handleForecast(args);
+  if (cmd === '/cashflow') return analytics.handleCashFlow();
+  if (cmd === '/churn') return analytics.handleChurnAnalysis();
+  if (cmd === '/scrape') return analytics.handleScrape(args);
+  if (cmd === '/marketintel' || cmd === '/intel') return analytics.handleMarketIntel(args);
+  if (cmd === '/review') return analytics.handleCodeReview(args);
+  if (cmd === '/reviewall') return analytics.handleReviewAll();
+
+  // ===== BLOCKCHAIN (v7.1) =====
+  if (cmd === '/auditcontract') return blockchain.handleAuditContract(args);
+  if (cmd === '/gas') return blockchain.handleGasEstimate(args);
+
+  // ===== BACKUP (v7.1) =====
+  if (cmd === '/backup') return backup.handleBackup();
+  if (cmd === '/restore') return backup.handleRestore(args);
+  if (cmd === '/backupstatus') return backup.handleBackupStatus();
+
   if (cmd === '/flw') {
     const flwArgs = rest.split('|').map(s => s?.trim());
     return financial.handleFlutterwave(flwArgs);

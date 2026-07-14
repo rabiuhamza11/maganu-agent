@@ -21,6 +21,7 @@ const writer = require('./services/writer');
 const memExt = require('./services/memory_extended');
 const devtools = require('./services/devtools');
 const financial = require('./services/financial');
+const builder = require('./services/builder-commands');
 
 const app = express();
 app.use(express.json());
@@ -66,7 +67,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.0 — Financial Edition*\n\nHey ${from}!\n\n200+ capabilities | 165+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.0 — Financial Edition*\n\nHey ${from}!\n\n220+ capabilities | 180+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -78,7 +79,7 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.0 Online*\n\n200+ capabilities | 165+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.0 Online*\n\n220+ capabilities | 180+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
 
   if (cmd === '/help') return `🤖 *Maganu v7.0 — 170+ Commands*
 
@@ -374,6 +375,37 @@ Or just chat naturally — I understand plain language.`;
     const qpArgs = rest.split('|').map(s => s?.trim());
     return financial.handleQuickPay(qpArgs);
   }
+
+  // ===== BUILDER & DEPLOYMENT (v7.0) =====
+  if (cmd === '/build' || cmd === '/scaffold') {
+    const buildArgs = rest.split('|').map(s => s?.trim());
+    const [template, ...nameParts] = (buildArgs[0] || '').split(' ');
+    const desc = buildArgs[1] || '';
+    return cmd === '/scaffold' 
+      ? builder.handleScaffold([template, ...nameParts])
+      : builder.handleBuild([template, ...nameParts, desc ? '|' + desc : '']);
+  }
+  if (cmd === '/create') {
+    const createArgs = rest.split('|').map(s => s?.trim());
+    return builder.handleCreate(createArgs);
+  }
+  if (cmd === '/generate' || cmd === '/gen') {
+    const genArgs = rest.split('|').map(s => s?.trim());
+    return builder.handleGenerate(genArgs);
+  }
+  if (cmd === '/deployall') return builder.handleDeployAll(args);
+  if (cmd === '/env') {
+    const envArgs = rest.split('|').map(s => s?.trim());
+    return builder.handleEnv(envArgs);
+  }
+  if (cmd === '/services') return builder.handleServices();
+  if (cmd === '/projectstatus' || cmd === '/pstatus') return builder.handleProjectStatus(args);
+  if (cmd === '/pushfiles' || cmd === '/pushmulti') {
+    const pfArgs = rest.split('|').map(s => s?.trim());
+    return builder.handlePushFiles(pfArgs);
+  }
+  if (cmd === '/templates') return builder.handleTemplates();
+
   if (cmd === '/flw') {
     const flwArgs = rest.split('|').map(s => s?.trim());
     return financial.handleFlutterwave(flwArgs);
@@ -966,7 +998,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.0.0 — ${PORT} | 200+ capabilities | 165+ commands`);
+  console.log(`🤖 Maganu v7.0.0 — ${PORT} | 220+ capabilities | 180+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

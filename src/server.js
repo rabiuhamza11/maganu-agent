@@ -370,6 +370,10 @@ Or just chat naturally — I understand plain language.`;
     const finArgs = rest.split('|').map(s => s?.trim());
     return financial.handleFinalize(finArgs);
   }
+  if (cmd === '/quickpay') {
+    const qpArgs = rest.split('|').map(s => s?.trim());
+    return financial.handleQuickPay(qpArgs);
+  }
   if (cmd === '/flw') {
     const flwArgs = rest.split('|').map(s => s?.trim());
     return financial.handleFlutterwave(flwArgs);

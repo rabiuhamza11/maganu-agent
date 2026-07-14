@@ -84,7 +84,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.0 — Financial Edition*\n\nHey ${from}!\n\n400+ capabilities | 230+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.1 — Financial Edition*\n\nHey ${from}!\n\n400+ capabilities | 230+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -96,9 +96,9 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.0 Online*\n\n400+ capabilities | 230+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.1 Online*\n\n400+ capabilities | 230+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
 
-  if (cmd === '/help') return `🤖 *Maganu v7.0 — 170+ Commands*
+  if (cmd === '/help') return `🤖 *Maganu v7.1 — 170+ Commands*
 
 *System*
 /status /ecosystem /dashboard /clear
@@ -359,7 +359,7 @@ Or just chat naturally — I understand plain language.`;
   // ===== PAYMENTS =====
   if (cmd === '/payments' || cmd === '/revenue') return await payments.getFullPaymentReport();
 
-  // ===== FINANCIAL TRANSACTIONS (v7.0) =====
+  // ===== FINANCIAL TRANSACTIONS (v7.1) =====
   if (cmd === '/gateway') return financial.handleGatewayStatus();
   if (cmd === '/pay') {
     const payArgs = rest.split('|').map(s => s?.trim());
@@ -393,7 +393,7 @@ Or just chat naturally — I understand plain language.`;
     return financial.handleQuickPay(qpArgs);
   }
 
-  // ===== BUILDER & DEPLOYMENT (v7.0) =====
+  // ===== BUILDER & DEPLOYMENT (v7.1) =====
   if (cmd === '/build' || cmd === '/scaffold') {
     const buildArgs = rest.split('|').map(s => s?.trim());
     const [template, ...nameParts] = (buildArgs[0] || '').split(' ');
@@ -439,7 +439,7 @@ Or just chat naturally — I understand plain language.`;
   if (cmd === '/loancalc') return banking.handleLoanCalc(args);
 
 
-  // ===== SECURITY (v7.0) =====
+  // ===== SECURITY (v7.1) =====
   if (cmd === '/security' || cmd === '/audit') return security.handleSecurityAudit();
   if (cmd === '/secstatus') return security.handleSecurityStatus();
   if (cmd === '/secrets' || cmd === '/secretscan') return security.handleSecretScan();
@@ -800,7 +800,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/maganu') {
-    return '🤖 *Maganu v7.0*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 170+ | Commands: 140+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
+    return '🤖 *Maganu v7.1*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 170+ | Commands: 140+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
   }
 
   if (cmd === '/hostmaster') {
@@ -1006,7 +1006,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/version') {
-    return `🤖 *Maganu v7.0*\n\nCapabilities: 170+\nCommands: 140+\nModel: llama-4-scout (30k TPM)\nNew in v7.0:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
+    return `🤖 *Maganu v7.1*\n\nCapabilities: 170+\nCommands: 140+\nModel: llama-4-scout (30k TPM)\nNew in v7.1:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
   }
 
 

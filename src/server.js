@@ -23,6 +23,7 @@ const devtools = require('./services/devtools');
 const financial = require('./services/financial');
 const builder = require('./services/builder-commands');
 const banking = require('./services/banking');
+const bankManager = require("./services/bank-manager");
 const security = require('./services/security');
 const aiCreative = require('./services/ai-creative');
 const bizOps = require('./services/business');
@@ -84,7 +85,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.1 — Financial Edition*\n\nHey ${from}!\n\n400+ capabilities | 230+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.2 — Financial Edition*\n\nHey ${from}!\n\n500+ capabilities | 260+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -96,9 +97,9 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.1 Online*\n\n400+ capabilities | 230+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.2 Online*\n\n500+ capabilities | 260+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
 
-  if (cmd === '/help') return `🤖 *Maganu v7.1 — 170+ Commands*
+  if (cmd === '/help') return `🤖 *Maganu v7.2 — 170+ Commands*
 
 *System*
 /status /ecosystem /dashboard /clear
@@ -116,6 +117,11 @@ async function processUpdate(chatId, text, from, sessionId) {
 
 *Payments*
 /payments /paystack /stripe /revenue\n*Financial*\n/pay [email] [amt] [cur] | [desc]\n/transfer [amt] | [recipient] | [reason]\n/recipient [name] | [acct] | [bank]\n/verify [acct] | [bank]\n/banks /refund [ref] | [amt]\n/txn [ref] /finalize [code] | [otp]\n/flw [amt] | [email] | [name] | [phone]\n/gateway
+*Bank Manager*
+/mdashboard /mstmt [days] /mtransfers
+/mrisk /msettlements /mcustomers
+/mrecipients /mreport [weekly|monthly]
+/mwallet
 /mrr [customers] | [price]
 /roi [invest] [returns]
 /forecast [mrr] [growth%] [months]
@@ -437,6 +443,16 @@ Or just chat naturally — I understand plain language.`;
   if (cmd === '/paybill') return banking.handlePayBill(args);
   if (cmd === '/convert') return banking.handleConvert(args);
   if (cmd === '/loancalc') return banking.handleLoanCalc(args);
+  // ===== BANK MANAGER OPERATIONS (v7.2) =====
+  if (cmd === "/mdashboard" || cmd === "/manager") return await bankManager.managerDashboard();
+  if (cmd === "/mstmt" || cmd === "/statement") { if(!args[0]) return "Usage: /mstmt [days]\nExample: /mstmt 30 — last 30 days statement"; return await bankManager.accountStatement(args[0]); }
+  if (cmd === "/mtransfers" || cmd === "/mpending") return await bankManager.pendingTransfers();
+  if (cmd === "/mrisk" || cmd === "/fraud") return await bankManager.riskMonitor();
+  if (cmd === "/msettlements" || cmd === "/msett") return await bankManager.settlementSchedule();
+  if (cmd === "/mcustomers" || cmd === "/customers") return await bankManager.customerDirectory();
+  if (cmd === "/mrecipients" || cmd === "/allrecipients") return await bankManager.recipientDirectory();
+  if (cmd === "/mreport") { return await bankManager.fullReport(args[0] || "weekly"); }
+  if (cmd === "/mwallet") return await bankManager.walletCheck();
 
 
   // ===== SECURITY (v7.1) =====
@@ -800,7 +816,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/maganu') {
-    return '🤖 *Maganu v7.1*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 170+ | Commands: 140+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
+    return '🤖 *Maganu v7.2*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 500+ | Commands: 260+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
   }
 
   if (cmd === '/hostmaster') {
@@ -1006,7 +1022,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/version') {
-    return `🤖 *Maganu v7.1*\n\nCapabilities: 170+\nCommands: 140+\nModel: llama-4-scout (30k TPM)\nNew in v7.1:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
+    return `🤖 *Maganu v7.2*\n\nCapabilities: 500+\nCommands: 260+\nModel: llama-4-scout (30k TPM)\nNew in v7.1:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
   }
 
 
@@ -1070,7 +1086,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.1.0 — ${PORT} | 400+ capabilities | 230+ commands`);
+  console.log(`🤖 Maganu v7.2.0 — ${PORT} | 500+ capabilities | 260+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

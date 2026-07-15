@@ -25,6 +25,7 @@ const builder = require('./services/builder-commands');
 const banking = require('./services/banking');
 const bankManager = require("./services/bank-manager");
 const bankOps = require("./services/bank-ops");
+const kyc = require("./services/kyc");
 const security = require('./services/security');
 const aiCreative = require('./services/ai-creative');
 const bizOps = require('./services/business');
@@ -86,7 +87,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.3 — Financial Edition*\n\nHey ${from}!\n\n500+ capabilities | 275+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.3 — Financial Edition*\n\nHey ${from}!\n\n500+ capabilities | 280+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -98,7 +99,7 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.3 Online*\n\n500+ capabilities | 275+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.3 Online*\n\n500+ capabilities | 280+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
 
   if (cmd === '/help') return `🤖 *Maganu v7.3 — 170+ Commands*
 
@@ -128,6 +129,11 @@ async function processUpdate(chatId, text, from, sessionId) {
 /quicksend [amt]|[acct]|[bank]|[reason]
 /bulksend /bankcompare /banksintl
 /iban /transferstatus /acchistory /bankstats
+*KYC & Identity*
+/verifybvn [BVN] /verifynin [NIN]
+/verifyacct [acct]|[bank] /linkbank
+/acctbalance [code] /accttxns [code]
+/kycstatus /paystackverify
 /mwallet
 /mrr [customers] | [price]
 /roi [invest] [returns]
@@ -473,6 +479,15 @@ Or just chat naturally — I understand plain language.`;
   if (cmd === "/transferstatus" || cmd === "/tstatus") return await bankOps.transferStatus(args);
   if (cmd === "/acchistory" || cmd === "/acchist") return await bankOps.accountHistory(args);
   if (cmd === "/bankstats" || cmd === "/bankdb") return await bankOps.bankStats();
+  // ===== KYC & IDENTITY VERIFICATION (v7.3) =====
+  if (cmd === "/verifybvn" || cmd === "/bvn") return await kyc.verifyBVN(args);
+  if (cmd === "/verifynin" || cmd === "/nin") return await kyc.verifyNIN(args);
+  if (cmd === "/verifyacct" || cmd === "/kycacct") return await kyc.verifyBankAccount(args);
+  if (cmd === "/linkbank" || cmd === "/connectbank") return await kyc.linkBankAccount(args);
+  if (cmd === "/acctbalance" || cmd === "/realbalance") return await kyc.getRealBalance(args);
+  if (cmd === "/accttxns" || cmd === "/realtxns") return await kyc.getRealTransactions(args);
+  if (cmd === "/kycstatus" || cmd === "/kyc") return kyc.kycStatus();
+  if (cmd === "/paystackverify" || cmd === "/goslive") return kyc.paystackVerification();
 
 
   // ===== SECURITY (v7.1) =====
@@ -1096,7 +1111,7 @@ app.post('/notify', async (req, res) => {
 });
 
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.3.0', status: 'online', capabilities: 500, commands: 275, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.3.1', status: 'online', capabilities: 500, commands: 280, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {
@@ -1106,7 +1121,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.3.0 — ${PORT} | 500+ capabilities | 275+ commands`);
+  console.log(`🤖 Maganu v7.3.1 — ${PORT} | 500+ capabilities | 280+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

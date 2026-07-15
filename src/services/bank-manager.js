@@ -66,7 +66,7 @@ async function managerDashboard() {
     txns.forEach(function(t) {
       if (t.status === 'success' && t.customer && t.customer.email) {
         var e = t.customer.email;
-        custVol[e] = (custVolume[e] || 0) + (t.amount || 0) / 100;
+        custVol[e] = (custVol[e] || 0) + (t.amount || 0) / 100;
       }
     });
     var topCusts = Object.entries(custVol).sort(function(a,b) { return b[1] - a[1]; }).slice(0, 3);

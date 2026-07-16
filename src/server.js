@@ -32,6 +32,7 @@ const bizOps = require('./services/business');
 const analyticsSvc = require('./services/analytics');
 const blockchainSvc = require('./services/blockchain');
 const backupSvc = require('./services/backup');
+const whatsapp = require('./services/whatsapp');
 
 const app = express();
 app.use(express.json());
@@ -87,7 +88,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.4.1 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.5.2 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -99,7 +100,7 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.4.1 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.5.2 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
 
   if (cmd === '/help') return `🤖 *Maganu v7.3 — 170+ Commands*
 
@@ -591,7 +592,7 @@ Or just chat naturally — I understand plain language.`;
 
 
 
-  // ===== FILE BRIDGE (v7.4.1) =====
+  // ===== FILE BRIDGE (v7.5.2) =====
   const FILE_API = 'https://superagent-2286fb2f.base44.app/functions/maganuFiles';
 
   if (cmd === '/myfiles' || cmd === '/files') {
@@ -1293,8 +1294,53 @@ app.post('/notify', async (req, res) => {
   res.json({ ok: true });
 });
 
+
+// ============ WHATSAPP WEBHOOK ============
+// Verification endpoint for Meta setup
+app.get('/wa-webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'harz_ecosystem_2026';
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+    console.log('WhatsApp webhook verified!');
+    return res.status(200).send(challenge);
+  }
+  return res.sendStatus(403);
+});
+
+// Receive WhatsApp messages
+app.post('/wa-webhook', async (req, res) => {
+  res.sendStatus(200);
+  try {
+    const entry = req.body?.entry?.[0];
+    const change = entry?.changes?.[0];
+    const msg = change?.value?.messages?.[0];
+    if (!msg) return;
+
+    const from = msg.from;
+    const text = msg.text?.body || '';
+    const name = change?.value?.contacts?.[0]?.name?.formatted_name || 'Unknown';
+
+    // Skip owner messages (Superagent handles those)
+    if (['2348028687857', '2347036170795'].includes(from)) return;
+
+    console.log(`[WA][${name}] ${text.slice(0,60)}`);
+
+    // Process as command or auto-reply
+    const response = await processUpdate('whatsapp_' + from, text, name, 'wa_' + from);
+
+    // Send response back via WhatsApp
+    if (whatsapp.isReady()) {
+      await whatsapp.send(from, response);
+    }
+  } catch (err) {
+    console.error('WhatsApp webhook error:', err.message);
+  }
+});
+
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.4.1', status: 'online', capabilities: 500, commands: 300, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.5.2', status: 'online', capabilities: 500, commands: 300, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus(), whatsapp: whatsapp.isReady() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {
@@ -1304,7 +1350,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.4.1 — ${PORT} | 500+ capabilities | 300+ commands`);
+  console.log(`🤖 Maganu v7.5.2 — ${PORT} | 500+ capabilities | 300+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

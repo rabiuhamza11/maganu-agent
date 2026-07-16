@@ -1,7 +1,7 @@
 {
   "name": "maganu-agent",
-  "version": "1.2.0",
-  "description": "Maganu \u2014 Custom AI Agent powered by Groq + Telegram. Built by Rabiu Hamza | Harz Ecosystem.",
+  "version": "1.3.0",
+  "description": "Maganu — Custom AI Agent powered by Groq + Telegram + WhatsApp. Built by Rabiu Hamza | Harz Ecosystem.",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -9,6 +9,8 @@
     "build": "echo 'No build step required'"
   },
   "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.0",
+    "@hapi/boom": "^10.0.1",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -16,6 +18,8 @@
     "express-rate-limit": "^7.3.1",
     "helmet": "^7.1.0",
     "node-cron": "^3.0.3",
+    "pino": "^9.4.0",
+    "qrcode-terminal": "^0.12.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
@@ -28,10 +32,12 @@
     "ai-agent",
     "groq",
     "telegram-bot",
+    "whatsapp-bot",
     "maganu",
     "harz",
-    "llama"
+    "llama",
+    "baileys"
   ],
-  "author": "Rabiu Hamza \u2014 Harz Ecosystem",
+  "author": "Rabiu Hamza — Harz Ecosystem",
   "license": "MIT"
 }

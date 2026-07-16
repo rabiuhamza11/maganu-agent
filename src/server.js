@@ -33,6 +33,7 @@ const analyticsSvc = require('./services/analytics');
 const blockchainSvc = require('./services/blockchain');
 const backupSvc = require('./services/backup');
 const whatsapp = require('./services/whatsapp');
+const waBaileys = require('./services/wa-baileys');
 
 const app = express();
 app.use(express.json());
@@ -1339,8 +1340,16 @@ app.post('/wa-webhook', async (req, res) => {
   }
 });
 
+// ============ WHATSAPP STATUS ============
+app.get('/wa-status', (req, res) => {
+  res.json({
+    whatsapp: waBaileys.isReady(),
+    pairingCode: waBaileys.getPairingCode()
+  });
+});
+
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.5.2', status: 'online', capabilities: 500, commands: 300, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus(), whatsapp: whatsapp.isReady() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.5.2', status: 'online', capabilities: 500, commands: 300, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus(), whatsapp: waBaileys.isReady(), whatsappPairingCode: waBaileys.getPairingCode() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {
@@ -1353,6 +1362,14 @@ app.listen(PORT, async () => {
   console.log(`🤖 Maganu v7.5.2 — ${PORT} | 500+ capabilities | 300+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
+  
+  // Start WhatsApp via Baileys (no Meta developer account needed)
+  console.log('📱 Starting WhatsApp (Baileys)...');
+  waBaileys.startWhatsApp(async (from, name, text) => {
+    // Process incoming WhatsApp messages through the same command processor
+    const sessionId = 'wa_' + from.split('@')[0];
+    return await processUpdate(sessionId, text, name, sessionId);
+  });
 });
 
 module.exports = app;

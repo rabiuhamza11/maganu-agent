@@ -1342,10 +1342,7 @@ app.post('/wa-webhook', async (req, res) => {
 
 // ============ WHATSAPP STATUS ============
 app.get('/wa-status', (req, res) => {
-  res.json({
-    whatsapp: waBaileys.isReady(),
-    pairingCode: waBaileys.getPairingCode()
-  });
+  res.json(waBaileys.getStatus());
 });
 
 // ============ HEALTH ============

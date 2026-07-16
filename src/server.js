@@ -87,7 +87,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.4.1 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.5.0 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -99,9 +99,9 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.4.1 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.5.0 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
 
-  if (cmd === '/help') return `🤖 *Maganu v7.3 — 170+ Commands*
+  if (cmd === '/help') return `🤖 *Maganu v7.5.0 — 310+ Commands*
 
 *System*
 /status /ecosystem /dashboard /clear
@@ -134,6 +134,16 @@ async function processUpdate(chatId, text, from, sessionId) {
 /verifyacct [acct]|[bank] /linkbank
 /acctbalance [code] /accttxns [code]
 /kycstatus /paystackverify
+
+*Global Marketplaces*
+/film — Film marketplace stats
+/filmsearch [query] — Search films
+/filmcreators — List film creators
+/filmdashboard [name] — Creator stats
+/music — Music marketplace stats
+/musicsearch [query] — Search tracks
+/musicartists — List artists
+/musicdashboard [name] — Artist stats
 
 *Harz Fintech*
 /ajo /harzpay
@@ -250,7 +260,7 @@ async function processUpdate(chatId, text, from, sessionId) {
 Or just chat naturally — I understand plain language.`;
 
 
-  if (cmd === '/ecosystem') return `🌐 *Harz Ecosystem — 10/10*\n\n1. HarzDM — harzdm-marketplace.vercel.app\n2. OMEGA INFINITY — omega-infinity-dashboard.vercel.app\n3. TradeOS — tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI (Base44)\n5. ContentPilot AI (Base44)\n6. Abuja Estate City AI — abuja-estate-city-ai.vercel.app\n7. Nexal Media (Base44)\n8. DeployForge (Base44)\n9. Nigerian Number Lookup (Base44)\n10. OMEGA DocMaster X (Base44)
+  if (cmd === '/ecosystem') return `🌐 *Harz Ecosystem — 23 Platforms*\n\n1. HarzDM — harzdm-marketplace.vercel.app\n2. OMEGA INFINITY — omega-infinity-dashboard.vercel.app\n3. TradeOS — tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI (Base44)\n5. ContentPilot AI (Base44)\n6. Abuja Estate City AI — abuja-estate-city-ai.vercel.app\n7. Nexal Media (Base44)\n8. DeployForge (Base44)\n9. Nigerian Number Lookup (Base44)\n10. OMEGA DocMaster X (Base44)
 11. HarzAjo — harzajo.vercel.app
 12. HarzPay — harzpay.vercel.app
 13. HarzFX — harzfx.vercel.app
@@ -1246,6 +1256,152 @@ Or just chat naturally — I understand plain language.`;
 
   // ===== AI FALLBACK =====
 
+  // ===== HARZFILM — Global Film Marketplace =====
+  if (cmd === '/film' || cmd === '/films') {
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzFilm', { action: 'platform_stats' }, { timeout: 10000 });
+      const s = r.data;
+      let msg = `🎬 *HarzFilm — Global Film Marketplace*\n\n`;
+      msg += `🌐 harz-film.vercel.app\n\n`;
+      msg += `📊 *Platform Stats*\n`;
+      msg += `Films: ${s.total_films}\n`;
+      msg += `Creators: ${s.total_creators}\n`;
+      msg += `Countries: ${s.total_countries}\n`;
+      msg += `Languages: ${s.total_languages}\n`;
+      msg += `Categories: ${s.total_categories}\n`;
+      msg += `Total Views: ${s.total_views?.toLocaleString()}\n`;
+      msg += `Total Sales: ${s.total_sales}\n`;
+      msg += `Revenue: $${s.total_revenue?.toFixed(2)}\n`;
+      msg += `Platform Commission: $${s.platform_commission?.toFixed(2)}\n\n`;
+      msg += `Subcommands:\n`;
+      msg += `/film search [title] — Search films\n`;
+      msg += `/film category [genre] — Browse by category\n`;
+      msg += `/film creators — List all creators\n`;
+      msg += `/film dashboard [creator] — Creator stats\n`;
+      msg += `\n20% commission. Creators keep 80%.`;
+      return msg;
+    } catch(e) { return `🎬 HarzFilm\n\nStats unavailable: ${e.message}\n\nVisit: harz-film.vercel.app`; }
+  }
+
+  if (cmd === '/filmsearch' || (cmd === '/film' && rest === 'search')) {
+    const q = args.slice(cmd === '/filmsearch' ? 0 : 1).join(' ');
+    if (!q) return 'Usage: /film search [title, actor, genre, country]';
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzFilm', { action: 'search', query: q }, { timeout: 10000 });
+      const films = r.data.films || [];
+      if (!films.length) return `No films found for "${q}"`;
+      let msg = `🎬 *Search: "${q}"* (${films.length} results)\n\n`;
+      films.slice(0, 10).forEach((f,i) => {
+        msg += `${i+1}. *${f.title}*\n   by ${f.creator_name} | ${f.country} | ${f.genre}\n   Buy: ${f.currency} ${f.purchase_price?.toFixed(2)} | Rent: ${f.currency} ${f.rental_price?.toFixed(2)}\n   ★ ${f.rating} | ${f.views?.toLocaleString()} views\n\n`;
+      });
+      return msg;
+    } catch(e) { return `Search error: ${e.message}`; }
+  }
+
+  if (cmd === '/filmdashboard') {
+    const creator = rest || '';
+    if (!creator) return 'Usage: /filmdashboard [creator name]';
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzFilm', { action: 'creator_dashboard', creator_name: creator }, { timeout: 10000 });
+      const d = r.data;
+      let msg = `🎬 *Creator Dashboard: ${creator}*\n\n`;
+      msg += `Films: ${d.total_films}\n`;
+      msg += `Sales: ${d.total_sales}\n`;
+      msg += `Revenue: $${d.total_revenue?.toFixed(2)}\n`;
+      msg += `Views: ${d.total_views?.toLocaleString()}\n\n`;
+      if (d.films?.length) {
+        msg += `*Films:*\n`;
+        d.films.forEach(f => {
+          msg += `• ${f.title} — ${f.category} | ★${f.rating} | ${f.views} views | ${f.purchases} buys\n`;
+        });
+      }
+      return msg;
+    } catch(e) { return `Dashboard error: ${e.message}`; }
+  }
+
+  if (cmd === '/filmcreators') {
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzFilm', { action: 'get_creators' }, { timeout: 10000 });
+      const creators = r.data.creators || [];
+      let msg = `🎬 *HarzFilm Creators* (${creators.length})\n\n`;
+      creators.forEach((c,i) => {
+        msg += `${i+1}. *${c.creator_name}* ${c.verified ? '✓' : ''}\n   ${c.creator_type} | ${c.country}${c.region ? ', '+c.region : ''}\n   ${c.total_films} films | ${c.languages}\n\n`;
+      });
+      return msg;
+    } catch(e) { return `Error: ${e.message}`; }
+  }
+
+  // ===== HARZMUSIC — Global Music Marketplace =====
+  if (cmd === '/music' || cmd === '/tracks') {
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzMusic', { action: 'platform_stats' }, { timeout: 10000 });
+      const s = r.data;
+      let msg = `🎵 *HarzMusic — Global Music Marketplace*\n\n`;
+      msg += `🌐 harz-music.vercel.app\n\n`;
+      msg += `📊 *Platform Stats*\n`;
+      msg += `Tracks: ${s.total_tracks}\n`;
+      msg += `Artists: ${s.total_artists}\n`;
+      msg += `Total Plays: ${s.total_plays?.toLocaleString()}\n`;
+      msg += `Total Sales: ${s.total_sales}\n`;
+      msg += `Revenue: $${s.total_revenue?.toFixed(2)}\n`;
+      msg += `Platform Commission: $${s.platform_commission?.toFixed(2)}\n\n`;
+      msg += `Subcommands:\n`;
+      msg += `/music search [title] — Search tracks\n`;
+      msg += `/music artists — List all artists\n`;
+      msg += `/music dashboard [artist] — Artist stats\n`;
+      msg += `\n20% commission. Artists keep 80%.`;
+      return msg;
+    } catch(e) { return `🎵 HarzMusic\n\nStats unavailable: ${e.message}\n\nVisit: harz-music.vercel.app`; }
+  }
+
+  if (cmd === '/musicsearch' || (cmd === '/music' && rest === 'search')) {
+    const q = args.slice(cmd === '/musicsearch' ? 0 : 1).join(' ');
+    if (!q) return 'Usage: /music search [title, artist, genre]';
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzMusic', { action: 'search', query: q }, { timeout: 10000 });
+      const tracks = r.data.tracks || [];
+      if (!tracks.length) return `No tracks found for "${q}"`;
+      let msg = `🎵 *Search: "${q}"* (${tracks.length} results)\n\n`;
+      tracks.slice(0, 10).forEach((t,i) => {
+        msg += `${i+1}. *${t.title}*\n   by ${t.artist_name} | ${t.genre}\n   ${t.currency} ${t.price?.toFixed(2)} | ${t.bpm} BPM | ★${t.rating}\n   ${t.plays?.toLocaleString()} plays | ${t.downloads} downloads\n\n`;
+      });
+      return msg;
+    } catch(e) { return `Search error: ${e.message}`; }
+  }
+
+  if (cmd === '/musicartists' || (cmd === '/music' && rest === 'artists')) {
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzMusic', { action: 'get_artists' }, { timeout: 10000 });
+      const artists = r.data.artists || [];
+      let msg = `🎵 *HarzMusic Artists* (${artists.length})\n\n`;
+      artists.forEach((a,i) => {
+        msg += `${i+1}. *${a.artist_name}* ${a.verified ? '✓' : ''}\n   ${a.genre} | ${a.country}\n   ${a.total_tracks} tracks | ${a.total_sales} sales | ${a.currency} ${a.total_revenue?.toLocaleString()}\n\n`;
+      });
+      return msg;
+    } catch(e) { return `Error: ${e.message}`; }
+  }
+
+  if (cmd === '/musicdashboard') {
+    const artist = rest || '';
+    if (!artist) return 'Usage: /musicdashboard [artist name]';
+    try {
+      const r = await axios.post('https://superagent-2286fb2f.base44.app/functions/harzMusic', { action: 'artist_dashboard', artist_name: artist }, { timeout: 10000 });
+      const d = r.data;
+      let msg = `🎵 *Artist Dashboard: ${artist}*\n\n`;
+      msg += `Tracks: ${d.total_tracks}\n`;
+      msg += `Sales: ${d.total_sales}\n`;
+      msg += `Revenue: $${d.total_revenue?.toFixed(2)}\n`;
+      msg += `Plays: ${d.total_plays?.toLocaleString()}\n\n`;
+      if (d.tracks?.length) {
+        msg += `*Tracks:*\n`;
+        d.tracks.forEach(t => {
+          msg += `• ${t.title} — ${t.genre} | ★${t.rating} | ${t.plays} plays | ${t.downloads} dl\n`;
+        });
+      }
+      return msg;
+    } catch(e) { return `Dashboard error: ${e.message}`; }
+  }
+
 
   const memory = getMemory(sessionId);
   const response = await think({ message: raw, from, sessionId, memory });
@@ -1304,7 +1460,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.4.1 — ${PORT} | 500+ capabilities | 300+ commands`);
+  console.log(`🤖 Maganu v7.5.0 — ${PORT} | 500+ capabilities | 300+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

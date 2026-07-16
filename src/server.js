@@ -87,7 +87,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.4 — Fintech Edition*\n\nHey ${from}!\n\n500+ capabilities | 290+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.4.1 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -99,7 +99,7 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.4 Online*\n\n500+ capabilities | 290+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.4.1 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
 
   if (cmd === '/help') return `🤖 *Maganu v7.3 — 170+ Commands*
 
@@ -139,6 +139,10 @@ async function processUpdate(chatId, text, from, sessionId) {
 /ajo /harzpay
 /harzfx /fxrates
 /harlend
+
+*File Vault*
+/myfiles /filesearch [term]
+/getfile [id] /filestats /delfile [id]
 /mwallet
 /mrr [customers] | [price]
 /roi [invest] [returns]
@@ -585,6 +589,89 @@ Or just chat naturally — I understand plain language.`;
   }
 
 
+
+
+  // ===== FILE BRIDGE (v7.4.1) =====
+  const FILE_API = 'https://superagent-2286fb2f.base44.app/functions/maganuFiles';
+
+  if (cmd === '/myfiles' || cmd === '/files') {
+    try {
+      const r = await axios.post(FILE_API, { action: 'list' });
+      const d = r.data;
+      const files = d.files || [];
+      if (!files.length) return '📂 *Your File Vault is empty*\n\nSend a file to the Base44 agent on WhatsApp and it will be stored here. Then use /myfiles to access it.';
+      let m = `📂 *File Vault — ${files.length} files*\n\n`;
+      files.forEach((f, i) => {
+        m += `${i+1}. *${f.file_name||'unnamed'}*\n`;
+        m += `   Type: ${f.file_type||'?'} | Size: ${f.file_size||'?'}\n`;
+        if (f.description) m += `   ${f.description.slice(0,60)}\n`;
+        if (f.tags) m += `   Tags: ${f.tags}\n`;
+        m += `   ID: ${f.id?.slice(-8) || '?'}\n\n`;
+      });
+      m += 'Use /getfile [id] to get a file URL\nUse /filesearch [term] to search';
+      return m;
+    } catch(e) { return `❌ File error: ${e.message}`; }
+  }
+
+  if (cmd === '/getfile') {
+    if (!args[0]) return 'Usage: /getfile [file_id_last_8_chars]';
+    try {
+      const r = await axios.post(FILE_API, { action: 'list' });
+      const files = r.data.files || [];
+      const file = files.find(f => f.id && f.id.endsWith(args[0]));
+      if (!file) return `❌ No file found with ID ending in ${args[0]}`;
+      let m = `📄 *${file.file_name}*\n\n`;
+      m += `Type: ${file.file_type||'?'}\n`;
+      m += `Size: ${file.file_size||'?'}\n`;
+      if (file.description) m += `Description: ${file.description}\n`;
+      if (file.tags) m += `Tags: ${file.tags}\n`;
+      m += `Uploaded by: ${file.uploaded_by||'?'} via ${file.source||'?'}\n\n`;
+      m += `🔗 ${file.file_url || '(no URL — stored metadata only)'}`;
+      return m;
+    } catch(e) { return `❌ ${e.message}`; }
+  }
+
+  if (cmd === '/filesearch' || cmd === '/searchfiles') {
+    if (!rest) return 'Usage: /filesearch [term]';
+    try {
+      const r = await axios.post(FILE_API, { action: 'search', term: rest });
+      const results = r.data.results || [];
+      if (!results.length) return `🔍 No files matching "${rest}"`;
+      let m = `🔍 *${results.length} files matching "${rest}"*\n\n`;
+      results.forEach((f, i) => {
+        m += `${i+1}. *${f.file_name||'unnamed'}*\n`;
+        if (f.description) m += `   ${f.description.slice(0,60)}\n`;
+        m += `   ID: ${f.id?.slice(-8) || '?'}\n\n`;
+      });
+      return m;
+    } catch(e) { return `❌ ${e.message}`; }
+  }
+
+  if (cmd === '/filestats') {
+    try {
+      const r = await axios.post(FILE_API, { action: 'stats' });
+      const d = r.data;
+      let m = `📊 *File Vault Stats*\n\n`;
+      m += `Total files: ${d.total||0}\n\n`;
+      const byType = d.byType || {};
+      Object.entries(byType).forEach(([type, count]) => {
+        m += `${type}: ${count}\n`;
+      });
+      return m;
+    } catch(e) { return `❌ ${e.message}`; }
+  }
+
+  if (cmd === '/delfile') {
+    if (!args[0]) return 'Usage: /delfile [file_id_last_8_chars]';
+    try {
+      const r = await axios.post(FILE_API, { action: 'list' });
+      const files = r.data.files || [];
+      const file = files.find(f => f.id && f.id.endsWith(args[0]));
+      if (!file) return `❌ No file found with ID ending in ${args[0]}`;
+      await axios.post(FILE_API, { action: 'delete', file_id: file.id });
+      return `🗑 Deleted: ${file.file_name}`;
+    } catch(e) { return `❌ ${e.message}`; }
+  }
 
   // ===== SECURITY (v7.1) =====
   if (cmd === '/security' || cmd === '/audit') return security.handleSecurityAudit();
@@ -1207,7 +1294,7 @@ app.post('/notify', async (req, res) => {
 });
 
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.4.0', status: 'online', capabilities: 500, commands: 290, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.4.1', status: 'online', capabilities: 500, commands: 290, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {
@@ -1217,7 +1304,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.4.0 — ${PORT} | 500+ capabilities | 290+ commands`);
+  console.log(`🤖 Maganu v7.4.1 — ${PORT} | 500+ capabilities | 300+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

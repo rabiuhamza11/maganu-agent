@@ -87,7 +87,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.5.0 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.5.1 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -99,9 +99,9 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.5.0 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.5.1 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
 
-  if (cmd === '/help') return `🤖 *Maganu v7.5.0 — 310+ Commands*
+  if (cmd === '/help') return `🤖 *Maganu v7.5.1 — 310+ Commands*
 
 *System*
 /status /ecosystem /dashboard /clear
@@ -1254,6 +1254,50 @@ Or just chat naturally — I understand plain language.`;
   }
 
 
+
+  // ===== WHATSAPP CRM =====
+  if (cmd === "/whatsappcrm" || cmd === "/crm2") {
+    try {
+      const r = await axios.post("https://superagent-2286fb2f.base44.app/functions/harzCRM", { action: "stats" }, { timeout: 10000 });
+      const s = r.data.stats;
+      let msg = `💬 *WhatsApp CRM Dashboard*
+
+`;
+      msg += `Total Customers: ${s.total_customers}
+`;
+      msg += `New: ${s.new}
+`;
+      msg += `Responded: ${s.responded}
+`;
+      msg += `In Progress: ${s.in_progress}
+`;
+      msg += `Converted: ${s.converted}
+`;
+      msg += `Lost: ${s.lost}
+`;
+      msg += `Follow Up: ${s.follow_up}
+`;
+      msg += `Revenue: N${s.total_revenue.toLocaleString()}
+`;
+      msg += `Conversion Rate: ${s.conversion_rate}%
+
+`;
+      msg += `Dashboard: harz-crm.vercel.app
+`;
+      msg += `Auto-reply handles: pricing, payments, products, music, film, support`;
+      return msg;
+    } catch(e) { return `CRM error: ${e.message}`; }
+  }
+
+  if (cmd === "/crmreply") {
+    const msg = rest;
+    if (!msg) return "Usage: /crmreply [message to test auto-reply]";
+    try {
+      const r = await axios.post("https://superagent-2286fb2f.base44.app/functions/harzCRM", { action: "auto_reply", message: msg, customer_name: from }, { timeout: 10000 });
+      return r.data.reply || "No reply generated";
+    } catch(e) { return `Error: ${e.message}`; }
+  }
+
   // ===== AI FALLBACK =====
 
   // ===== HARZFILM — Global Film Marketplace =====
@@ -1460,7 +1504,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.5.0 — ${PORT} | 500+ capabilities | 300+ commands`);
+  console.log(`🤖 Maganu v7.5.1 — ${PORT} | 500+ capabilities | 300+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

@@ -87,7 +87,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.3 — Financial Edition*\n\nHey ${from}!\n\n500+ capabilities | 280+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.4 — Fintech Edition*\n\nHey ${from}!\n\n500+ capabilities | 290+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -99,7 +99,7 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.3 Online*\n\n500+ capabilities | 280+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 10/10 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.4 Online*\n\n500+ capabilities | 290+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
 
   if (cmd === '/help') return `🤖 *Maganu v7.3 — 170+ Commands*
 
@@ -134,6 +134,11 @@ async function processUpdate(chatId, text, from, sessionId) {
 /verifyacct [acct]|[bank] /linkbank
 /acctbalance [code] /accttxns [code]
 /kycstatus /paystackverify
+
+*Harz Fintech*
+/ajo /harzpay
+/harzfx /fxrates
+/harlend
 /mwallet
 /mrr [customers] | [price]
 /roi [invest] [returns]
@@ -241,7 +246,11 @@ async function processUpdate(chatId, text, from, sessionId) {
 Or just chat naturally — I understand plain language.`;
 
 
-  if (cmd === '/ecosystem') return `🌐 *Harz Ecosystem — 10/10*\n\n1. HarzDM — harzdm-marketplace.vercel.app\n2. OMEGA INFINITY — omega-infinity-dashboard.vercel.app\n3. TradeOS — tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI (Base44)\n5. ContentPilot AI (Base44)\n6. Abuja Estate City AI — abuja-estate-city-ai.vercel.app\n7. Nexal Media (Base44)\n8. DeployForge (Base44)\n9. Nigerian Number Lookup (Base44)\n10. OMEGA DocMaster X (Base44)`;
+  if (cmd === '/ecosystem') return `🌐 *Harz Ecosystem — 10/10*\n\n1. HarzDM — harzdm-marketplace.vercel.app\n2. OMEGA INFINITY — omega-infinity-dashboard.vercel.app\n3. TradeOS — tradeos-dashboard-fawn.vercel.app\n4. BuildBot AI (Base44)\n5. ContentPilot AI (Base44)\n6. Abuja Estate City AI — abuja-estate-city-ai.vercel.app\n7. Nexal Media (Base44)\n8. DeployForge (Base44)\n9. Nigerian Number Lookup (Base44)\n10. OMEGA DocMaster X (Base44)
+11. HarzAjo — harzajo.vercel.app
+12. HarzPay — harzpay.vercel.app
+13. HarzFX — harzfx.vercel.app
+14. HarzLend — harzlend.vercel.app`;
 
   // ===== TASKS =====
   if (cmd === '/tasks') return tasks.formatTaskList();
@@ -488,6 +497,93 @@ Or just chat naturally — I understand plain language.`;
   if (cmd === "/accttxns" || cmd === "/realtxns") return await kyc.getRealTransactions(args);
   if (cmd === "/kycstatus" || cmd === "/kyc") return kyc.kycStatus();
   if (cmd === "/paystackverify" || cmd === "/goslive") return kyc.paystackVerification();
+
+  // ===== HARZ FINTECH SUITE (v7.4) =====
+  if (cmd === '/ajo' || cmd === '/harzajo') {
+    try {
+      const r = await fetch('https://superagent-2286fb2f.base44.app/functions/harzAjo', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action:'list'})
+      });
+      const d = await r.json();
+      const groups = d.groups || [];
+      if (!groups.length) return '🔄 *HarzAjo — No groups yet*\n\nCreate one at https://harzajo.vercel.app';
+      let m = `🔄 *HarzAjo — ${groups.length} Savings Groups*\n\n`;
+      groups.forEach(g => {
+        const pot = (g.contribution_amount||0) * (g.capacity||0);
+        m += `*${g.name||'Group'}*\n`;
+        m += `${g.cycle_frequency||'weekly'} • ₦${(g.contribution_amount||0).toLocaleString()} • ${(g.members||[]).length}/${g.capacity||0} members\n`;
+        m += `Pot: ₦${pot.toLocaleString()} • Collected: ₦${(g.total_collected||0).toLocaleString()}\n`;
+        m += `Status: ${g.status||'recruiting'}\n\n`;
+      });
+      m += `🔗 https://harzajo.vercel.app`;
+      return m;
+    } catch(e) { return `❌ HarzAjo: ${e.message}`; }
+  }
+
+  if (cmd === '/harzpay') {
+    try {
+      const r = await fetch('https://superagent-2286fb2f.base44.app/functions/harzPay', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action:'all_providers'})
+      });
+      const d = await r.json();
+      const providers = d.providers || [];
+      if (!providers.length) return '⚡ *HarzPay — No providers yet*\n\nVisit https://harzpay.vercel.app';
+      const cats = {};
+      providers.forEach(p => { cats[p.bill_type] = (cats[p.bill_type]||0)+1; });
+      let m = `⚡ *HarzPay — ${providers.length} Bill Providers*\n\n`;
+      Object.entries(cats).forEach(([type, count]) => {
+        m += `${type}: ${count} providers\n`;
+      });
+      m += `\n🔗 https://harzpay.vercel.app`;
+      return m;
+    } catch(e) { return `❌ HarzPay: ${e.message}`; }
+  }
+
+  if (cmd === '/harzfx' || cmd === '/fxrates') {
+    try {
+      const r = await fetch('https://superagent-2286fb2f.base44.app/functions/harzFx', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action:'rates'})
+      });
+      const d = await r.json();
+      const rates = d.rates || [];
+      if (!rates.length) return '💱 *HarzFX — No rates yet*\n\nVisit https://harzfx.vercel.app';
+      let m = `💱 *HarzFX — Live Rates*\n\n`;
+      rates.filter(r => r.market === 'parallel').forEach(r => {
+        m += `${r.flag||'💱'} ${r.currency_code}: ₦${(r.rate||0).toLocaleString()}`;
+        if (r.daily_change) m += ` (${r.daily_change>=0?'+':''}${r.daily_change}%)`;
+        m += `\n`;
+      });
+      m += `\n🔗 https://harzfx.vercel.app`;
+      return m;
+    } catch(e) { return `❌ HarzFX: ${e.message}`; }
+  }
+
+  if (cmd === '/harzlend') {
+    try {
+      const r = await fetch('https://superagent-2286fb2f.base44.app/functions/harzLend', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action:'list'})
+      });
+      const d = await r.json();
+      const loans = d.loans || [];
+      let m = `💰 *HarzLend — Micro-Loans*\n\n`;
+      m += `Loan Types:\n`;
+      m += `⚡ Quick Loan (₦5k-50k, 7-30 days)\n`;
+      m += `💼 Salary Loan (up to ₦50k, 30 days)\n`;
+      m += `📈 Business Loan (₦10k-50k, 30-90 days)\n`;
+      m += `🚨 Emergency Loan (₦5k-25k, 7 days)\n`;
+      m += `🎓 Student Loan (₦5k-15k, 30 days)\n`;
+      m += `💳 Salary Advance (50% of monthly)\n\n`;
+      m += `Interest: 15% flat • No hidden fees\n`;
+      if (loans.length) m += `\n${loans.length} active loan(s)\n`;
+      m += `\n🔗 https://harzlend.vercel.app`;
+      return m;
+    } catch(e) { return `❌ HarzLend: ${e.message}`; }
+  }
+
 
 
   // ===== SECURITY (v7.1) =====
@@ -1111,7 +1207,7 @@ app.post('/notify', async (req, res) => {
 });
 
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.3.1', status: 'online', capabilities: 500, commands: 280, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.4.0', status: 'online', capabilities: 500, commands: 290, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {
@@ -1121,7 +1217,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.3.1 — ${PORT} | 500+ capabilities | 280+ commands`);
+  console.log(`🤖 Maganu v7.4.0 — ${PORT} | 500+ capabilities | 290+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
 });

@@ -34,6 +34,7 @@ const blockchainSvc = require('./services/blockchain');
 const backupSvc = require('./services/backup');
 const whatsapp = require('./services/whatsapp');
 const waBaileys = require('./services/wa-baileys');
+const bridge = require('./services/base44-bridge');
 
 const app = express();
 app.use(express.json());
@@ -89,7 +90,7 @@ async function processUpdate(chatId, text, from, sessionId) {
   const sentiment = research.analyzeSentiment(raw);
 
   // ===== SYSTEM =====
-  if (cmd === '/start') return `\U0001f44b *Maganu v7.5.2 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 300+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
+  if (cmd === '/start') return `\U0001f44b *Maganu v7.5.4 — File Edition*\n\nHey ${from}!\n\n500+ capabilities | 400+ commands\n\u26a0\ufe0f Financial Transactions: ENABLED\n\U0001f4b3 Payment Gateways: Paystack + Stripe + Flutterwave\n\U0001f4b8 Transfers, Refunds, Payment Links\nOMEGA Master Knowledge loaded\nFull Harz Ecosystem control\n\nType /help for all commands or /gateway for payment status.`;
 
   if (cmd === '/clear') { clearMemory(sessionId); return '🧹 Memory cleared! (conversation history + long-term summary reset)'; }
   if (cmd === '/memory') {
@@ -101,9 +102,9 @@ async function processUpdate(chatId, text, from, sessionId) {
     return msg;
   }
 
-  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.5.2 Online*\n\n500+ capabilities | 300+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 4 automations\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
+  if (cmd === '/status') return `\U0001f7e2 *Maganu v7.5.4 Online*\n\n500+ capabilities | 400+ commands\nModel: Groq llama-4-scout (30k TPM)\nKnowledge: OMEGA Master Synthesis\nMemory: Persistent\nScheduler: 8 automations + Base44 Bridge\n\U0001f4b3 Payments: Stripe + Paystack + Flutterwave\n\U0001f4b8 Financial: Transfers, Refunds, Payment Links\n\U0001f577\ufe0f Deploy: Vercel+Netlify+Render+Railway\nCRM + Nigerian Tools\nLearning + Habits\nIntelligence: Crypto, Domains, SSL\nWriter: Proposals, SOPs, Scripts, Ads\nStrategy: Market sizing, Pivots, Exit\nSecurity: Password, Audit\n\nHarz Ecosystem: 14/14 platforms live\nReady, Rabiu. \U0001f525`;
 
-  if (cmd === '/help') return `🤖 *Maganu v7.3 — 170+ Commands*
+  if (cmd === '/help') return `🤖 *Maganu v7.5.4 — 170+ Commands*
 
 *System*
 /status /ecosystem /dashboard /clear
@@ -593,7 +594,7 @@ Or just chat naturally — I understand plain language.`;
 
 
 
-  // ===== FILE BRIDGE (v7.5.2) =====
+  // ===== FILE BRIDGE (v7.5.4) =====
   const FILE_API = 'https://superagent-2286fb2f.base44.app/functions/maganuFiles';
 
   if (cmd === '/myfiles' || cmd === '/files') {
@@ -1036,7 +1037,7 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/maganu') {
-    return '🤖 *Maganu v7.3*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 500+ | Commands: 260+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
+    return '🤖 *Maganu v7.5.4*\n\nRunning on: Render (maganu-agent.onrender.com)\nModel: Groq llama-4-scout-17b (30k TPM)\nGitHub: github.com/rabiuhamza11/maganu-agent\nTelegram: @rabiuhamza11_bot\n\nCapabilities: 500+ | Commands: 400+\nMemory: 100 msgs stored, 40 active context\nDeploy: Vercel + Netlify + Render + Railway\nAPI Keys: 13 injected\n\nHonesty protocol: ACTIVE (never lies about actions)\nStatus: LIVE ✅';
   }
 
   if (cmd === '/hostmaster') {
@@ -1242,9 +1243,14 @@ Or just chat naturally — I understand plain language.`;
   }
 
   if (cmd === '/version') {
-    return `🤖 *Maganu v7.3*\n\nCapabilities: 500+\nCommands: 260+\nModel: llama-4-scout (30k TPM)\nNew in v7.1:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
+    return `🤖 *Maganu v7.5.4*\n\nCapabilities: 500+\nCommands: 400+\nModel: llama-4-scout (30k TPM)\nNew in v7.1:\n• /weather [city] — live Nigerian weather\n• /timer [task] — Pomodoro (25 min)\n• /win, /wins — win tracking\n• /journal, /myjournal — journal\n• /loan — loan calculator\n• /paye — salary tax calculator\n• /swot, /okr, /market — strategy\n• /valuation, /runway, /churn — SaaS metrics\n• /percent, /age, /tip — quick math\n• /uuid, /b64, /genpass — dev tools\n• /word — word of the day\nGitHub: github.com/rabiuhamza11/maganu-agent`;
   }
 
+
+
+  // ===== BASE44 BRIDGE COMMANDS =====
+  const bridgeResult = await bridge.handleCommand(cmd, rest);
+  if (bridgeResult !== null) return bridgeResult;
 
   // ===== AI FALLBACK =====
 
@@ -1356,7 +1362,7 @@ async function setWebhook(url) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`🤖 Maganu v7.5.2 — ${PORT} | 500+ capabilities | 300+ commands`);
+  console.log(`🤖 Maganu v7.5.4 — ${PORT} | 500+ capabilities | 400+ commands`);
   scheduler.start();
   await setWebhook(process.env.WEBHOOK_URL || 'https://maganu-agent.onrender.com');
   

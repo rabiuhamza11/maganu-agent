@@ -1164,6 +1164,332 @@ ${result.percent_off}% off | ${result.duration}`;
         }
 
 
+        // ===== ECOSYSTEM MANAGEMENT COMMANDS (Write/Create) =====
+        case '/addtrack': {
+          if (!args) return 'Usage: /addtrack title | artist_name | genre | price | currency | audio_url';
+          const [title, artist_name, genre, price, currency, audio_url] = args.split('|').map(s => s.trim());
+          if (!title) return 'Usage: /addtrack title | artist | genre | price | cur | url';
+          const result = await callBridge('createEntityRecord', { entityName: 'MusicTrack', data: { title, artist_name, genre, price: parseFloat(price) || 0, currency: currency || 'NGN', audio_url: audio_url || '', status: 'active', downloads: 0, plays: 0, rating: 0, commission_percent: 20, file_format: 'mp3', language: 'en', country: 'Nigeria' } });
+          if (result.success) return `✅ Track added: ${title} by ${artist_name}\nPrice: ${currency || 'NGN'} ${price || 0}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addartist': {
+          if (!args) return 'Usage: /addartist artist_name | real_name | email | genre | phone';
+          const [artist_name, real_name, email, genre, phone] = args.split('|').map(s => s.trim());
+          if (!artist_name) return 'Usage: /addartist stage_name | real_name | email | genre | phone';
+          const result = await callBridge('createEntityRecord', { entityName: 'MusicArtist', data: { artist_name, real_name, email, genre, phone, country: 'Nigeria', verified: false, total_tracks: 0, total_sales: 0, total_revenue: 0, currency: 'NGN', status: 'active' } });
+          if (result.success) return `✅ Artist added: ${artist_name}\nEmail: ${email || 'N/A'}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addfilm': {
+          if (!args) return 'Usage: /addfilm title | creator_name | category | price | currency | video_url';
+          const [title, creator_name, category, price, currency, video_url] = args.split('|').map(s => s.trim());
+          if (!title) return 'Usage: /addfilm title | creator | category | price | cur | url';
+          const result = await callBridge('createEntityRecord', { entityName: 'Film', data: { title, creator_name, category, purchase_price: parseFloat(price) || 0, currency: currency || 'NGN', video_url: video_url || '', status: 'active', views: 0, purchases: 0, rentals: 0, rating: 0, commission_percent: 20, license_type: 'standard', age_rating: 'all' } });
+          if (result.success) return `✅ Film added: ${title} by ${creator_name}\nPrice: ${currency || 'NGN'} ${price || 0}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addcreator': {
+          if (!args) return 'Usage: /addcreator creator_name | real_name | email | creator_type | phone';
+          const [creator_name, real_name, email, creator_type, phone] = args.split('|').map(s => s.trim());
+          if (!creator_name) return 'Usage: /addcreator name | real_name | email | type | phone';
+          const result = await callBridge('createEntityRecord', { entityName: 'FilmCreator', data: { creator_name, real_name, email, creator_type: creator_type || 'filmmaker', phone, country: 'Nigeria', verified: false, total_films: 0, total_sales: 0, total_revenue: 0, currency: 'NGN', status: 'active' } });
+          if (result.success) return `✅ Creator added: ${creator_name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addproperty': {
+          if (!args) return 'Usage: /addproperty title | type | listing | location | price | beds | baths';
+          const [title, property_type, listing_type, location, price, bedrooms, bathrooms] = args.split('|').map(s => s.trim());
+          if (!title) return 'Usage: /addproperty title | type | listing | location | price | beds | baths';
+          const result = await callBridge('createEntityRecord', { entityName: 'EstateProperty', data: { title, property_type, listing_type: listing_type || 'sale', location, price: parseFloat(price) || 0, currency: 'NGN', bedrooms: parseInt(bedrooms) || 0, bathrooms: parseInt(bathrooms) || 0, status: 'active', verified: false, seller_name: 'Rabiu Hamza', seller_email: 'harzco.business@gmail.com' } });
+          if (result.success) return `✅ Property added: ${title}\n${listing_type || 'sale'} | ${location}\nPrice: NGN ${price || 0}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addpro': {
+          if (!args) return 'Usage: /addpro name | category | pro_type | phone | email | rate';
+          const [name, category, pro_type, phone, email, rate] = args.split('|').map(s => s.trim());
+          if (!name) return 'Usage: /addpro name | category | pro_type | phone | email | rate';
+          const result = await callBridge('createEntityRecord', { entityName: 'EstatePro', data: { name, category, pro_type, phone, email, hourly_rate: parseFloat(rate) || 0, location: 'Nigeria', verified: false, rating: 0, reviews_count: 0, available: true } });
+          if (result.success) return `✅ Pro added: ${name} (${category})\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addmaterial': {
+          if (!args) return 'Usage: /addmaterial name | category | supplier | price | unit';
+          const [name, category, supplier_name, price, unit] = args.split('|').map(s => s.trim());
+          if (!name) return 'Usage: /addmaterial name | category | supplier | price | unit';
+          const result = await callBridge('createEntityRecord', { entityName: 'EstateMaterial', data: { name, category, supplier_name, price: parseFloat(price) || 0, currency: 'NGN', unit, in_stock: true, location: 'Nigeria', rating: 0 } });
+          if (result.success) return `✅ Material added: ${name} — NGN ${price || 0}/${unit || 'unit'}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addcourse': {
+          if (!args) return 'Usage: /addcourse title | category | instructor | price | level | duration';
+          const [title, category, instructor_name, price, level, duration] = args.split('|').map(s => s.trim());
+          if (!title) return 'Usage: /addcourse title | category | instructor | price | level | hrs';
+          const result = await callBridge('createEntityRecord', { entityName: 'EduCourse', data: { title, category, instructor_name, instructor_email: 'harzco.business@gmail.com', price: parseFloat(price) || 0, currency: 'NGN', level: level || 'beginner', language: 'en', duration_hours: parseFloat(duration) || 0, lessons_count: 0, students_count: 0, rating: 0, status: 'active', is_free: !parseFloat(price), certificate_included: true } });
+          if (result.success) return `✅ Course added: ${title}\n${level || 'beginner'} | NGN ${price || 0}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addstudent': {
+          if (!args) return 'Usage: /addstudent full_name | email | phone | country';
+          const [full_name, email, phone, country] = args.split('|').map(s => s.trim());
+          if (!full_name || !email) return 'Usage: /addstudent name | email | phone | country';
+          const result = await callBridge('createEntityRecord', { entityName: 'EduStudent', data: { full_name, email, phone, country: country || 'Nigeria', xp_points: 0, coins: 0, streak_days: 0, level: 1, badges: [], enrolled_courses: [], completed_courses: [], certificates_earned: [], status: 'active' } });
+          if (result.success) return `✅ Student added: ${full_name}\nEmail: ${email}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addinstructor': {
+          if (!args) return 'Usage: /addinstructor full_name | email | phone | expertise | bio';
+          const [full_name, email, phone, expertise, bio] = args.split('|').map(s => s.trim());
+          if (!full_name || !email) return 'Usage: /addinstructor name | email | phone | expertise | bio';
+          const result = await callBridge('createEntityRecord', { entityName: 'EduInstructor', data: { full_name, email, phone, expertise, bio, verified: false, rating: 0, reviews_count: 0, total_students: 0, total_courses: 0, total_revenue: 0, currency: 'NGN', country: 'Nigeria', status: 'active' } });
+          if (result.success) return `✅ Instructor added: ${full_name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addcontent': {
+          if (!args) return 'Usage: /addcontent title | content_type | platform | priority';
+          const [title, content_type, platforms, priority] = args.split('|').map(s => s.trim());
+          if (!title) return 'Usage: /addcontent title | type | platforms | priority';
+          const platformArr = platforms ? platforms.split(',').map(p => p.trim()) : ['youtube'];
+          const result = await callBridge('createEntityRecord', { entityName: 'ContentProject', data: { title, content_type: content_type || 'video', platforms: platformArr, priority: priority || 'medium', status: 'planning', language: 'en', tags: [], hashtags: [], assigned_agents: [] } });
+          if (result.success) return `✅ Content project created: ${title}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addscript': {
+          if (!args) return 'Usage: /addscript project_id | hook | body | cta';
+          const [project_id, hook, ...bodyParts] = args.split('|').map(s => s.trim());
+          const body = bodyParts.join(' | ');
+          if (!project_id) return 'Usage: /addscript project_id | hook | body | cta';
+          const result = await callBridge('createEntityRecord', { entityName: 'ContentScript', data: { project_id, title: 'Script for ' + project_id, hook, body, cta: 'Follow for more!', full_script: hook + ' ' + body, word_count: body.split(' ').length, status: 'draft', fact_check_status: 'pending', copyright_status: 'clear' } });
+          if (result.success) return `✅ Script created for project ${project_id}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addtrend': {
+          if (!args) return 'Usage: /addtrend topic | platform | viral_score | opportunity | notes';
+          const [topic, platform, viral_score, opportunity, ...notesParts] = args.split('|').map(s => s.trim());
+          const notes = notesParts.join(' | ');
+          if (!topic) return 'Usage: /addtrend topic | platform | score | opportunity | notes';
+          const result = await callBridge('createEntityRecord', { entityName: 'TrendResearch', data: { topic, platform: platform || 'YouTube', viral_score: parseFloat(viral_score) || 5, opportunity_score: parseFloat(opportunity) || 5, competition_level: 'medium', status: 'new', related_topics: [], recommended_formats: [], notes, best_platforms: [platform || 'YouTube'], discovered_at: new Date().toISOString() } });
+          if (result.success) return `✅ Trend added: ${topic}\nViral: ${viral_score || 5}/10 | Opportunity: ${opportunity || 5}/10\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addajo': {
+          if (!args) return 'Usage: /addajo admin_name | admin_phone | capacity | amount | frequency';
+          const [admin_name, admin_phone, capacity, contribution_amount, cycle_frequency] = args.split('|').map(s => s.trim());
+          if (!admin_name) return 'Usage: /addajo admin | phone | capacity | amount | frequency';
+          const result = await callBridge('createEntityRecord', { entityName: 'AjoGroup', data: { admin_name, admin_phone, capacity: parseInt(capacity) || 10, contribution_amount: parseFloat(contribution_amount) || 0, currency: 'NGN', cycle_frequency: cycle_frequency || 'monthly', current_cycle: 1, status: 'active', total_collected: 0, total_payout: 0, payout_order: [], members: [] } });
+          if (result.success) return `✅ Ajo group created!\nAdmin: ${admin_name}\nCapacity: ${capacity || 10} | NGN ${contribution_amount || 0}/${cycle_frequency || 'monthly'}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addmember': {
+          if (!args) return 'Usage: /addmember group_id | name | phone | email | account | bank_code';
+          const [group_id, name, phone, email, account_number, bank_code] = args.split('|').map(s => s.trim());
+          if (!group_id || !name) return 'Usage: /addmember group_id | name | phone | email | acct | bank';
+          const result = await callBridge('createEntityRecord', { entityName: 'AjoMember', data: { group_id, name, phone, email, account_number, bank_code, kyc_status: 'pending', status: 'active', contribution_paid: 0, cycles_paid: 0, payout_position: 0, payout_received: 0, currency: 'NGN', joined_date: new Date().toISOString().slice(0, 10) } });
+          if (result.success) return `✅ Member added to ${group_id}: ${name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addapexacct': {
+          if (!args) return 'Usage: /addapexacct account_name | type | number | balance | currency';
+          const [account_name, account_type, account_number, balance, currency] = args.split('|').map(s => s.trim());
+          if (!account_name) return 'Usage: /addapexacct name | type | number | balance | cur';
+          const result = await callBridge('createEntityRecord', { entityName: 'ApexAccount', data: { account_name, account_type: account_type || 'savings', account_number, balance: parseFloat(balance) || 0, currency: currency || 'NGN', status: 'active' } });
+          if (result.success) return `✅ Apex account: ${account_name} (${account_type || 'savings'})\nBalance: ${currency || 'NGN'} ${balance || 0}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addcard': {
+          if (!args) return 'Usage: /addcard account_id | holder | number | exp_month | exp_year | type';
+          const [account_id, card_holder_name, card_number, expiry_month, expiry_year, card_type] = args.split('|').map(s => s.trim());
+          if (!account_id || !card_holder_name) return 'Usage: /addcard acct_id | holder | number | mm | yy | type';
+          const result = await callBridge('createEntityRecord', { entityName: 'ApexCard', data: { account_id, card_holder_name, card_number, expiry_month, expiry_year, card_type: card_type || 'debit', card_color: 'blue', status: 'active', daily_limit: 500000 } });
+          if (result.success) return `✅ Card added for ${card_holder_name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addbeneficiary': {
+          if (!args) return 'Usage: /addbeneficiary name | bank | account | email | country';
+          const [name, bank_name, account_number, email, country] = args.split('|').map(s => s.trim());
+          if (!name) return 'Usage: /addbeneficiary name | bank | account | email | country';
+          const result = await callBridge('createEntityRecord', { entityName: 'ApexBeneficiary', data: { name, bank_name, account_number, email, country: country || 'Nigeria', currency: 'NGN', avatar_color: 'blue', transfer_type: 'domestic' } });
+          if (result.success) return `✅ Beneficiary: ${name} (${bank_name})\nAcct: ${account_number}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addsavings': {
+          if (!args) return 'Usage: /addsavings name | target | current | deadline | account_id';
+          const [goal_name, target_amount, current_amount, deadline, account_id] = args.split('|').map(s => s.trim());
+          if (!goal_name) return 'Usage: /addsavings name | target | current | deadline | acct';
+          const result = await callBridge('createEntityRecord', { entityName: 'ApexSavingsGoal', data: { name: goal_name, target_amount: parseFloat(target_amount) || 0, current_amount: parseFloat(current_amount) || 0, deadline, account_id, icon: 'target', color: 'green', status: 'active' } });
+          if (result.success) return `✅ Savings goal: ${goal_name}\nTarget: NGN ${target_amount || 0}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addbill': {
+          if (!args) return 'Usage: /addbill biller | category | amount | due_date | account_id';
+          const [biller_name, category, amount, due_date, account_id] = args.split('|').map(s => s.trim());
+          if (!biller_name) return 'Usage: /addbill biller | category | amount | due | acct';
+          const result = await callBridge('createEntityRecord', { entityName: 'ApexBill', data: { biller_name, category, amount: parseFloat(amount) || 0, due_date, status: 'pending', account_id, auto_pay: false } });
+          if (result.success) return `✅ Bill added: ${biller_name} — NGN ${amount || 0}\nDue: ${due_date || 'N/A'}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addthreat': {
+          if (!args) return 'Usage: /addthreat type | severity | source | target | description';
+          const [threat_type, severity, source_ip, target_asset, ...descParts] = args.split('|').map(s => s.trim());
+          const description = descParts.join(' | ');
+          if (!threat_type) return 'Usage: /addthreat type | severity | src | target | desc';
+          const result = await callBridge('createEntityRecord', { entityName: 'CyberThreat', data: { threat_type, severity, source_ip, target_asset, description, status: 'active', detected_at: new Date().toISOString(), risk_score: severity === 'critical' ? 10 : 5 } });
+          if (result.success) return `✅ Threat logged: ${threat_type} [${severity}]\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addvuln': {
+          if (!args) return 'Usage: /addvuln cve | title | severity | system | cvss';
+          const [cve_id, title, severity, affected_system, cvss_score] = args.split('|').map(s => s.trim());
+          if (!title) return 'Usage: /addvuln cve | title | severity | system | cvss';
+          const result = await callBridge('createEntityRecord', { entityName: 'CyberVulnerability', data: { cve_id, title, severity, affected_system, cvss_score: parseFloat(cvss_score) || 0, status: 'open', discovered_at: new Date().toISOString(), exploit_available: false, owasp_category: 'N/A' } });
+          if (result.success) return `✅ Vulnerability logged: ${title} [${severity}]\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addendpoint': {
+          if (!args) return 'Usage: /addendpoint name | type | ip | os | status';
+          const [endpoint_name, endpoint_type, ip_address, os, status] = args.split('|').map(s => s.trim());
+          if (!endpoint_name) return 'Usage: /addendpoint name | type | ip | os | status';
+          const result = await callBridge('createEntityRecord', { entityName: 'CyberEndpoint', data: { endpoint_name, endpoint_type, ip_address, os, status: status || 'online', security_score: 0, last_scan: new Date().toISOString(), open_ports: [], patch_level: 'current', encryption_status: 'enabled', installed_agents: [] } });
+          if (result.success) return `✅ Endpoint added: ${endpoint_name} (${ip_address})\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addhealth': {
+          if (!args) return 'Usage: /addhealth user_email | name | age | sex | height | weight';
+          const [user_email, user_name, age, sex, height_cm, weight_kg] = args.split('|').map(s => s.trim());
+          if (!user_email) return 'Usage: /addhealth email | name | age | sex | height | weight';
+          const h = parseFloat(height_cm) || 0, w = parseFloat(weight_kg) || 0;
+          const bmi = h > 0 ? (w / ((h/100) ** 2)).toFixed(1) : 0;
+          const result = await callBridge('createEntityRecord', { entityName: 'HealthProfile', data: { user_email, user_name, user_phone: '', age: parseInt(age) || 0, sex, height_cm: h, weight_kg: w, bmi: parseFloat(bmi), allergies: [], chronic_conditions: [], health_goals: ['general_wellness'], lifestyle: 'moderate', fitness_level: 'beginner', last_updated: new Date().toISOString() } });
+          if (result.success) return `✅ Health profile: ${user_name}\nBMI: ${bmi}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addmed': {
+          if (!args) return 'Usage: /addmed user_email | name | dosage | frequency | purpose';
+          const [user_email, medication_name, dosage, frequency, purpose] = args.split('|').map(s => s.trim());
+          if (!user_email || !medication_name) return 'Usage: /addmed email | name | dosage | freq | purpose';
+          const result = await callBridge('createEntityRecord', { entityName: 'Medication', data: { user_email, medication_name, dosage, frequency, start_date: new Date().toISOString().slice(0, 10), purpose, status: 'active', adherence_count: 0, total_doses: 0, refill_reminder: false, allergy_check: 'pending' } });
+          if (result.success) return `✅ Medication added: ${medication_name} (${dosage})\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addappt': {
+          if (!args) return 'Usage: /addappt user_email | name | provider | facility | date | time | reason';
+          const [user_email, user_name, provider_name, facility, appointment_date, appointment_time, ...reasonParts] = args.split('|').map(s => s.trim());
+          const reason = reasonParts.join(' | ');
+          if (!user_email || !provider_name) return 'Usage: /addappt email | name | provider | facility | date | time | reason';
+          const result = await callBridge('createEntityRecord', { entityName: 'Appointment', data: { user_email, user_name, provider_name, provider_type: 'doctor', facility, appointment_date, appointment_time, reason, status: 'scheduled', reminder_sent: false } });
+          if (result.success) return `✅ Appointment: ${provider_name} on ${appointment_date} at ${appointment_time}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addemergency': {
+          if (!args) return 'Usage: /addemergency user_email | name | relation | phone | email';
+          const [user_email, contact_name, relationship, phone, contact_email] = args.split('|').map(s => s.trim());
+          if (!user_email || !contact_name) return 'Usage: /addemergency email | name | relation | phone | email';
+          const result = await callBridge('createEntityRecord', { entityName: 'EmergencyContact', data: { user_email, contact_name, relationship, phone, email: contact_email, is_primary: true, blood_type: '', allergies: [], medical_notes: '' } });
+          if (result.success) return `✅ Emergency contact: ${contact_name} (${relationship})\nPhone: ${phone}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addfamily': {
+          if (!args) return 'Usage: /addfamily user_email | name | relation | age | sex | blood';
+          const [user_email, member_name, relationship, age, sex, blood_type] = args.split('|').map(s => s.trim());
+          if (!user_email || !member_name) return 'Usage: /addfamily email | name | relation | age | sex | blood';
+          const result = await callBridge('createEntityRecord', { entityName: 'FamilyMember', data: { user_email, member_name, relationship, age: parseInt(age) || 0, sex, blood_type, allergies: [], chronic_conditions: [], medications: [], vaccination_status: 'up_to_date', caregiver_access: false } });
+          if (result.success) return `✅ Family member: ${member_name} (${relationship})\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addsubscriber': {
+          if (!args) return 'Usage: /addsubscriber email | name | plan | amount';
+          const [email, name, plan, amount] = args.split('|').map(s => s.trim());
+          if (!email) return 'Usage: /addsubscriber email | name | plan | amount';
+          const result = await callBridge('createEntityRecord', { entityName: 'ContentPilotSubscriber', data: { email, name, plan: plan || 'free', billing_provider: 'paystack', status: 'active', amount: parseFloat(amount) || 0, currency: 'NGN' } });
+          if (result.success) return `✅ Subscriber: ${name || email}\nPlan: ${plan || 'free'}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addseller': {
+          if (!args) return 'Usage: /addseller store_name | owner | email | country';
+          const [store_name, owner_name, email, country] = args.split('|').map(s => s.trim());
+          if (!store_name || !email) return 'Usage: /addseller store | owner | email | country';
+          const result = await callBridge('createEntityRecord', { entityName: 'Seller', data: { store_name, owner_name, email, country: country || 'Nigeria', total_sales: 0, total_revenue: 0, status: 'active' } });
+          if (result.success) return `✅ Seller: ${store_name} (${owner_name})\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addreferral': {
+          if (!args) return 'Usage: /addreferral referrer | referred | product | commission';
+          const [referrer_email, referred_email, product_title, commission_amount] = args.split('|').map(s => s.trim());
+          if (!referrer_email || !referred_email) return 'Usage: /addreferral referrer | referred | product | commission';
+          const result = await callBridge('createEntityRecord', { entityName: 'Referral', data: { referrer_email, referred_email, product_title, commission_amount: parseFloat(commission_amount) || 0, commission_percent: 10, status: 'active', date_earned: new Date().toISOString().slice(0, 10) } });
+          if (result.success) return `✅ Referral: ${referred_email} via ${referrer_email}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addfile': {
+          if (!args) return 'Usage: /addfile file_name | file_url | file_type | description | tags';
+          const [file_name, file_url, file_type, ...descParts] = args.split('|').map(s => s.trim());
+          const description = descParts.join(' | ');
+          if (!file_name || !file_url) return 'Usage: /addfile name | url | type | desc';
+          const result = await callBridge('createEntityRecord', { entityName: 'FileStore', data: { file_name, file_url, file_type: file_type || 'document', file_size: 0, description, uploaded_by: 'Rabiu Hamza', source: 'telegram', tags: [], is_private: false } });
+          if (result.success) return `✅ File stored: ${file_name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addad': {
+          if (!args) return 'Usage: /addad business | email | phone | headline | desc | package | amount';
+          const [business_name, contact_email, contact_phone, ad_headline, ad_description, package_name, amount] = args.split('|').map(s => s.trim());
+          if (!business_name || !ad_headline) return 'Usage: /addad biz | email | phone | headline | desc | pkg | amt';
+          const result = await callBridge('createEntityRecord', { entityName: 'NexalAdSubmission', data: { business_name, contact_email, contact_phone, ad_headline, ad_description, package: package_name || 'basic', amount: parseFloat(amount) || 0, currency: 'NGN', payment_status: 'pending', publish_status: 'pending', platforms: [] } });
+          if (result.success) return `✅ Ad submission: ${business_name}\nHeadline: ${ad_headline}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addinquiry': {
+          if (!args) return 'Usage: /addinquiry name | email | phone | interest | message';
+          const [full_name, email, phone, interest, ...msgParts] = args.split('|').map(s => s.trim());
+          const message = msgParts.join(' | ');
+          if (!full_name) return 'Usage: /addinquiry name | email | phone | interest | msg';
+          const result = await callBridge('createEntityRecord', { entityName: 'EstateInquiry', data: { full_name, email, phone, interest, message, status: 'new' } });
+          if (result.success) return `✅ Inquiry logged: ${full_name} — ${interest}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addjob': {
+          if (!args) return 'Usage: /addjob company | title | type | salary | location | remote';
+          const [company_name, job_title, job_type, salary_range, location, remote] = args.split('|').map(s => s.trim());
+          if (!company_name || !job_title) return 'Usage: /addjob company | title | type | salary | loc | remote';
+          const result = await callBridge('createEntityRecord', { entityName: 'EduJobPosting', data: { company_name, job_title, job_type: job_type || 'full_time', salary_range, currency: 'NGN', location, remote: remote === 'true', applicants_count: 0, matched_candidates: 0, posted_by_email: 'harzco.business@gmail.com', posted_date: new Date().toISOString().slice(0, 10), status: 'active' } });
+          if (result.success) return `✅ Job posted: ${job_title} at ${company_name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addliveclass': {
+          if (!args) return 'Usage: /addliveclass title | course_id | instructor | date | time | duration';
+          const [title, course_id, instructor_name, scheduled_date, scheduled_time, duration] = args.split('|').map(s => s.trim());
+          if (!title) return 'Usage: /addliveclass title | course_id | instructor | date | time | mins';
+          const result = await callBridge('createEntityRecord', { entityName: 'EduLiveClass', data: { title, course_id, instructor_name, instructor_email: 'harzco.business@gmail.com', scheduled_date, scheduled_time, duration_minutes: parseInt(duration) || 60, max_participants: 100, registered_count: 0, status: 'scheduled' } });
+          if (result.success) return `✅ Live class: ${title}\n${scheduled_date} at ${scheduled_time}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addmonetization': {
+          if (!args) return 'Usage: /addmonetization channel | type | platform | threshold';
+          const [channel_name, channel_type, platform, threshold] = args.split('|').map(s => s.trim());
+          if (!channel_name) return 'Usage: /addmonetization channel | type | platform | threshold';
+          const result = await callBridge('createEntityRecord', { entityName: 'MonetizationChannel', data: { channel_name, channel_type, platform, status: 'active', revenue_total: 0, currency: 'NGN', revenue_this_month: 0, threshold: parseFloat(threshold) || 0, payout_method: 'bank', affiliate_links: [] } });
+          if (result.success) return `✅ Monetization channel: ${channel_name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addgoal': {
+          if (!args) return 'Usage: /addgoal user_email | type | name | target | current';
+          const [user_email, goal_type, goal_name, target_value, current_value] = args.split('|').map(s => s.trim());
+          if (!user_email || !goal_name) return 'Usage: /addgoal email | type | name | target | current';
+          const result = await callBridge('createEntityRecord', { entityName: 'WellnessGoal', data: { user_email, goal_type: goal_type || 'health', goal_name, target_value: parseFloat(target_value) || 0, current_value: parseFloat(current_value) || 0, streak_days: 0, completed_days: 0, target_days: 30, status: 'active', created_at: new Date().toISOString() } });
+          if (result.success) return `✅ Wellness goal: ${goal_name}\nID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+        case '/addmood': {
+          if (!args) return 'Usage: /addmood user_email | happiness | anxiety | stress | energy | focus';
+          const [user_email, happiness, anxiety, stress, energy, focus] = args.split('|').map(s => s.trim());
+          if (!user_email) return 'Usage: /addmood email | happy(1-10) | anx | stress | energy | focus';
+          const scores = { happiness: parseInt(happiness) || 5, anxiety: parseInt(anxiety) || 5, stress: parseInt(stress) || 5, energy: parseInt(energy) || 5, focus: parseInt(focus) || 5 };
+          const overall = Math.round((scores.happiness + scores.energy + scores.focus + (10 - scores.stress) + (10 - scores.anxiety)) / 5);
+          const result = await callBridge('createEntityRecord', { entityName: 'MoodEntry', data: { user_email, ...scores, overall_mood: overall, mood_label: overall >= 7 ? 'good' : overall >= 5 ? 'neutral' : 'low', notes: '', triggers: [], recorded_at: new Date().toISOString() } });
+          if (result.success) return `✅ Mood logged. Overall: ${overall}/10 (${overall >= 7 ? 'good' : overall >= 5 ? 'neutral' : 'low'})`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+
         default:
           return null;
       }

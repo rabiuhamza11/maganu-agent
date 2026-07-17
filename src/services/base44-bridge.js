@@ -115,6 +115,27 @@ module.exports = {
   stripeCheckout: (email, amount, currency, product_name) => callPayment('stripeCheckout', { email, amount, currency, product_name }),
   stripeRefund: (charge_id, amount) => callPayment('stripeRefund', { charge_id, amount }),
   stripeProducts: () => callPayment('stripeProducts'),
+  // Paystack extended
+  paystackCreateCustomer: (email, first_name, last_name, phone) => callPayment('paystackCreateCustomer', { email, first_name, last_name, phone }),
+  paystackListCustomers: (limit) => callPayment('paystackListCustomers', { limit }),
+  paystackCreatePlan: (name, amount, interval, currency) => callPayment('paystackCreatePlan', { name, amount, interval, currency }),
+  paystackListPlans: () => callPayment('paystackListPlans'),
+  paystackCreatePage: (name, amount, currency) => callPayment('paystackCreatePage', { name, amount, currency }),
+  paystackListPages: () => callPayment('paystackListPages'),
+  paystackCreateSubaccount: (business_name, settlement_bank, account_number, percentage) => callPayment('paystackCreateSubaccount', { business_name, settlement_bank, account_number, percentage_charge: percentage }),
+  paystackListTransfers: (limit) => callPayment('paystackListTransfers', { limit }),
+  // Stripe extended
+  stripeCreateProduct: (name, description) => callPayment('stripeCreateProduct', { name, description }),
+  stripeCreatePrice: (product_id, amount, currency, recurring) => callPayment('stripeCreatePrice', { product_id, amount, currency, recurring }),
+  stripeListPrices: () => callPayment('stripeListPrices'),
+  stripeCreateCustomer: (email, name, phone) => callPayment('stripeCreateCustomer', { email, name, phone }),
+  stripeListCustomers: (limit) => callPayment('stripeListCustomers', { limit }),
+  stripeCreateSubscription: (customer_id, price_id) => callPayment('stripeCreateSubscription', { customer_id, price_id }),
+  stripeListSubscriptions: () => callPayment('stripeListSubscriptions'),
+  stripeCreateInvoice: (customer_id) => callPayment('stripeCreateInvoice', { customer_id }),
+  stripeListInvoices: (limit) => callPayment('stripeListInvoices', { limit }),
+  stripeCreatePaymentLink: (price_id, quantity) => callPayment('stripeCreatePaymentLink', { price_id, quantity }),
+  stripeCreateCoupon: (percent_off, duration, months) => callPayment('stripeCreateCoupon', { percent_off, duration, duration_in_months: months }),
 
   async handleCommand(cmd, args) {
     try {
@@ -888,6 +909,257 @@ Status: ${result.status}`;
 `; });
             return msg;
           }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+
+        // ===== EXTENDED PAYMENT COMMANDS =====
+        case '/pscustomer': {
+          if (!args) return 'Usage: /pscustomer email | name | phone';
+          const [email, ...rest] = args.split('|');
+          const nameParts = (rest[0] || '').trim().split(' ');
+          const result = await callPayment('paystackCreateCustomer', { email: email.trim(), first_name: nameParts[0] || '', last_name: nameParts.slice(1).join(' ') || '', phone: (rest[1] || '').trim() });
+          if (result.success) return `✅ Customer created!
+ID: ${result.customerId}
+Code: ${result.customer_code}
+Email: ${result.email}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/pscustomers': {
+          const result = await callPayment('paystackListCustomers', { limit: 15 });
+          if (result.success) {
+            if (result.count === 0) return '📭 No customers';
+            let msg = `👥 *Paystack Customers (${result.count})*
+
+`;
+            result.customers.forEach(c => { msg += `  ${c.email}
+  Code: ${c.code} | TXNs: ${c.total_transactions || 0}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/psplan': {
+          if (!args) return 'Usage: /psplan name | amount | interval | currency';
+          const [name, amount, interval, currency] = args.split('|').map(s => s.trim());
+          if (!name || !amount || !interval) return 'Usage: /psplan name | amount | interval(daily/weekly/monthly/annually) | currency';
+          const result = await callPayment('paystackCreatePlan', { name, amount: parseFloat(amount), interval, currency: currency || 'NGN' });
+          if (result.success) return `✅ Plan created!
+Name: ${result.name}
+Code: ${result.plan_code}
+Amount: ${currency || 'NGN'} ${amount}
+Interval: ${interval}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/psplans': {
+          const result = await callPayment('paystackListPlans');
+          if (result.success) {
+            if (result.count === 0) return '📭 No subscription plans';
+            let msg = `📋 *Paystack Plans (${result.count})*
+
+`;
+            result.plans.forEach(p => { msg += `  ${p.name}
+  ${p.currency} ${p.amount} / ${p.interval}
+  Code: ${p.plan_code}
+  Subscribers: ${p.subscribers || 0}
+
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/pspage': {
+          if (!args) return 'Usage: /pspage name | amount | currency';
+          const [name, amount, currency] = args.split('|').map(s => s.trim());
+          if (!name) return 'Usage: /pspage name | amount | currency';
+          const result = await callPayment('paystackCreatePage', { name, amount: amount ? parseFloat(amount) : undefined, currency: currency || 'NGN' });
+          if (result.success) return `✅ Payment Page Created!
+Name: ${result.name}
+Slug: ${result.slug}
+URL: ${result.page_url}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/pspages': {
+          const result = await callPayment('paystackListPages');
+          if (result.success) {
+            if (result.count === 0) return '📭 No payment pages';
+            let msg = `📄 *Paystack Pages (${result.count})*
+
+`;
+            result.pages.forEach(p => { msg += `  ${p.name}
+  ${p.url}
+  ${p.amount ? p.currency + ' ' + p.amount : 'Flexible'} | ${p.active ? 'Active' : 'Inactive'}
+
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/pssubaccount': {
+          if (!args) return 'Usage: /pssubaccount business_name | bank_code | account_number | percentage';
+          const [business_name, settlement_bank, account_number, percentage_charge] = args.split('|').map(s => s.trim());
+          if (!business_name || !settlement_bank || !account_number) return 'Usage: /pssubaccount business_name | bank_code | account_number | percentage';
+          const result = await callPayment('paystackCreateSubaccount', { business_name, settlement_bank, account_number, percentage_charge: percentage_charge ? parseFloat(percentage_charge) : 0 });
+          if (result.success) return `✅ Subaccount created!
+Business: ${result.business_name}
+Code: ${result.subaccount_code}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/pstransfers': {
+          const result = await callPayment('paystackListTransfers', { limit: 10 });
+          if (result.success) {
+            if (result.count === 0) return '📭 No transfers yet';
+            let msg = `💸 *Paystack Transfers (${result.count})*
+
+`;
+            result.transfers.forEach(t => { msg += `  ${t.recipient || 'Unknown'}
+  ₦${t.amount.toLocaleString()} [${t.status}]
+  Ref: ${t.reference}
+  ${t.date?.slice(0,10) || ''}
+
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stproduct': {
+          if (!args) return 'Usage: /stproduct name | description';
+          const [name, ...descParts] = args.split('|').map(s => s.trim());
+          const result = await callPayment('stripeCreateProduct', { name, description: descParts.join(' | ') });
+          if (result.success) return `✅ Stripe product created!
+ID: ${result.product_id}
+Name: ${result.name}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stprice': {
+          if (!args) return 'Usage: /stprice product_id | amount | currency | recurring(month/blank)';
+          const [product_id, amount, currency, recurring] = args.split('|').map(s => s.trim());
+          if (!product_id || !amount) return 'Usage: /stprice product_id | amount | currency | recurring';
+          const result = await callPayment('stripeCreatePrice', { product_id, amount: parseFloat(amount), currency: currency || 'usd', recurring: recurring === 'month', interval: recurring || 'month' });
+          if (result.success) return `✅ Price created!
+ID: ${result.price_id}
+Amount: ${result.currency} ${result.amount}
+Recurring: ${result.recurring}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stprices': {
+          const result = await callPayment('stripeListPrices');
+          if (result.success) {
+            if (result.count === 0) return '📭 No Stripe prices';
+            let msg = `💰 *Stripe Prices (${result.count})*
+
+`;
+            result.prices.forEach(p => { msg += `  ${p.currency} ${p.amount} ${p.recurring ? '/ ' + p.interval : ''}
+  ID: ${p.id}
+  Product: ${p.product}
+
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stcustomer': {
+          if (!args) return 'Usage: /stcustomer email | name | phone';
+          const [email, name, phone] = args.split('|').map(s => s.trim());
+          if (!email) return 'Usage: /stcustomer email | name | phone';
+          const result = await callPayment('stripeCreateCustomer', { email, name, phone });
+          if (result.success) return `✅ Stripe customer created!
+ID: ${result.customer_id}
+Email: ${result.email}
+Name: ${result.name || 'N/A'}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stcustomers': {
+          const result = await callPayment('stripeListCustomers', { limit: 15 });
+          if (result.success) {
+            if (result.count === 0) return '📭 No Stripe customers';
+            let msg = `👥 *Stripe Customers (${result.count})*
+
+`;
+            result.customers.forEach(c => { msg += `  ${c.name || c.email || 'Unknown'}
+  ID: ${c.id}
+  ${c.email || ''} ${c.phone ? '| ' + c.phone : ''}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stsub': {
+          if (!args) return 'Usage: /stsub customer_id | price_id';
+          const [customer_id, price_id] = args.split('|').map(s => s.trim());
+          if (!customer_id || !price_id) return 'Usage: /stsub customer_id | price_id';
+          const result = await callPayment('stripeCreateSubscription', { customer_id, price_id });
+          if (result.success) return `✅ Subscription created!
+ID: ${result.subscription_id}
+Status: ${result.status}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stsubs': {
+          const result = await callPayment('stripeListSubscriptions');
+          if (result.success) {
+            if (result.count === 0) return '📭 No Stripe subscriptions';
+            let msg = `🔄 *Stripe Subscriptions (${result.count})*
+
+`;
+            result.subscriptions.forEach(s => { msg += `  ${s.id}
+  Status: ${s.status}
+  Customer: ${s.customer}
+  Ends: ${s.current_period_end}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stinvoices': {
+          const result = await callPayment('stripeListInvoices', { limit: 10 });
+          if (result.success) {
+            if (result.count === 0) return '📭 No Stripe invoices';
+            let msg = `🧾 *Stripe Invoices (${result.count})*
+
+`;
+            result.invoices.forEach(i => { msg += `  ${i.number || i.id}
+  ${i.currency} ${i.amount_due} [${i.status}]
+  ${i.paid ? '✅ Paid' : '⏳ Unpaid'}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stlink': {
+          if (!args) return 'Usage: /stlink price_id | quantity';
+          const [price_id, quantity] = args.split('|').map(s => s.trim());
+          if (!price_id) return 'Usage: /stlink price_id | quantity';
+          const result = await callPayment('stripeCreatePaymentLink', { price_id, quantity: parseInt(quantity) || 1 });
+          if (result.success) return `✅ Payment Link Created!
+ID: ${result.payment_link_id}
+URL: ${result.url}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stcoupon': {
+          if (!args) return 'Usage: /stcoupon percent_off | duration(once/repeating/forever) | months';
+          const [percent_off, duration, months] = args.split('|').map(s => s.trim());
+          if (!percent_off) return 'Usage: /stcoupon percent_off | duration | months';
+          const result = await callPayment('stripeCreateCoupon', { percent_off: parseFloat(percent_off), duration: duration || 'once', duration_in_months: months ? parseInt(months) : undefined });
+          if (result.success) return `✅ Coupon created!
+ID: ${result.coupon_id}
+${result.percent_off}% off | ${result.duration}`;
           return '❌ ' + (result.error || 'failed');
         }
 

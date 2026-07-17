@@ -1,5 +1,5 @@
-// Base44 Integration Bridge Service — gives Maganu access to all Base44 integrations
-// Calls the deployed maganuBridge backend function on Base44
+// Base44 Integration Bridge v3.0 — 60+ actions, 30+ Telegram commands
+// Full ecosystem access for Maganu on Render
 
 const BASE44_BRIDGE_URL = process.env.BASE44_BRIDGE_URL || 'https://6a1e2efdc14fbb292286fb2f.base44app.com/functions/maganuBridge';
 const GMAIL_TOKEN = process.env.GMAIL_ACCESS_TOKEN || '';
@@ -11,8 +11,7 @@ async function callBridge(action, extra = {}) {
     const payload = { action, ...extra };
     if (GMAIL_TOKEN) payload.gmailToken = GMAIL_TOKEN;
     if (CALENDAR_TOKEN) payload.calendarToken = CALENDAR_TOKEN;
-    
-    const res = await axios.post(BASE44_BRIDGE_URL, payload, { timeout: 15000 });
+    const res = await axios.post(BASE44_BRIDGE_URL, payload, { timeout: 20000 });
     return res.data;
   } catch (err) {
     return { success: false, error: err.message };
@@ -24,306 +23,459 @@ module.exports = {
   sendEmail: (to, subject, body) => callBridge('sendEmail', { to, subject, body }),
   readEmails: (max = 10) => callBridge('readEmails', { max }),
   searchEmails: (query, max = 10) => callBridge('searchEmails', { query, max }),
-  
   // Calendar
   getCalendar: (daysAhead = 7) => callBridge('getCalendar', { daysAhead }),
-  createCalendarEvent: (title, startTime, endTime, description, location) => 
-    callBridge('createCalendarEvent', { title, startTime, endTime, description, location }),
-  
-  // Entity CRUD
+  createCalendarEvent: (title, startTime, endTime, description, location) => callBridge('createCalendarEvent', { title, startTime, endTime, description, location }),
+  // Generic Entity CRUD
   getEntityData: (entityName) => callBridge('getEntityData', { entityName }),
+  queryEntity: (entityName, filter, sort, limit) => callBridge('queryEntity', { entityName, filter, sort, limit }),
+  getEntityCount: (entityName) => callBridge('getEntityCount', { entityName }),
   createEntityRecord: (entityName, data) => callBridge('createEntityRecord', { entityName, data }),
   updateEntityRecord: (entityName, id, data) => callBridge('updateEntityRecord', { entityName, id, data }),
-  
-  // Domain-specific
+  deleteEntityRecord: (entityName, id) => callBridge('deleteEntityRecord', { entityName, id }),
+  multiQuery: (entities) => callBridge('multiQuery', { entities }),
+  getFullDashboard: () => callBridge('getFullDashboard'),
+  // Domain summaries
   getCRMStats: () => callBridge('getCRMStats'),
   getOrders: () => callBridge('getOrders'),
   getProducts: () => callBridge('getProducts'),
   getMusicTracks: () => callBridge('getMusicTracks'),
+  getMusicArtists: () => callBridge('getMusicArtists'),
   getFilms: () => callBridge('getFilms'),
+  getFilmCreators: () => callBridge('getFilmCreators'),
   getFXRates: () => callBridge('getFXRates'),
   getEstateProperties: () => callBridge('getEstateProperties'),
+  getEstateInquiries: () => callBridge('getEstateInquiries'),
   getApexAccounts: () => callBridge('getApexAccounts'),
+  getApexCards: () => callBridge('getApexCards'),
+  getApexLoans: () => callBridge('getApexLoans'),
+  getApexSavings: () => callBridge('getApexSavings'),
   getAjoGroups: () => callBridge('getAjoGroups'),
+  getLoans: () => callBridge('getLoans'),
+  getBillPayments: () => callBridge('getBillPayments'),
   getEduCourses: () => callBridge('getEduCourses'),
+  getEduStudents: () => callBridge('getEduStudents'),
+  getEduInstructors: () => callBridge('getEduInstructors'),
+  getEduEnrollments: () => callBridge('getEduEnrollments'),
+  getEduJobs: () => callBridge('getEduJobs'),
+  getEduLiveClasses: () => callBridge('getEduLiveClasses'),
+  getEduMarketplace: () => callBridge('getEduMarketplace'),
   getContentProjects: () => callBridge('getContentProjects'),
+  getContentAnalytics: () => callBridge('getContentAnalytics'),
+  getAIExecutives: () => callBridge('getAIExecutives'),
+  getHealthProfiles: () => callBridge('getHealthProfiles'),
+  getAppointments: () => callBridge('getAppointments'),
+  getMindCare: () => callBridge('getMindCare'),
+  getCyberStatus: () => callBridge('getCyberStatus'),
+  getDomainOrders: () => callBridge('getDomainOrders'),
+  getOracleSessions: () => callBridge('getOracleSessions'),
+  getBuildProjects: () => callBridge('getBuildProjects'),
+  getNexalAds: () => callBridge('getNexalAds'),
+  getNumberLookups: () => callBridge('getNumberLookups'),
+  getChapterTracker: () => callBridge('getChapterTracker'),
+  getDeployTasks: () => callBridge('getDeployTasks'),
+  getOmegaProjects: () => callBridge('getOmegaProjects'),
+  getFileStore: () => callBridge('getFileStore'),
+  getReferrals: () => callBridge('getReferrals'),
   getSubscribers: () => callBridge('getSubscribers'),
   getEcosystemSummary: () => callBridge('getEcosystemSummary'),
-  
   // Messaging
   sendTelegram: (message, chatId) => callBridge('sendTelegram', { message, chatId }),
-  
   // System
   getStatus: () => callBridge('getStatus'),
-  
-  // Generic bridge call
   call: callBridge,
-  
-  // Telegram command handler for bridge
+
   async handleCommand(cmd, args) {
     try {
       switch (cmd) {
+        // ===== SYSTEM =====
         case '/bridge': {
           const status = await callBridge('getStatus');
           if (status.success) {
             const s = status.system;
             let msg = `🌉 *Maganu Bridge v${s.version}*\n\n`;
-            msg += `*Integrations:*\n`;
-            msg += `  Gmail: ${s.integrations.gmail}\n`;
-            msg += `  Calendar: ${s.integrations.googleCalendar}\n`;
-            msg += `  Telegram: ${s.integrations.telegram}\n`;
-            msg += `  WhatsApp: ${s.integrations.whatsapp}\n\n`;
-            msg += `*Capabilities (${s.capabilities.length}):*\n`;
-            s.capabilities.forEach(c => msg += `  • ${c}\n`);
-            msg += `\n*Entities:* ${s.entityCount} tables accessible`;
+            msg += `*Integrations:*\n  Gmail: ${s.integrations.gmail}\n  Calendar: ${s.integrations.googleCalendar}\n  Telegram: ${s.integrations.telegram}\n\n`;
+            msg += `*Capabilities:* ${s.capabilities.length} actions\n`;
+            msg += `*Entities:* ${s.entityCount} tables`;
             return msg;
           }
-          return '❌ Bridge error: ' + (status.error || 'unknown');
+          return '❌ ' + (status.error || 'unknown');
         }
-        
+
+        case '/dashboard': {
+          const result = await callBridge('getFullDashboard');
+          if (result.success) {
+            let msg = `📊 *Full Ecosystem Dashboard*\n\n`;
+            msg += `*Entities:* ${result.total_entities}\n*Total Records:* ${result.total_records}\n\n`;
+            const c = result.counts;
+            const cats = [
+              ['Marketplace', ['Product', 'Seller', 'Order']],
+              ['CRM', ['WhatsAppCRM', 'Referral']],
+              ['Music', ['MusicTrack', 'MusicArtist', 'MusicPurchase']],
+              ['Film', ['Film', 'FilmCreator', 'FilmPurchase', 'FilmReview']],
+              ['Banking', ['ApexAccount', 'ApexTransaction', 'ApexCard', 'ApexLoan', 'ApexSavingsGoal', 'ApexBill']],
+              ['Ajo', ['AjoGroup', 'AjoMember', 'AjoContribution']],
+              ['Loans', ['MicroLoan', 'LoanApplication', 'BillPayment']],
+              ['Education', ['EduCourse', 'EduStudent', 'EduInstructor', 'EduEnrollment', 'EduCertificate']],
+              ['Content', ['ContentProject', 'ContentScript', 'ContentCampaign', 'ContentAsset', 'AnalyticsMetric']],
+              ['Health', ['HealthProfile', 'HealthMetric', 'Medication', 'MedicalRecord']],
+              ['Mental Health', ['MindCareProfile', 'MoodEntry', 'MindCareJournal', 'WellnessGoal']],
+              ['Cyber', ['CyberThreat', 'CyberIncident', 'CyberVulnerability', 'CyberAgent']],
+              ['Hosting', ['HMDomain', 'HMHostingOrder', 'HMTicket', 'HMInvoice', 'DomainOrder']],
+              ['Other', ['BuildProject', 'NexalAdSubmission', 'OracleSession', 'DeployTask', 'FileStore']]
+            ];
+            cats.forEach(([name, ents]) => {
+              const total = ents.reduce((s, e) => s + (c[e] || 0), 0);
+              if (total > 0) {
+                msg += `*${name}:* ${total}\n  `;
+                msg += ents.map(e => `${e.replace(/([A-Z])/g, ' $1').trim()}: ${c[e] || 0}`).join(' | ') + '\n';
+              }
+            });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
         case '/ecosystem': {
           const summary = await callBridge('getEcosystemSummary');
           if (summary.success) {
             const e = summary.ecosystem;
             let msg = `🌍 *Harz Ecosystem Summary*\n\n`;
-            msg += `Platforms: ${e.platforms}\n`;
-            msg += `Products: ${e.products} (${e.total_product_sales} sales)\n`;
-            msg += `Orders: ${e.orders} (${e.paid_orders} paid)\n`;
-            msg += `CRM Customers: ${e.crm_customers}\n`;
-            msg += `Music Tracks: ${e.music_tracks} (${e.total_music_plays} plays)\n`;
+            msg += `Platforms: ${e.platforms}\nProducts: ${e.products} (${e.total_product_sales} sales)\n`;
+            msg += `Orders: ${e.orders} (${e.paid_orders} paid)\nCRM: ${e.crm_customers} customers\n`;
+            msg += `Music: ${e.music_tracks} tracks, ${e.total_music_plays} plays\n`;
             msg += `Films: ${e.films} (${e.total_film_views} views)\n`;
-            msg += `Subscribers: ${e.subscribers} (${e.active_subscribers} active)\n`;
-            msg += `Bank Accounts: ${e.bank_accounts}\n`;
-            msg += `Ajo Groups: ${e.ajo_groups}\n`;
-            msg += `Edu Courses: ${e.edu_courses}\n`;
-            msg += `Estate Properties: ${e.estate_properties}`;
+            msg += `Subs: ${e.subscribers} (${e.active_subscribers} active)\n`;
+            msg += `Bank: ${e.bank_accounts} accts, $${e.total_bank_balance}\n`;
+            msg += `Ajo: ${e.ajo_groups} | Edu: ${e.edu_courses} courses, ${e.edu_students} students\n`;
+            msg += `Estate: ${e.estate_properties} | Health: ${e.health_profiles}\n`;
+            msg += `Cyber: ${e.cyber_threats} threats | Content: ${e.content_projects} projects\n`;
+            msg += `Domains: ${e.domains} | Loans: ${e.micro_loans}`;
             return msg;
           }
-          return '❌ Error: ' + (summary.error || 'unknown');
+          return '❌ ' + (summary.error || 'unknown');
         }
-        
+
+        // ===== CRM =====
         case '/crmstats': {
           const result = await callBridge('getCRMStats');
           if (result.success) {
             const s = result.stats;
-            let msg = `📊 *WhatsApp CRM Stats*\n\n`;
-            msg += `Total: ${s.total_customers}\n`;
-            msg += `New: ${s.new} | Responded: ${s.responded}\n`;
-            msg += `In Progress: ${s.in_progress} | Converted: ${s.converted}\n`;
-            msg += `Follow-up: ${s.follow_up} | Lost: ${s.lost}\n`;
-            msg += `Revenue: ₦${s.total_revenue.toLocaleString()}\n`;
-            msg += `Conversion: ${s.conversion_rate}%\n\n`;
-            if (s.recent_customers.length > 0) {
-              msg += `*Recent Customers:*\n`;
-              s.recent_customers.forEach(c => {
-                msg += `  ${c.name} (${c.phone})\n`;
-                msg += `  Interest: ${c.product} | Status: ${c.status}\n`;
-              });
-            }
+            let msg = `📊 *CRM Stats*\n\nTotal: ${s.total_customers}\nNew: ${s.new} | Responded: ${s.responded}\nConverted: ${s.converted} | Rate: ${s.conversion_rate}%\nRevenue: ₦${s.total_revenue.toLocaleString()}\n`;
+            if (s.recent_customers.length > 0) { msg += `\n*Recent:*\n`; s.recent_customers.forEach(c => { msg += `  ${c.name} (${c.phone}) — ${c.product} [${c.status}]\n`; }); }
             return msg;
           }
-          return '❌ Error: ' + (result.error || 'unknown');
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        // ===== ORDERS =====
         case '/orders': {
           const result = await callBridge('getOrders');
           if (result.success) {
             const s = result.summary;
-            let msg = `📦 *Orders Summary*\n\n`;
-            msg += `Total: ${s.total_orders}\n`;
-            msg += `Paid: ${s.paid} | Pending: ${s.pending}\n`;
-            msg += `Revenue: ₦${s.total_revenue.toLocaleString()}\n\n`;
-            if (result.orders && result.orders.length > 0) {
-              msg += `*Recent Orders:*\n`;
-              result.orders.slice(0, 5).forEach(o => {
-                msg += `  ${o.product_title} — ${o.buyer_name || o.buyer_email}\n`;
-                msg += `  ${o.currency} ${o.amount} | ${o.payment_status}\n`;
-              });
-            }
+            let msg = `📦 *Orders*\n\nTotal: ${s.total_orders} | Paid: ${s.paid} | Pending: ${s.pending}\nRevenue: ₦${s.total_revenue.toLocaleString()}\n`;
+            if (result.orders && result.orders.length > 0) { msg += `\n*Recent:*\n`; result.orders.slice(0, 5).forEach(o => { msg += `  ${o.product_title} — ${o.buyer_name || o.buyer_email} (${o.currency}${o.amount}, ${o.payment_status})\n`; }); }
             return msg;
           }
-          return '❌ Error: ' + (result.error || 'unknown');
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        // ===== PRODUCTS =====
         case '/products': {
           const result = await callBridge('getProducts');
           if (result.success) {
             const s = result.summary;
-            let msg = `🛒 *Products Summary*\n\n`;
-            msg += `Total: ${s.total_products} (${s.active} active)\n`;
-            msg += `Total Sales: ${s.total_sales}\n\n`;
-            msg += `*Top Products:*\n`;
-            s.top_products.forEach(p => {
-              msg += `  ${p.title} — $${p.price} (${p.sales} sales, ⭐${p.rating})\n`;
-            });
+            let msg = `🛒 *Products*\n\nTotal: ${s.total_products} (${s.active} active)\nSellers: ${s.total_sellers}\nTotal Sales: ${s.total_sales}\n\n*Top:*\n`;
+            s.top_products.forEach(p => { msg += `  ${p.title} — $${p.price} (${p.sales} sales, ⭐${p.rating})\n`; });
             return msg;
           }
-          return '❌ Error: ' + (result.error || 'unknown');
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        // ===== MUSIC =====
         case '/music': {
           if (args && args.toLowerCase() === 'stats') {
             const result = await callBridge('getMusicTracks');
             if (result.success) {
               const s = result.summary;
-              let msg = `🎵 *HarzMusic Stats*\n\n`;
-              msg += `Tracks: ${s.total_tracks}\n`;
-              msg += `Total Plays: ${s.total_plays.toLocaleString()}\n`;
-              msg += `Total Downloads: ${s.total_downloads.toLocaleString()}\n\n`;
-              msg += `*Trending:*\n`;
-              s.trending.forEach(t => {
-                msg += `  ${t.title} — ${t.artist} (${t.plays} plays)\n`;
-              });
+              let msg = `🎵 *HarzMusic*\n\nTracks: ${s.total_tracks}\nArtists: ${s.total_artists}\nPlays: ${s.total_plays.toLocaleString()}\nDownloads: ${s.total_downloads}\nPurchases: ${s.total_purchases}\nRevenue: ₦${s.total_revenue.toLocaleString()}\n`;
+              if (s.trending.length > 0) { msg += `\n*Trending:*\n`; s.trending.forEach(t => { msg += `  ${t.title} — ${t.artist} (${t.plays} plays)\n`; }); }
               return msg;
             }
-            return '❌ Error: ' + (result.error || 'unknown');
+            return '❌ ' + (result.error || 'unknown');
           }
           return 'Usage: /music stats';
         }
-        
+
+        case '/artists': {
+          const result = await callBridge('getMusicArtists');
+          if (result.success) {
+            let msg = `🎤 *HarzMusic Artists (${result.total_artists})*\n\n`;
+            result.artists.forEach(a => { msg += `  ${a.artist_name}${a.verified ? ' ✓' : ''} — ${a.track_count} tracks, ${a.total_sales} sales\n`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== FILM =====
         case '/films': {
           const result = await callBridge('getFilms');
           if (result.success) {
             const s = result.summary;
-            let msg = `🎬 *HarzFilm Stats*\n\n`;
-            msg += `Films: ${s.total_films}\n`;
-            msg += `Views: ${s.total_views.toLocaleString()}\n`;
-            msg += `Purchases: ${s.total_purchases}\n`;
-            msg += `Rentals: ${s.total_rentals}\n\n`;
-            if (s.featured.length > 0) {
-              msg += `*Featured:*\n`;
-              s.featured.forEach(f => {
-                msg += `  ${f.title} — ${f.creator} (⭐${f.rating})\n`;
-              });
-            }
+            let msg = `🎬 *HarzFilm*\n\nFilms: ${s.total_films}\nCreators: ${s.total_creators}\nViews: ${s.total_views.toLocaleString()}\nPurchases: ${s.total_purchases} | Rentals: ${s.total_rentals}\nReviews: ${s.total_reviews} | Avg: ⭐${s.avg_rating}\n`;
+            if (s.featured.length > 0) { msg += `\n*Featured:*\n`; s.featured.forEach(f => { msg += `  ${f.title} — ${f.creator} (⭐${f.rating})\n`; }); }
             return msg;
           }
-          return '❌ Error: ' + (result.error || 'unknown');
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        case '/creators': {
+          const result = await callBridge('getFilmCreators');
+          if (result.success) {
+            let msg = `🎬 *HarzFilm Creators (${result.total_creators})*\n\n`;
+            result.creators.forEach(c => { msg += `  ${c.creator_name}${c.verified ? ' ✓' : ''} — ${c.film_count} films, ${c.total_sales} sales\n`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== BANKING =====
         case '/apex': {
           const result = await callBridge('getApexAccounts');
           if (result.success) {
             const s = result.summary;
-            let msg = `🏦 *Apex Bank Summary*\n\n`;
-            msg += `Accounts: ${s.total_accounts}\n`;
-            msg += `Total Balance: $${s.total_balance.toLocaleString()}\n`;
-            msg += `Transactions: ${s.total_transactions}\n\n`;
-            msg += `*Recent Transactions:*\n`;
-            s.recent_transactions.forEach(t => {
-              msg += `  ${t.type}: $${t.amount} — ${t.description}\n`;
-            });
+            let msg = `🏦 *Apex Bank*\n\nAccounts: ${s.total_accounts}\nBalance: $${s.total_balance.toLocaleString()}\nTransactions: ${s.total_transactions}\nCards: ${s.total_cards} | Loans: ${s.total_loans}\n\n*Recent TXN:*\n`;
+            s.recent_transactions.forEach(t => { msg += `  ${t.type}: $${t.amount} — ${t.description} [${t.status}]\n`; });
             return msg;
           }
-          return '❌ Error: ' + (result.error || 'unknown');
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        case '/apexcards': {
+          const result = await callBridge('getApexCards');
+          if (result.success) { let msg = `💳 *Apex Cards (${result.total_cards})*\n\n`; result.cards.forEach(c => { msg += `  ${c.card_holder_name} — ${c.card_type} ••••${c.card_number?.slice(-4) || ''} [${c.status}]\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/apexloans': {
+          const result = await callBridge('getApexLoans');
+          if (result.success) { const s = result.summary; let msg = `💰 *Apex Loans*\n\nTotal: ${s.total_loans} | Active: ${s.active}\nBorrowed: $${s.total_borrowed.toLocaleString()} | Paid: $${s.total_paid.toLocaleString()}\n`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== AJO =====
         case '/ajo': {
           const result = await callBridge('getAjoGroups');
           if (result.success) {
-            let msg = `💰 *HarzAjo Summary*\n\n`;
-            msg += `Groups: ${result.total_groups}\n`;
-            msg += `Members: ${result.total_members}\n\n`;
-            if (result.groups && result.groups.length > 0) {
-              result.groups.forEach(g => {
-                msg += `  ${g.group_name || 'Group'} — ${g.capacity} capacity\n`;
-                msg += `  ${g.currency} ${g.contribution_amount} | Cycle: ${g.current_cycle}/${g.cycle_frequency}\n`;
-              });
-            }
-            return msg;
-          }
-          return '❌ Error: ' + (result.error || 'unknown');
-        }
-        
-        case '/subs': {
-          const result = await callBridge('getSubscribers');
-          if (result.success) {
             const s = result.summary;
-            let msg = `📈 *ContentPilot Subscribers*\n\n`;
-            msg += `Total: ${s.total_subscribers}\n`;
-            msg += `Active: ${s.active}\n`;
-            msg += `MRR: $${s.total_mrr}\n\n`;
-            msg += `*By Plan:*\n`;
-            Object.entries(s.by_plan).forEach(([plan, count]) => {
-              msg += `  ${plan}: ${count}\n`;
-            });
+            let msg = `💰 *HarzAjo*\n\nGroups: ${s.total_groups}\nMembers: ${s.total_members}\nCollected: ₦${s.total_collected.toLocaleString()}\nContributions: ${s.total_contributions}\n`;
+            if (result.groups && result.groups.length > 0) { msg += `\n*Groups:*\n`; result.groups.forEach(g => { msg += `  ${g.admin_name || 'Group'} — ${g.capacity} cap, ${g.currency}${g.contribution_amount}/${g.cycle_frequency}\n`; }); }
             return msg;
           }
-          return '❌ Error: ' + (result.error || 'unknown');
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        // ===== LOANS =====
+        case '/loans': {
+          const result = await callBridge('getLoans');
+          if (result.success) { const s = result.summary; let msg = `💵 *HarzLend*\n\nTotal: ${s.total_loans} | Approved: ${s.approved} | Pending: ${s.pending}\nDisbursed: ₦${s.total_disbursed.toLocaleString()}\nApplications: ${s.total_applications}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== FX =====
         case '/fx': {
           const result = await callBridge('getFXRates');
-          if (result.success) {
-            let msg = `💱 *FX Rates*\n\n`;
-            result.rates.slice(0, 10).forEach(r => {
-              msg += `  ${r.currency_code}: ₦${r.rate} (${r.daily_change_percent || '0'}%)\n`;
-            });
-            return msg;
-          }
-          return '❌ Error: ' + (result.error || 'unknown');
+          if (result.success) { let msg = `💱 *FX Rates (${result.total_rates})*\n`; result.rates.slice(0, 10).forEach(r => { msg += `  ${r.currency_code}: ₦${r.rate} (${r.daily_change_percent || '0'}%)\n`; }); if (result.total_trades > 0) msg += `\nTrades: ${result.total_trades} (${result.active_trades} active)`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        // ===== ESTATE =====
         case '/estate': {
           const result = await callBridge('getEstateProperties');
-          if (result.success) {
-            let msg = `🏠 *Estate Properties*\n\n`;
-            msg += `Total: ${result.count}\n\n`;
-            result.properties.slice(0, 5).forEach(p => {
-              msg += `  ${p.title} — ${p.property_type}\n`;
-              msg += `  ${p.location} | ${p.currency} ${p.price?.toLocaleString()}\n`;
-              msg += `  ${p.bedrooms} bed, ${p.bathrooms} bath | ${p.status}\n\n`;
-            });
-            return msg;
-          }
-          return '❌ Error: ' + (result.error || 'unknown');
+          if (result.success) { let msg = `🏠 *Estate Properties (${result.count})*\nInquiries: ${result.inquiries} | Pros: ${result.professionals} | Materials: ${result.materials}\n\n`; result.properties.slice(0, 5).forEach(p => { msg += `  ${p.title} — ${p.location}\n  ${p.bedrooms} bed, ${p.bathrooms} bath | ${p.currency} ${p.price?.toLocaleString()} [${p.status}]\n\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        case '/inquiries': {
+          const result = await callBridge('getEstateInquiries');
+          if (result.success) { let msg = `📩 *Estate Inquiries (${result.count})*\n\n`; if (result.inquiries.length > 0) result.inquiries.slice(0, 5).forEach(i => { msg += `  ${i.full_name} — ${i.interest}\n  ${i.email} | ${i.phone} [${i.status}]\n\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== EDUCATION =====
+        case '/edu': {
+          const result = await callBridge('getEduCourses');
+          if (result.success) { let msg = `🎓 *EduWealth*\n\nCourses: ${result.total_courses}\nStudents: ${result.total_students}\nEnrollments: ${result.total_enrollments}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/students': {
+          const result = await callBridge('getEduStudents');
+          if (result.success) { let msg = `🎓 *Students (${result.total})*\n\n`; result.students.slice(0, 5).forEach(s => { msg += `  ${s.full_name} — L${s.level} | XP: ${s.xp_points} | ${s.enrolled_courses?.length || 0} courses\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/jobs': {
+          const result = await callBridge('getEduJobs');
+          if (result.success) { let msg = `💼 *Job Postings (${result.total})*\n\n`; result.jobs.slice(0, 5).forEach(j => { msg += `  ${j.job_title} — ${j.company_name}\n  ${j.location} | ${j.salary_range} ${j.currency} [${j.status}]\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/liveclass': {
+          const result = await callBridge('getEduLiveClasses');
+          if (result.success) { let msg = `📹 *Live Classes (${result.total})*\n\n`; result.classes.forEach(c => { msg += `  ${c.title}\n  ${c.scheduled_date} ${c.scheduled_time} | ${c.registered_count}/${c.max_participants}\n  [${c.status}]\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== CONTENT =====
+        case '/content': {
+          const result = await callBridge('getContentProjects');
+          if (result.success) { let msg = `📝 *Content Pipeline*\n\nProjects: ${result.total_projects}\nCampaigns: ${result.total_campaigns}\nScripts: ${result.total_scripts}\nAssets: ${result.total_assets}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/analytics': {
+          const result = await callBridge('getContentAnalytics');
+          if (result.success) { let msg = `📈 *Content Analytics*\n\nMetrics: ${result.total_metrics}\nSchedules: ${result.total_schedules}\nTrends: ${result.total_trends}\nMonetization Channels: ${result.monetization?.length || 0}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/aiagents': {
+          const result = await callBridge('getAIExecutives');
+          if (result.success) { let msg = `🤖 *AI Executives (${result.total})*\n\n`; result.executives.forEach(e => { msg += `  ${e.agent_name} — ${e.role} [${e.status}]\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== HEALTH =====
+        case '/health': {
+          const result = await callBridge('getHealthProfiles');
+          if (result.success) { let msg = `🏥 *OMEGA HEALTH AI*\n\nProfiles: ${result.profiles}\nMetrics: ${result.metrics}\nMedications: ${result.medications}\nRecords: ${result.records}\nAgents: ${result.agents}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/appointments': {
+          const result = await callBridge('getAppointments');
+          if (result.success) { let msg = `📅 *Appointments*\n\n`; if (result.appointments.length > 0) result.appointments.forEach(a => { msg += `  ${a.provider_name} — ${a.facility}\n  ${a.appointment_date} ${a.appointment_time} [${a.status}]\n`; }); else msg += 'No upcoming appointments.'; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== MENTAL HEALTH =====
+        case '/mindcare': {
+          const result = await callBridge('getMindCare');
+          if (result.success) { let msg = `🧠 *MindCare AI*\n\nProfiles: ${result.profiles}\nMood Entries: ${result.mood_entries}\nJournals: ${result.journals}\nAssessments: ${result.assessments}\nGoals: ${result.goals}\nExercises: ${result.exercises}\nMeditations: ${result.meditations}\nCrisis Alerts: ${result.crisis_alerts}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== CYBER =====
+        case '/cyber': {
+          const result = await callBridge('getCyberStatus');
+          if (result.success) { let msg = `🛡️ *CYBER SHIELD X*\n\nThreats: ${result.threats} (${result.active_threats} active, ${result.resolved_threats} resolved)\nIncidents: ${result.incidents}\nVulnerabilities: ${result.vulnerabilities}\nAgents: ${result.agents}\nEndpoints: ${result.endpoints}\nThreat Intel: ${result.threat_intel}\nSecurity Events: ${result.security_events}\nCompliance: ${result.compliance_reports}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== HOSTING =====
+        case '/domains': {
+          const result = await callBridge('getDomainOrders');
+          if (result.success) { let msg = `🌐 *HostMaster*\n\nDomains: ${result.domains}\nHosting Orders: ${result.hosting_orders}\nTickets: ${result.tickets} (${result.open_tickets} open)\nInvoices: ${result.invoices}\nDomain Orders: ${result.domain_orders}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== OTHER PLATFORMS =====
+        case '/oracle': {
+          const result = await callBridge('getOracleSessions');
+          if (result.success) { let msg = `🔮 *Oracle AI*\n\nSessions: ${result.total} | Active: ${result.active}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/builds': {
+          const result = await callBridge('getBuildProjects');
+          if (result.success) { let msg = `🏗️ *BuildBot AI (${result.total})*\n\n`; Object.entries(result.by_status).forEach(([s, c]) => { msg += `  ${s}: ${c}\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/ads': {
+          const result = await callBridge('getNexalAds');
+          if (result.success) { let msg = `📢 *Nexal Ads (${result.total})*\nPending: ${result.pending}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/deploys': {
+          const result = await callBridge('getDeployTasks');
+          if (result.success) { let msg = `🚀 *Deploy Tasks (${result.total})*\n\n`; Object.entries(result.by_status).forEach(([s, c]) => { msg += `  ${s}: ${c}\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/omega': {
+          const result = await callBridge('getOmegaProjects');
+          if (result.success) { let msg = `♾️ *OMEGA INFINITY*\n\nProjects: ${result.total_projects}\nRuns: ${result.runs}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/referrals': {
+          const result = await callBridge('getReferrals');
+          if (result.success) { const s = result.summary; let msg = `🔗 *Referrals*\n\nTotal: ${s.total} | Paid: ${s.paid} | Pending: ${s.pending}\nCommission: ₦${s.total_commission.toLocaleString()}`; return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/subs': {
+          const result = await callBridge('getSubscribers');
+          if (result.success) { const s = result.summary; let msg = `📈 *ContentPilot Subs*\n\nTotal: ${s.total_subscribers} | Active: ${s.active}\nMRR: $${s.total_mrr}\n\n*By Plan:*\n`; Object.entries(s.by_plan).forEach(([p, c]) => { msg += `  ${p}: ${c}\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/files': {
+          const result = await callBridge('getFileStore');
+          if (result.success) { let msg = `📁 *File Store (${result.total})*\n\n`; result.files.slice(0, 5).forEach(f => { msg += `  ${f.file_name} (${f.file_type}, ${f.file_size})\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        // ===== EMAIL =====
         case '/sendemail': {
-          // /sendemail to:subject:body
           const parts = (args || '').split(':');
           if (parts.length < 3) return 'Usage: /sendemail recipient@email.com:Subject:Body text';
           const [to, subject, ...bodyParts] = parts;
           const result = await callBridge('sendEmail', { to, subject, body: bodyParts.join(':') });
-          if (result.success) return `✅ Email sent to ${to}! Message ID: ${result.messageId}`;
-          return '❌ Email failed: ' + (result.error || 'unknown');
+          if (result.success) return `✅ Email sent to ${to}! ID: ${result.messageId}`;
+          return '❌ ' + (result.error || 'failed');
         }
-        
+
         case '/readmail': {
           const result = await callBridge('readEmails', { max: 5 });
-          if (result.success) {
-            if (result.count === 0) return '📭 No emails in inbox';
-            let msg = `📧 *Recent Emails (${result.count})*\n\n`;
-            result.emails.forEach(e => {
-              msg += `*From:* ${e.from}\n`;
-              msg += `*Subject:* ${e.subject}\n`;
-              msg += `*Date:* ${e.date}\n`;
-              msg += `${e.snippet}\n\n`;
-            });
-            return msg;
-          }
-          return '❌ Error: ' + (result.error || 'unknown');
+          if (result.success) { if (result.count === 0) return '📭 No emails'; let msg = `📧 *Recent (${result.count})*\n\n`; result.emails.forEach(e => { msg += `*From:* ${e.from}\n*Subject:* ${e.subject}\n${e.snippet}\n\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
         case '/calendar': {
           const result = await callBridge('getCalendar', { daysAhead: 7 });
-          if (result.success) {
-            if (result.count === 0) return '📅 No upcoming events in the next 7 days';
-            let msg = `📅 *Upcoming Events (${result.count})*\n\n`;
-            result.events.forEach(e => {
-              msg += `*${e.summary}*\n`;
-              msg += `  ${e.start} → ${e.end}\n`;
-              if (e.location) msg += `  📍 ${e.location}\n`;
-              if (e.description) msg += `  ${e.description.substring(0, 100)}\n`;
-              msg += `\n`;
-            });
-            return msg;
-          }
-          return '❌ Error: ' + (result.error || 'unknown');
+          if (result.success) { if (result.count === 0) return '📅 No upcoming events'; let msg = `📅 *Events (${result.count})*\n\n`; result.events.forEach(e => { msg += `*${e.summary}*\n  ${e.start} → ${e.end}\n`; if (e.location) msg += `  📍 ${e.location}\n`; msg += '\n'; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
         }
-        
+
+        // ===== ENTITY QUERIES =====
+        case '/entity': {
+          if (!args) return 'Usage: /entity [EntityName] — returns all records';
+          const result = await callBridge('getEntityData', { entityName: args.trim() });
+          if (result.success) return `📋 *${args.trim()}*: ${result.count} records`;
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/count': {
+          if (!args) return 'Usage: /count [EntityName]';
+          const result = await callBridge('getEntityCount', { entityName: args.trim() });
+          if (result.success) return `📊 ${result.entity}: ${result.count} records`;
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/multi': {
+          if (!args) return 'Usage: /multi Entity1,Entity2,Entity3';
+          const entities = args.split(',').map(e => e.trim());
+          const result = await callBridge('multiQuery', { entities });
+          if (result.success) { let msg = `📊 *Multi-Query*\n\n`; Object.entries(result.summary).forEach(([e, c]) => { msg += `  ${e}: ${c}\n`; }); return msg; }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
         default:
-          return null; // Not a bridge command
+          return null;
       }
     } catch (err) {
       return '❌ Bridge error: ' + err.message;

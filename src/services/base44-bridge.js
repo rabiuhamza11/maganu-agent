@@ -601,8 +601,7 @@ ID: ${result.record?.ticket_id || ''}`;
           if (existing.success && existing.data) {
             const record = existing.data.find(r => r.id === id);
             const currentNotes = record?.notes || '';
-            const result = await callBridge('updateEntityRecord', { entityName, id, data: { notes: currentNotes + (currentNotes ? '
-' : '') + new Date().toISOString().slice(0,10) + ': ' + note } });
+            const result = await callBridge('updateEntityRecord', { entityName, id, data: { notes: currentNotes + (currentNotes ? '\n' : '') + new Date().toISOString().slice(0,10) + ': ' + note } });
             if (result.success) return `✅ Note added to ${entityName} ${id}`;
           }
           return '❌ Could not add note';

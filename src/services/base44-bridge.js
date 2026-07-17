@@ -474,6 +474,141 @@ module.exports = {
           return '❌ ' + (result.error || 'unknown');
         }
 
+        // ===== WRITE COMMANDS (Create/Update/Delete) =====
+        case '/create': {
+          // /create EntityName:{"field":"value","field2":"value2"}
+          if (!args) return 'Usage: /create EntityName:{"field":"value"}';
+          const colonIdx = args.indexOf(':');
+          if (colonIdx < 0) return 'Usage: /create EntityName:{"field":"value"}';
+          const entityName = args.substring(0, colonIdx).trim();
+          const jsonStr = args.substring(colonIdx + 1).trim();
+          try {
+            const data = JSON.parse(jsonStr);
+            const result = await callBridge('createEntityRecord', { entityName, data });
+            if (result.success) return `✅ Created ${entityName} record! ID: ${result.record?.id || 'unknown'}`;
+            return '❌ ' + (result.error || 'create failed');
+          } catch (e) { return '❌ Invalid JSON: ' + e.message; }
+        }
+
+        case '/update': {
+          // /update EntityName:id:{"field":"value"}
+          if (!args) return 'Usage: /update EntityName:id:{"field":"value"}';
+          const parts = args.split(':');
+          if (parts.length < 3) return 'Usage: /update EntityName:id:{"field":"value"}';
+          const entityName = parts[0].trim();
+          const id = parts[1].trim();
+          const jsonStr = parts.slice(2).join(':').trim();
+          try {
+            const data = JSON.parse(jsonStr);
+            const result = await callBridge('updateEntityRecord', { entityName, id, data });
+            if (result.success) return `✅ Updated ${entityName} ${id}!`;
+            return '❌ ' + (result.error || 'update failed');
+          } catch (e) { return '❌ Invalid JSON: ' + e.message; }
+        }
+
+        case '/delete': {
+          // /delete EntityName:id
+          if (!args) return 'Usage: /delete EntityName:id';
+          const parts = args.split(':');
+          if (parts.length < 2) return 'Usage: /delete EntityName:id';
+          const entityName = parts[0].trim();
+          const id = parts[1].trim();
+          const result = await callBridge('deleteEntityRecord', { entityName, id });
+          if (result.success) return `✅ Deleted ${entityName} ${id}!`;
+          return '❌ ' + (result.error || 'delete failed');
+        }
+
+        case '/addcrm': {
+          // /addcrm Name:Phone:Inquiry:Message
+          if (!args) return 'Usage: /addcrm Name:Phone:InquiryType:Message';
+          const parts = args.split(':');
+          if (parts.length < 4) return 'Usage: /addcrm Name:Phone:InquiryType:Message';
+          const [name, phone, inquiry, ...msgParts] = parts;
+          const result = await callBridge('createEntityRecord', {
+            entityName: 'WhatsAppCRM',
+            data: { customer_name: name, customer_phone: phone, inquiry_type: inquiry, message: msgParts.join(':'), status: 'new', response_sent: false, platform: 'telegram' }
+          });
+          if (result.success) return `✅ CRM customer added: ${name} (${phone})
+ID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/addproduct': {
+          // /addproduct Title:Price:Category
+          if (!args) return 'Usage: /addproduct Title:Price:Category';
+          const parts = args.split(':');
+          if (parts.length < 3) return 'Usage: /addproduct Title:Price:Category';
+          const [title, price, category] = parts;
+          const result = await callBridge('createEntityRecord', {
+            entityName: 'Product',
+            data: { title, price: parseFloat(price) || 0, category, currency: 'USD', status: 'active', sales_count: 0, rating: 0, seller_name: 'Rabiu Hamza', seller_email: 'harzco.business@gmail.com' }
+          });
+          if (result.success) return `✅ Product added: ${title} ($${price})
+ID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/addorder': {
+          // /addorder ProductTitle:BuyerEmail:Amount:Currency
+          if (!args) return 'Usage: /addorder ProductTitle:BuyerEmail:Amount:Currency';
+          const parts = args.split(':');
+          if (parts.length < 4) return 'Usage: /addorder ProductTitle:BuyerEmail:Amount:Currency';
+          const [title, email, amount, currency] = parts;
+          const result = await callBridge('createEntityRecord', {
+            entityName: 'Order',
+            data: { product_title: title, buyer_email: email, amount: parseFloat(amount) || 0, currency: currency || 'NGN', payment_status: 'pending', seller_email: 'harzco.business@gmail.com' }
+          });
+          if (result.success) return `✅ Order created: ${title} for ${email}
+Amount: ${currency} ${amount}
+ID: ${result.record?.id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/setstatus': {
+          // /setstatus EntityName:id:newstatus
+          if (!args) return 'Usage: /setstatus EntityName:id:status';
+          const parts = args.split(':');
+          if (parts.length < 3) return 'Usage: /setstatus EntityName:id:status';
+          const [entityName, id, status] = parts;
+          const result = await callBridge('updateEntityRecord', { entityName, id, data: { status } });
+          if (result.success) return `✅ ${entityName} ${id} → status: ${status}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/addticket': {
+          // /addticket Subject:Message
+          if (!args) return 'Usage: /addticket Subject:Your message here';
+          const parts = args.split(':');
+          if (parts.length < 2) return 'Usage: /addticket Subject:Your message here';
+          const [subject, ...msgParts] = parts;
+          const result = await callBridge('createEntityRecord', {
+            entityName: 'HMTicket',
+            data: { ticket_id: 'TKT-' + Date.now().toString(36).toUpperCase(), subject, message: msgParts.join(':'), owner_email: 'harzco.business@gmail.com', owner_name: 'Rabiu Hamza', status: 'open', priority: 'medium', category: 'general' }
+          });
+          if (result.success) return `✅ Support ticket created: ${subject}
+ID: ${result.record?.ticket_id || ''}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/addnote': {
+          // /addnote EntityName:id:note text
+          if (!args) return 'Usage: /addnote EntityName:id:Your note here';
+          const parts = args.split(':');
+          if (parts.length < 3) return 'Usage: /addnote EntityName:id:Your note here';
+          const [entityName, id, ...noteParts] = parts;
+          const note = noteParts.join(':');
+          const existing = await callBridge('getEntityData', { entityName });
+          if (existing.success && existing.data) {
+            const record = existing.data.find(r => r.id === id);
+            const currentNotes = record?.notes || '';
+            const result = await callBridge('updateEntityRecord', { entityName, id, data: { notes: currentNotes + (currentNotes ? '
+' : '') + new Date().toISOString().slice(0,10) + ': ' + note } });
+            if (result.success) return `✅ Note added to ${entityName} ${id}`;
+          }
+          return '❌ Could not add note';
+        }
+
+
         default:
           return null;
       }

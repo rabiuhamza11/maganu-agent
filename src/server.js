@@ -1352,7 +1352,7 @@ app.get('/wa-status', (req, res) => {
 });
 
 // ============ HEALTH ============
-app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.5.2', status: 'online', capabilities: 500, commands: 300, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus(), whatsapp: waBaileys.isReady(), whatsappPairingCode: waBaileys.getPairingCode() }));
+app.get('/', (req, res) => res.json({ name: 'Maganu Agent', version: '7.5.4', status: 'online', capabilities: 523, commands: 400, payments: { paystack: !!process.env.PAYSTACK_SECRET_KEY, stripe: !!process.env.STRIPE_SECRET_KEY, flutterwave: !!process.env.FLUTTERWAVE_SECRET_KEY }, financial: { transfers: true, refunds: true, paymentLinks: true, bankManager: true, universalBanks: true }, owner: 'Rabiu Hamza', scheduler: scheduler.getStatus(), whatsapp: waBaileys.isReady(), whatsappPairingCode: waBaileys.getPairingCode() }));
 
 // ============ WEBHOOK SETUP ============
 async function setWebhook(url) {

@@ -6,6 +6,17 @@ const GMAIL_TOKEN = process.env.GMAIL_ACCESS_TOKEN || '';
 const CALENDAR_TOKEN = process.env.GOOGLECALENDAR_ACCESS_TOKEN || '';
 
 async function callBridge(action, extra = {}) {
+const PAYMENT_BRIDGE_URL = 'https://6a1e2efdc14fbb292286fb2f.base44app.com/functions/paymentBridge';
+
+async function callPayment(action, extra = {}) {
+  try {
+    const axios = require('axios');
+    const res = await axios.post(PAYMENT_BRIDGE_URL, { action, ...extra }, { timeout: 20000 });
+    return res.data;
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
   try {
     const axios = require('axios');
     const payload = { action, ...extra };
@@ -84,6 +95,26 @@ module.exports = {
   // System
   getStatus: () => callBridge('getStatus'),
   call: callBridge,
+  // Payment Bridge — Paystack + Stripe + Flutterwave
+  paymentStatus: () => callPayment('paymentStatus'),
+  // Paystack
+  paystackBalance: () => callPayment('paystackBalance'),
+  paystackTransactions: (limit = 10) => callPayment('paystackTransactions', { limit }),
+  paystackStats: () => callPayment('paystackStats'),
+  paystackCreatePayment: (email, amount, currency, title, description) => callPayment('paystackCreatePayment', { email, amount, currency, title, description }),
+  paystackVerify: (reference) => callPayment('paystackVerify', { reference }),
+  paystackRefund: (reference, amount, note) => callPayment('paystackRefund', { reference, amount, note }),
+  paystackCreateRecipient: (name, account_number, bank_code) => callPayment('paystackCreateRecipient', { name, account_number, bank_code }),
+  paystackTransfer: (amount, recipient_code, reason) => callPayment('paystackTransfer', { amount, recipient_code, reason }),
+  paystackVerifyAccount: (account_number, bank_code) => callPayment('paystackVerifyAccount', { account_number, bank_code }),
+  paystackListBanks: () => callPayment('paystackListBanks'),
+  // Stripe
+  stripeBalance: () => callPayment('stripeBalance'),
+  stripeTransactions: (limit = 10) => callPayment('stripeTransactions', { limit }),
+  stripeStats: () => callPayment('stripeStats'),
+  stripeCheckout: (email, amount, currency, product_name) => callPayment('stripeCheckout', { email, amount, currency, product_name }),
+  stripeRefund: (charge_id, amount) => callPayment('stripeRefund', { charge_id, amount }),
+  stripeProducts: () => callPayment('stripeProducts'),
 
   async handleCommand(cmd, args) {
     try {
@@ -605,6 +636,259 @@ ID: ${result.record?.ticket_id || ''}`;
             if (result.success) return `✅ Note added to ${entityName} ${id}`;
           }
           return '❌ Could not add note';
+        }
+
+
+        // ===== PAYMENT COMMANDS =====
+        case '/gateway': {
+          const result = await callPayment('paymentStatus');
+          if (result.success) {
+            const g = result.gateways;
+            let msg = `💳 *Payment Gateways*
+
+`;
+            msg += `*Paystack:* ${g.paystack.status === 'connected' ? '✅' : '❌'} ${g.paystack.mode}
+`;
+            msg += `*Stripe:* ${g.stripe.status === 'connected' ? '✅' : '❌'} ${g.stripe.mode}
+`;
+            msg += `*Flutterwave:* ${g.flutterwave.status === 'connected' ? '✅' : '❌'} ${g.flutterwave.mode}
+`;
+            return msg;
+          }
+          return '❌ ' + (result.error || 'unknown');
+        }
+
+        case '/paystats': {
+          const [ps, st] = await Promise.all([callPayment('paystackStats'), callPayment('stripeStats')]);
+          let msg = `📊 *Payment Statistics*
+
+`;
+          if (ps.success) {
+            msg += `*Paystack (${ps.mode})*
+`;
+            msg += `Balance: ₦${(ps.balance || 0).toLocaleString()}
+`;
+            msg += `Transactions: ${ps.totalTxns} (${ps.successTxns} success)
+`;
+            msg += `Revenue: ₦${(ps.successAmount || 0).toLocaleString()}
+`;
+            msg += `Customers: ${ps.customers}
+`;
+            if (ps.recentTxns && ps.recentTxns.length > 0) {
+              msg += `
+*Recent:*
+`;
+              ps.recentTxns.forEach(t => { msg += `  ${t.email} — ₦${t.amount.toLocaleString()} [${t.status}]
+`; });
+            }
+          }
+          if (st.success) {
+            msg += `
+*Stripe (${st.mode})*
+`;
+            msg += `Balance: $${(st.balance?.[0]?.amount || 0).toFixed(2)}
+`;
+            msg += `Charges: ${st.totalCharges} (${st.succeededCharges} succeeded)
+`;
+            msg += `Revenue: $${st.totalRevenue.toFixed(2)}
+`;
+          }
+          return msg;
+        }
+
+        case '/paylink': {
+          // /paylink email:amount:currency:title
+          if (!args) return 'Usage: /paylink email:amount:currency:title — Example: /paylink customer@email.com:5000:NGN:Product Name';
+          const parts = args.split(':');
+          if (parts.length < 2) return 'Usage: /paylink email:amount:currency:title';
+          const [email, amount, currency, ...titleParts] = parts;
+          const result = await callPayment('paystackCreatePayment', { email, amount: parseFloat(amount), currency: currency || 'NGN', title: titleParts.join(':') || 'Harz Ecosystem' });
+          if (result.success) {
+            return `✅ *Payment Link Created*
+
+Amount: ${result.currency} ${result.amount.toLocaleString()}
+Reference: ${result.reference}
+
+Checkout URL:
+${result.checkout_url}`;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stripepay': {
+          // /stripepay email:amount:currency:product_name
+          if (!args) return 'Usage: /stripepay email:amount:currency:product';
+          const parts = args.split(':');
+          if (parts.length < 2) return 'Usage: /stripepay email:amount:currency:product';
+          const [email, amount, currency, ...prodParts] = parts;
+          const result = await callPayment('stripeCheckout', { email, amount: parseFloat(amount), currency: currency || 'usd', product_name: prodParts.join(':') || 'Harz Ecosystem Product' });
+          if (result.success) {
+            return `✅ *Stripe Checkout*
+
+Amount: ${result.currency} ${result.amount}
+Session: ${result.session_id}
+
+Checkout URL:
+${result.checkout_url}`;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/verifytxn': {
+          if (!args) return 'Usage: /verifytxn [reference]';
+          const result = await callPayment('paystackVerify', { reference: args.trim() });
+          if (result.success) {
+            return `✅ *Transaction Verified*
+
+Reference: ${result.reference}
+Amount: ${result.currency} ${result.amount.toLocaleString()}
+Status: ${result.status}
+Customer: ${result.customer}
+Channel: ${result.channel}
+Fees: ₦${(result.fees || 0).toLocaleString()}
+Date: ${result.date}`;
+          }
+          return '❌ ' + (result.error || 'not found');
+        }
+
+        case '/verifyacct': {
+          if (!args) return 'Usage: /verifyacct account:bank_code — Example: /verifyacct 2034326424:033';
+          const parts = args.split(':');
+          if (parts.length < 2) return 'Usage: /verifyacct account:bank_code';
+          const result = await callPayment('paystackVerifyAccount', { account_number: parts[0].trim(), bank_code: parts[1].trim() });
+          if (result.success) return `✅ *Account Verified*
+
+Name: ${result.account_name}
+Account: ${result.account_number}`;
+          return '❌ ' + (result.error || 'not found');
+        }
+
+        case '/refund': {
+          if (!args) return 'Usage: /refund reference:amount';
+          const parts = args.split(':');
+          const result = await callPayment('paystackRefund', { reference: parts[0].trim(), amount: parts[1] ? parseFloat(parts[1]) : undefined });
+          if (result.success) return `✅ *Refund Initiated*
+
+ID: ${result.refundId}
+Amount: ₦${(result.amount || 0).toLocaleString()}
+Status: ${result.status}
+Ref: ${result.reference}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/nigeriabanks': {
+          const result = await callPayment('paystackListBanks');
+          if (result.success) {
+            let msg = `🏦 *Nigerian Banks (${result.count})*
+
+`;
+            result.banks.slice(0, 15).forEach(b => { msg += `  ${b.name} — ${b.code}
+`; });
+            if (result.count > 15) msg += `
+... and ${result.count - 15} more`;
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/paytxn': {
+          const result = await callPayment('paystackTransactions', { limit: 10 });
+          if (result.success) {
+            if (result.count === 0) return '📭 No Paystack transactions yet';
+            let msg = `💳 *Paystack Transactions (${result.count})*
+
+`;
+            result.transactions.forEach(t => { msg += `  ${t.email || 'Unknown'} — ${t.currency} ${t.amount.toLocaleString()} [${t.status}]
+  Ref: ${t.reference}
+  ${t.date?.slice(0,10) || ''}
+
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stripetxn': {
+          const result = await callPayment('stripeTransactions', { limit: 10 });
+          if (result.success) {
+            if (result.count === 0) return '📭 No Stripe transactions yet';
+            let msg = `💜 *Stripe Transactions (${result.count})*
+
+`;
+            result.charges.forEach(c => { msg += `  ${c.email || 'Unknown'} — ${c.currency} ${c.amount} [${c.status}]
+  ${c.date}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stripebalance': {
+          const result = await callPayment('stripeBalance');
+          if (result.success) {
+            let msg = `💜 *Stripe Balance*
+
+`;
+            result.balances.forEach(b => { msg += `  ${b.currency.toUpperCase()}: $${b.amount.toFixed(2)}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/paybalance': {
+          const result = await callPayment('paystackBalance');
+          if (result.success) {
+            let msg = `💳 *Paystack Balance*
+
+`;
+            result.balances.forEach(b => { msg += `  ${b.currency}: ₦${b.amount.toLocaleString()}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/recipient': {
+          if (!args) return 'Usage: /recipient name:account_number:bank_code';
+          const parts = args.split(':');
+          if (parts.length < 3) return 'Usage: /recipient name:account_number:bank_code';
+          const result = await callPayment('paystackCreateRecipient', { name: parts[0].trim(), account_number: parts[1].trim(), bank_code: parts[2].trim() });
+          if (result.success) return `✅ *Recipient Created*
+
+Code: ${result.recipient_code}
+Name: ${result.account_name}
+Bank: ${result.bank}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/sendmoney': {
+          if (!args) return 'Usage: /sendmoney amount:recipient_code:reason';
+          const parts = args.split(':');
+          if (parts.length < 2) return 'Usage: /sendmoney amount:recipient_code:reason';
+          const result = await callPayment('paystackTransfer', { amount: parseFloat(parts[0]), recipient_code: parts[1].trim(), reason: parts[2] || 'Harz Ecosystem transfer' });
+          if (result.success) return `✅ *Transfer Initiated*
+
+Amount: ₦${result.amount.toLocaleString()}
+Transfer Code: ${result.transfer_code}
+Status: ${result.status}`;
+          return '❌ ' + (result.error || 'failed');
+        }
+
+        case '/stripeproducts': {
+          const result = await callPayment('stripeProducts');
+          if (result.success) {
+            if (result.count === 0) return '📭 No Stripe products';
+            let msg = `💜 *Stripe Products (${result.count})*
+
+`;
+            result.products.forEach(p => { msg += `  ${p.name} [${p.active ? 'active' : 'inactive'}]
+  ID: ${p.id}
+`; if (p.description) msg += `  ${p.description}
+`; });
+            return msg;
+          }
+          return '❌ ' + (result.error || 'failed');
         }
 
 

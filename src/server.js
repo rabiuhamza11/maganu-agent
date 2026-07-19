@@ -42,6 +42,18 @@ app.use(express.urlencoded({ extended: true }));
 
 // Security headers
 app.use(function(req, res, next) {
+// Background ping to keep OMEGA Commander alive on every request
+let lastOmegaPing = 0;
+app.use(function(req, res, next) {
+  const now = Date.now();
+  if (now - lastOmegaPing > 240000) { /* ping at most every 4 min */
+    lastOmegaPing = now;
+    require("./services/brain").think ? null : null;
+    const https = require("https");
+    https.get("https://omega-commander-ai.onrender.com/health", function() {}).on("error", function() {});
+  }
+  next();
+});
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
